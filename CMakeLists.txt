@@ -22,7 +22,8 @@ include(cmake/Dependencies/OGRE.cmake)
 # ----------------------------
 # Config
 # ----------------------------
-set( EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin/")
+
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin/")
 
 # ----------------------------
 # External dependencies
@@ -35,9 +36,12 @@ setupOgre( OGRE_SOURCE, OGRE_BINARIES, OGRE_LIBRARIES, FALSE )
 # SDL2
 find_package(SDL2 REQUIRED)
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
 # ----------------------------
 # Sub directories
 # ----------------------------
 
-
+add_subdirectory(test)
 add_subdirectory(src)

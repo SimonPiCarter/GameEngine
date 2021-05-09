@@ -9,6 +9,20 @@ add_library(logic)
 target_sources(logic
 	PRIVATE
 	src/tmp.cpp
+	src/message/LogicMessage.cpp
+	src/message/LogicMessageHandler.cpp
 )
 
 target_link_libraries(logic PUBLIC common)
+
+target_include_directories (logic
+PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+	$<INSTALL_INTERFACE:include>
+)
+
+# -------------
+# Test
+# -------------
+
+add_subdirectory(test)

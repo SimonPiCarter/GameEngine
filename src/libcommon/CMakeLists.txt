@@ -11,5 +11,8 @@ target_sources(common
 	src/tmp.cpp
 )
 
-target_link_libraries(common PUBLIC ${OGRE_LIBRARIES} ${SDL2_LIBRARIES})
-target_include_directories(common PUBLIC ${SDL2_INCLUDE_DIRS})
+target_include_directories (common
+PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+	$<INSTALL_INTERFACE:include>
+)
