@@ -282,13 +282,13 @@ file( COPY "${OGRE_SOURCE}/Samples/Media/2.0/scripts/materials/Common"	DESTINATI
 file( COPY "${OGRE_SOURCE}/Samples/Media/packs/DebugPack.zip"	DESTINATION "${CMAKE_BINARY_DIR}/bin/Data" )
 
 message( STATUS "Copying DLLs and generating Plugins.cfg for Debug" )
-setupPluginFileFromTemplate( "Debug" ${OGRE_USE_SCENE_FORMAT} )
+#setupPluginFileFromTemplate( "Debug" ${OGRE_USE_SCENE_FORMAT} )
 message( STATUS "Copying DLLs and generating Plugins.cfg for Release" )
-setupPluginFileFromTemplate( "Release" ${OGRE_USE_SCENE_FORMAT} )
+#setupPluginFileFromTemplate( "Release" ${OGRE_USE_SCENE_FORMAT} )
 message( STATUS "Copying DLLs and generating Plugins.cfg for RelWithDebInfo" )
-setupPluginFileFromTemplate( "RelWithDebInfo" ${OGRE_USE_SCENE_FORMAT} )
+#setupPluginFileFromTemplate( "RelWithDebInfo" ${OGRE_USE_SCENE_FORMAT} )
 message( STATUS "Copying DLLs and generating Plugins.cfg for MinSizeRel" )
-setupPluginFileFromTemplate( "MinSizeRel" ${OGRE_USE_SCENE_FORMAT} )
+#setupPluginFileFromTemplate( "MinSizeRel" ${OGRE_USE_SCENE_FORMAT} )
 
 setupResourceFileFromTemplate()
 #setupOgreSamplesCommon()
