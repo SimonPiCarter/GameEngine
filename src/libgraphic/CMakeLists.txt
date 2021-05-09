@@ -8,9 +8,10 @@ add_library(graphic)
 
 target_sources(graphic
 	PRIVATE
-	src/tmp.cpp
 	src/engine/GraphicEngine.cpp
 	src/engine/utils/StaticPluginLoader.cpp
+	src/message/GraphicMessage.cpp
+	src/message/GraphicMessageHandler.cpp
 )
 
 target_link_libraries(graphic PUBLIC ${OGRE_LIBRARIES} ${SDL2_LIBRARIES} common)
