@@ -1,0 +1,34 @@
+@startuml post_sequence
+
+participant Engine
+
+LogicEngine -> Engine : postNewEntity
+
+Engine -> LogicEngine : postLogicMessage
+
+note right
+	_mutex.lock()
+	_postMessage.push_back(msg_p)
+end note
+
+Engine -> LogicEngine : handleFrame(elapsedTime)
+loop while popMessage()
+LogicEngine -> LogicEngine : handleMessage(Message *msg_l)
+
+note left
+	[called in popMessage()]
+	visitor LogicMessage
+end note
+
+end
+
+LogicEngine -> LogicEngine : swapMessages
+note left
+	clean up _handleMessage
+	_mutex.lock()
+	swap(_handleMessage, _postMessage)
+end note
+
+LogicEngine -> LogicEngine : runFrame(elapsedTime)
+
+@enduml
