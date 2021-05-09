@@ -8,7 +8,6 @@ add_library(logic)
 
 target_sources(logic
 	PRIVATE
-	src/tmp.cpp
 	src/message/LogicMessage.cpp
 	src/message/LogicMessageHandler.cpp
 )
