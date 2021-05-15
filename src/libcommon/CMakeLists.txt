@@ -8,7 +8,7 @@ add_library(common)
 
 target_sources(common
 	PRIVATE
-	src/tmp.cpp
+	src/resource/Resource.cpp
 )
 
 target_include_directories (common
