@@ -29,6 +29,9 @@ Scene -o "*" Entity : entities
 GraphicEntity -o "1" Resource : resource
 GraphicEntity : std::string state
 GraphicEntity : float frame
+GraphicEntity : Ogre::Item item
+GraphicEntity : Ogre::SceneNode node (item->getParentNode())
+
 
 Resource : Model model
 

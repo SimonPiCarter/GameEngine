@@ -1,0 +1,33 @@
+@startuml entity
+
+package engine
+{
+
+package logic
+{
+	class LogicMessage
+}
+package graphic
+{
+	class GraphicMessage
+	class NewGraphicEntityMessage
+	class MoveGraphicEntityMessage
+	class ChangeStateGraphicEntityMessage
+}
+NewGraphicEntityMessage -|> GraphicMessage
+NewGraphicEntityMessage : GraphicEntity entity
+NewGraphicEntityMessage : std::string resourceId
+NewGraphicEntityMessage : std::string sceneId
+NewGraphicEntityMessage : array<double, 3> position
+
+MoveGraphicEntityMessage -|> GraphicMessage
+MoveGraphicEntityMessage : GraphicEntity entity
+MoveGraphicEntityMessage : array<double, 3> move
+
+ChangeStateGraphicEntityMessage -|> GraphicMessage
+ChangeStateGraphicEntityMessage : GraphicEntity entity
+ChangeStateGraphicEntityMessage : std::string state
+
+}
+
+@enduml
