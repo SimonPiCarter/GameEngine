@@ -10,21 +10,28 @@
 #include "OgreOverlayManager.h"
 
 #include <SDL.h>
+#include <unordered_map>
 
-class GraphicEngine
+#include "message/GraphicMessageHandler.h"
+
+class ResourceHandler;
+
+class GraphicEngine : public GraphicMessageHandler
 {
 public:
-	GraphicEngine(Ogre::ColourValue backgroundColour_p);
+	GraphicEngine(Ogre::ColourValue backgroundColour_p, ResourceHandler const *resourceHandler_p);
 
 	void initWindow(const std::string &windowTitle_p);
 	void tearDown();
 
+	void handleFrame(double elapsedTime_p);
 	void run(double elapsedTime_p);
 
 
 	void setQuit(void)                                      { _quit = true; }
 	bool getQuit(void) const                                { return _quit; }
 
+	ResourceHandler const * getResourceHandler() const      { return _resourceHandler; }
 	Ogre::Root* getRoot(void) const                         { return _root; }
 	Ogre::RenderWindow* getRenderWindow(void) const         { return _renderWindow; }
 	Ogre::SceneManager* getSceneManager(void) const         { return _sceneManager; }
@@ -35,7 +42,13 @@ public:
 	const Ogre::String& getPluginsFolder(void) const        { return _pluginsFolder; }
 	const Ogre::String& getResourcePath(void) const         { return _resourcePath; }
 	const Ogre::String& getWriteAccessFolder(void) const    { return _writeAccessFolder; }
+
+	std::unordered_map<std::string, Ogre::SceneNode *> & getMapSceneNode() { return _mapSceneNode; }
+	std::unordered_map<std::string, Ogre::SceneNode *> const & getMapSceneNode() const { return _mapSceneNode; }
 protected:
+	ResourceHandler const * const _resourceHandler;
+	std::unordered_map<std::string, Ogre::SceneNode *> _mapSceneNode;
+
 	std::string const _pluginsFolder;
 	std::string const _resourcePath;
 	std::string _writeAccessFolder;
@@ -60,6 +73,7 @@ protected:
 
 	bool isWriteAccessFolder(const std::string &folderPath, const std::string &fileToSave);
 
+	void registerHlms();
 	virtual void setupResources();
 	/// Optional override method where you can perform resource group loading
 	/// Must at least do ResourceGroupManager::getSingleton().initialiseAllResourceGroups();

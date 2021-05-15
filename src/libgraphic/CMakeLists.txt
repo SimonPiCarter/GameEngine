@@ -12,6 +12,8 @@ target_sources(graphic
 	src/engine/utils/StaticPluginLoader.cpp
 	src/message/GraphicMessage.cpp
 	src/message/GraphicMessageHandler.cpp
+	src/message/implem/NewGraphicEntityMessage.cpp
+	src/resource/ResourceLoader.cpp
 )
 
 target_link_libraries(graphic PUBLIC ${OGRE_LIBRARIES} ${SDL2_LIBRARIES} common)

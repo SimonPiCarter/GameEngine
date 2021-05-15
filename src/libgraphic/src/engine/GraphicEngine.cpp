@@ -9,9 +9,16 @@
 #include "OgreWindowEventUtilities.h"
 #include "Compositor/OgreCompositorManager2.h"
 
+#include "OgreHlmsUnlit.h"
+#include "OgreHlmsPbs.h"
+#include "OgreHlmsManager.h"
+#include "OgreArchiveManager.h"
+
 #include <SDL_syswm.h>
 
-GraphicEngine::GraphicEngine(Ogre::ColourValue backgroundColour_p) :
+GraphicEngine::GraphicEngine(Ogre::ColourValue backgroundColour_p, ResourceHandler const *resourceHandler_p) :
+	GraphicMessageHandler(this),
+	_resourceHandler(resourceHandler_p),
 	_root(nullptr),
 	_renderWindow(nullptr),
 	_sceneManager(nullptr),
@@ -54,137 +61,150 @@ bool GraphicEngine::isWriteAccessFolder(const std::string &folderPath_p, const s
 
 void GraphicEngine::initWindow(const std::string &windowTitle_p)
 {
-        if( SDL_Init( SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_JOYSTICK |
-                      SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS ) != 0 )
-        {
-            OGRE_EXCEPT( Ogre::Exception::ERR_INTERNAL_ERROR, "Cannot initialize SDL2!",
-                         "GraphicEngine::initialize" );
-        }
+	if( SDL_Init( SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_JOYSTICK |
+					SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS ) != 0 )
+	{
+		OGRE_EXCEPT( Ogre::Exception::ERR_INTERNAL_ERROR, "Cannot initialize SDL2!",
+						"GraphicEngine::initialize" );
+	}
 
-        Ogre::String pluginPath_l;
-        // only use plugins.cfg if not static
-        pluginPath_l = _pluginsFolder + "plugins.cfg";
+	Ogre::String pluginPath_l;
+	// only use plugins.cfg if not static
+	pluginPath_l = _pluginsFolder + "plugins.cfg";
 
-        _root = OGRE_NEW Ogre::Root( pluginPath_l,
-                                     _writeAccessFolder + "ogre.cfg",
-                                     _writeAccessFolder + "Ogre.log" );
+	_root = OGRE_NEW Ogre::Root( pluginPath_l,
+									_writeAccessFolder + "ogre.cfg",
+									_writeAccessFolder + "Ogre.log" );
 
-        _staticPluginLoader.install( _root );
+	_staticPluginLoader.install( _root );
 
-        if( _alwaysAskForConfig || !_root->restoreConfig() )
-        {
-            if( !_root->showConfigDialog() )
-            {
-                _quit = true;
-                return;
-            }
-        }
-        _root->getRenderSystem()->setConfigOption( "sRGB Gamma Conversion", "Yes" );
-        _root->initialise(false);
+	if( _alwaysAskForConfig || !_root->restoreConfig() )
+	{
+		if( !_root->showConfigDialog() )
+		{
+			_quit = true;
+			return;
+		}
+	}
+	_root->getRenderSystem()->setConfigOption( "sRGB Gamma Conversion", "Yes" );
+	_root->initialise(false);
 
-        Ogre::ConfigOptionMap& cfgOpts_l = _root->getRenderSystem()->getConfigOptions();
+	Ogre::ConfigOptionMap& cfgOpts_l = _root->getRenderSystem()->getConfigOptions();
 
-        int width_l   = 1280;
-        int height_l  = 720;
+	int width_l   = 1280;
+	int height_l  = 720;
 
-        Ogre::ConfigOptionMap::iterator options_l = cfgOpts_l.find( "Video Mode" );
-        if( options_l != cfgOpts_l.end() )
-        {
-            //Ignore leading space
-            const Ogre::String::size_type start_l = options_l->second.currentValue.find_first_of("012356789");
-            //Get the width and height
-            Ogre::String::size_type widthEnd_l = options_l->second.currentValue.find(' ', start_l);
-            // we know that the height starts 3 characters after the width and goes until the next space
-            Ogre::String::size_type heightEnd_l = options_l->second.currentValue.find(' ', widthEnd_l+3);
-            // Now we can parse out the values
-            width_l   = Ogre::StringConverter::parseInt( options_l->second.currentValue.substr( 0, widthEnd_l ) );
-            height_l  = Ogre::StringConverter::parseInt( options_l->second.currentValue.substr(
-                                                           widthEnd_l+3, heightEnd_l ) );
-        }
+	Ogre::ConfigOptionMap::iterator options_l = cfgOpts_l.find( "Video Mode" );
+	if( options_l != cfgOpts_l.end() )
+	{
+		//Ignore leading space
+		const Ogre::String::size_type start_l = options_l->second.currentValue.find_first_of("012356789");
+		//Get the width and height
+		Ogre::String::size_type widthEnd_l = options_l->second.currentValue.find(' ', start_l);
+		// we know that the height starts 3 characters after the width and goes until the next space
+		Ogre::String::size_type heightEnd_l = options_l->second.currentValue.find(' ', widthEnd_l+3);
+		// Now we can parse out the values
+		width_l   = Ogre::StringConverter::parseInt( options_l->second.currentValue.substr( 0, widthEnd_l ) );
+		height_l  = Ogre::StringConverter::parseInt( options_l->second.currentValue.substr(
+														widthEnd_l+3, heightEnd_l ) );
+	}
 
-        Ogre::NameValuePairList params_l;
-        bool fullscreen_l = Ogre::StringConverter::parseBool( cfgOpts_l["Full Screen"].currentValue );
+	Ogre::NameValuePairList params_l;
+	bool fullscreen_l = Ogre::StringConverter::parseBool( cfgOpts_l["Full Screen"].currentValue );
 
-        int screen_l = 0;
-        int posX_l = SDL_WINDOWPOS_CENTERED_DISPLAY(screen_l);
-        int posY_l = SDL_WINDOWPOS_CENTERED_DISPLAY(screen_l);
+	int screen_l = 0;
+	int posX_l = SDL_WINDOWPOS_CENTERED_DISPLAY(screen_l);
+	int posY_l = SDL_WINDOWPOS_CENTERED_DISPLAY(screen_l);
 
-        if(fullscreen_l)
-        {
-            posX_l = SDL_WINDOWPOS_UNDEFINED_DISPLAY(screen_l);
-            posY_l = SDL_WINDOWPOS_UNDEFINED_DISPLAY(screen_l);
-        }
+	if(fullscreen_l)
+	{
+		posX_l = SDL_WINDOWPOS_UNDEFINED_DISPLAY(screen_l);
+		posY_l = SDL_WINDOWPOS_UNDEFINED_DISPLAY(screen_l);
+	}
 
-        _sdlWindow = SDL_CreateWindow(
-                    windowTitle_p.c_str(),    // window title
-                    posX_l,               // initial x position
-                    posY_l,               // initial y position
-                    width_l,              // width, in pixels
-                    height_l,             // height, in pixels
-                    SDL_WINDOW_SHOWN
-                      | (fullscreen_l ? SDL_WINDOW_FULLSCREEN : 0) | SDL_WINDOW_RESIZABLE );
+	_sdlWindow = SDL_CreateWindow(
+				windowTitle_p.c_str(),    // window title
+				posX_l,               // initial x position
+				posY_l,               // initial y position
+				width_l,              // width, in pixels
+				height_l,             // height, in pixels
+				SDL_WINDOW_SHOWN
+					| (fullscreen_l ? SDL_WINDOW_FULLSCREEN : 0) | SDL_WINDOW_RESIZABLE );
 
-        //Get the native whnd
-        SDL_SysWMinfo wmInfo_l;
-        SDL_VERSION( &wmInfo_l.version );
+	//Get the native whnd
+	SDL_SysWMinfo wmInfo_l;
+	SDL_VERSION( &wmInfo_l.version );
 
-        if( SDL_GetWindowWMInfo( _sdlWindow, &wmInfo_l ) == SDL_FALSE )
-        {
-            OGRE_EXCEPT( Ogre::Exception::ERR_INTERNAL_ERROR,
-                         "Couldn't get WM Info! (SDL2)",
-                         "GraphicEngine::initialize" );
-        }
+	if( SDL_GetWindowWMInfo( _sdlWindow, &wmInfo_l ) == SDL_FALSE )
+	{
+		OGRE_EXCEPT( Ogre::Exception::ERR_INTERNAL_ERROR,
+						"Couldn't get WM Info! (SDL2)",
+						"GraphicEngine::initialize" );
+	}
 
-        Ogre::String winHandle_l;
-        switch( wmInfo_l.subsystem )
-        {
-        #ifdef WIN32
-        case SDL_SYSWM_WINDOWS:
-            // Windows code
-            winHandle_l = Ogre::StringConverter::toString( (uintptr_t)wmInfo_l.info.win.window );
-            break;
-        #elif __MACOSX__
-        case SDL_SYSWM_COCOA:
-            //required to make OGRE play nice with our window
-            params_l.insert( std::make_pair("macAPICocoaUseNSView", "true") );
+	Ogre::String winHandle_l;
+	switch( wmInfo_l.subsystem )
+	{
+	#ifdef WIN32
+	case SDL_SYSWM_WINDOWS:
+		// Windows code
+		winHandle_l = Ogre::StringConverter::toString( (uintptr_t)wmInfo_l.info.win.window );
+		break;
+	#elif __MACOSX__
+	case SDL_SYSWM_COCOA:
+		//required to make OGRE play nice with our window
+		params_l.insert( std::make_pair("macAPICocoaUseNSView", "true") );
 
-            winHandle_l  = Ogre::StringConverter::toString(WindowContentViewHandle(wmInfo_l));
-            break;
-        #else
-        case SDL_SYSWM_X11:
-            winHandle_l = Ogre::StringConverter::toString( (uintptr_t)wmInfo_l.info.x11.window );
-            break;
-        #endif
-        default:
-            OGRE_EXCEPT( Ogre::Exception::ERR_NOT_IMPLEMENTED,
-                         "Unexpected WM! (SDL2)",
-                         "GraphicEngine::initialize" );
-            break;
-        }
+		winHandle_l  = Ogre::StringConverter::toString(WindowContentViewHandle(wmInfo_l));
+		break;
+	#else
+	case SDL_SYSWM_X11:
+		winHandle_l = Ogre::StringConverter::toString( (uintptr_t)wmInfo_l.info.x11.window );
+		break;
+	#endif
+	default:
+		OGRE_EXCEPT( Ogre::Exception::ERR_NOT_IMPLEMENTED,
+						"Unexpected WM! (SDL2)",
+						"GraphicEngine::initialize" );
+		break;
+	}
 
-        #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-            params_l.insert( std::make_pair("externalWindowHandle",  winHandle_l) );
-        #else
-            params_l.insert( std::make_pair("parentWindowHandle",  winHandle_l) );
-        #endif
+	#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+		params_l.insert( std::make_pair("externalWindowHandle",  winHandle_l) );
+	#else
+		params_l.insert( std::make_pair("parentWindowHandle",  winHandle_l) );
+	#endif
 
-        params_l.insert( std::make_pair("title", windowTitle_p) );
-        params_l.insert( std::make_pair("gamma", "true") );
-        params_l.insert( std::make_pair("FSAA", cfgOpts_l["FSAA"].currentValue) );
-        params_l.insert( std::make_pair("vsync", cfgOpts_l["VSync"].currentValue) );
+	params_l.insert( std::make_pair("title", windowTitle_p) );
+	params_l.insert( std::make_pair("gamma", "true") );
+	params_l.insert( std::make_pair("FSAA", cfgOpts_l["FSAA"].currentValue) );
+	params_l.insert( std::make_pair("vsync", cfgOpts_l["VSync"].currentValue) );
 
-        _renderWindow = Ogre::Root::getSingleton().createRenderWindow( windowTitle_p, width_l, height_l,
-                                                                       fullscreen_l, &params_l );
+	_renderWindow = Ogre::Root::getSingleton().createRenderWindow( windowTitle_p, width_l, height_l,
+																	fullscreen_l, &params_l );
 
-        _overlaySystem = OGRE_NEW Ogre::v1::OverlaySystem();
-        setupResources();
-        loadResources();
-        chooseSceneManager();
-        createCamera();
-        _workspace = setupCompositor();
+	_overlaySystem = OGRE_NEW Ogre::v1::OverlaySystem();
+	setupResources();
+	loadResources();
+	chooseSceneManager();
+	createCamera();
+	_workspace = setupCompositor();
 
-        //mInputHandler = new SdlInputHandler( _sdlWindow, mCurrentGameState,
-        //                                     mCurrentGameState, mCurrentGameState );
+	_mapSceneNode["root"] = _sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC );
+
+	//---------------------------------------------------------------------------------------
+	//
+	//---------------------------------------------------------------------------------------
+
+	Ogre::Light *light = _sceneManager->createLight();
+	Ogre::SceneNode *lightNode = _sceneManager->getRootSceneNode()->createChildSceneNode();
+	lightNode->attachObject( light );
+	light->setPowerScale( Ogre::Math::PI ); //Since we don't do HDR, counter the PBS' division by PI
+	light->setType( Ogre::Light::LT_DIRECTIONAL );
+	light->setDirection( Ogre::Vector3( -1, -1, -1 ).normalisedCopy() );
+
+	//mInputHandler = new SdlInputHandler( _sdlWindow, mCurrentGameState,
+	//                                     mCurrentGameState, mCurrentGameState );
 
 #if OGRE_PROFILING
         Ogre::Profiler::getSingleton().setEnabled( true );
@@ -225,6 +245,18 @@ void GraphicEngine::tearDown()
 
 	SDL_Quit();
 }
+
+//-----------------------------------------------------------------------------------
+void GraphicEngine::handleFrame(double elapsedTime_p)
+{
+	while(popMessage())
+	{
+		// NA (handle of message is done in popMessage)
+	}
+	swapMessages();
+	run(elapsedTime_p);
+}
+
 
 //-----------------------------------------------------------------------------------
 void GraphicEngine::run(double elapsedTime_p)
@@ -288,9 +320,99 @@ void GraphicEngine::setupResources()
 }
 
 //-----------------------------------------------------------------------------------
+    void GraphicEngine::registerHlms()
+    {
+        Ogre::ConfigFile cf;
+        cf.load( _resourcePath + "resources2.cfg" );
+
+        Ogre::String rootHlmsFolder = cf.getSetting( "DoNotUseAsResource", "Hlms", "" );
+
+        if( rootHlmsFolder.empty() )
+            rootHlmsFolder = "./";
+        else if( *(rootHlmsFolder.end() - 1) != '/' )
+            rootHlmsFolder += "/";
+
+        //At this point rootHlmsFolder should be a valid path to the Hlms data folder
+
+        Ogre::HlmsUnlit *hlmsUnlit = 0;
+        Ogre::HlmsPbs *hlmsPbs = 0;
+
+        //For retrieval of the paths to the different folders needed
+        Ogre::String mainFolderPath;
+        Ogre::StringVector libraryFoldersPaths;
+        Ogre::StringVector::const_iterator libraryFolderPathIt;
+        Ogre::StringVector::const_iterator libraryFolderPathEn;
+
+        Ogre::ArchiveManager &archiveManager = Ogre::ArchiveManager::getSingleton();
+
+        {
+            //Create & Register HlmsUnlit
+            //Get the path to all the subdirectories used by HlmsUnlit
+            Ogre::HlmsUnlit::getDefaultPaths( mainFolderPath, libraryFoldersPaths );
+            Ogre::Archive *archiveUnlit = archiveManager.load( rootHlmsFolder + mainFolderPath,
+                                                               "FileSystem", true );
+            Ogre::ArchiveVec archiveUnlitLibraryFolders;
+            libraryFolderPathIt = libraryFoldersPaths.begin();
+            libraryFolderPathEn = libraryFoldersPaths.end();
+            while( libraryFolderPathIt != libraryFolderPathEn )
+            {
+                Ogre::Archive *archiveLibrary =
+                        archiveManager.load( rootHlmsFolder + *libraryFolderPathIt, "FileSystem", true );
+                archiveUnlitLibraryFolders.push_back( archiveLibrary );
+                ++libraryFolderPathIt;
+            }
+
+            //Create and register the unlit Hlms
+            hlmsUnlit = OGRE_NEW Ogre::HlmsUnlit( archiveUnlit, &archiveUnlitLibraryFolders );
+            Ogre::Root::getSingleton().getHlmsManager()->registerHlms( hlmsUnlit );
+        }
+
+        {
+            //Create & Register HlmsPbs
+            //Do the same for HlmsPbs:
+            Ogre::HlmsPbs::getDefaultPaths( mainFolderPath, libraryFoldersPaths );
+            Ogre::Archive *archivePbs = archiveManager.load( rootHlmsFolder + mainFolderPath,
+                                                             "FileSystem", true );
+
+            //Get the library archive(s)
+            Ogre::ArchiveVec archivePbsLibraryFolders;
+            libraryFolderPathIt = libraryFoldersPaths.begin();
+            libraryFolderPathEn = libraryFoldersPaths.end();
+            while( libraryFolderPathIt != libraryFolderPathEn )
+            {
+                Ogre::Archive *archiveLibrary =
+                        archiveManager.load( rootHlmsFolder + *libraryFolderPathIt, "FileSystem", true );
+                archivePbsLibraryFolders.push_back( archiveLibrary );
+                ++libraryFolderPathIt;
+            }
+
+            //Create and register
+            hlmsPbs = OGRE_NEW Ogre::HlmsPbs( archivePbs, &archivePbsLibraryFolders );
+            Ogre::Root::getSingleton().getHlmsManager()->registerHlms( hlmsPbs );
+        }
+
+
+        Ogre::RenderSystem *renderSystem = _root->getRenderSystem();
+        if( renderSystem->getName() == "Direct3D11 Rendering Subsystem" )
+        {
+            //Set lower limits 512kb instead of the default 4MB per Hlms in D3D 11.0
+            //and below to avoid saturating AMD's discard limit (8MB) or
+            //saturate the PCIE bus in some low end machines.
+            bool supportsNoOverwriteOnTextureBuffers;
+            renderSystem->getCustomAttribute( "MapNoOverwriteOnDynamicBufferSRV",
+                                              &supportsNoOverwriteOnTextureBuffers );
+
+            if( !supportsNoOverwriteOnTextureBuffers )
+            {
+                hlmsPbs->setTextureBufferDefaultSize( 512 * 1024 );
+                hlmsUnlit->setTextureBufferDefaultSize( 512 * 1024 );
+            }
+        }
+    }
+//-----------------------------------------------------------------------------------
 void GraphicEngine::loadResources()
 {
-	//registerHlms();
+	registerHlms();
 
 	//loadHlmsDiskCache();
 
