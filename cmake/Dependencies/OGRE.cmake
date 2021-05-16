@@ -290,7 +290,7 @@ message( STATUS "Copying DLLs and generating Plugins.cfg for RelWithDebInfo" )
 message( STATUS "Copying DLLs and generating Plugins.cfg for MinSizeRel" )
 #setupPluginFileFromTemplate( "MinSizeRel" ${OGRE_USE_SCENE_FORMAT} )
 
-setupResourceFileFromTemplate()
+#setupResourceFileFromTemplate()
 #setupOgreSamplesCommon()
 
 endmacro()
