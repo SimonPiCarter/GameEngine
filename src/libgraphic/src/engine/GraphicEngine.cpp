@@ -283,8 +283,6 @@ void GraphicEngine::run(double elapsedTime_p)
 		default:
 			break;
 		}
-
-		//mInputHandler->_handleSdlEvents( evt );
 	}
 
 	if( _renderWindow->isVisible() )

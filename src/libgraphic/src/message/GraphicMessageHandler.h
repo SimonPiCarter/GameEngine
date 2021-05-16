@@ -4,6 +4,7 @@
 
 #include "GraphicMessage.h"
 #include "implem/NewGraphicEntityMessage.h"
+#include "implem/MoveGraphicEntityMessage.h"
 
 class GraphicEngine;
 
@@ -18,6 +19,7 @@ public:
 	void visitNoOp(NoOpGraphicMessage const &msg_p);
 
 	void visitNewGraphicEntity(NewGraphicEntityMessage const &msg_p);
+	void visitMoveGraphicEntity(MoveGraphicEntityMessage const &msg_p);
 protected:
 	/// @brief method to be extended to handle message
 	virtual void handleMessage(GraphicMessage *msg_p) override;

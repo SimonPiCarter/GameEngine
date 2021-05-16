@@ -10,9 +10,11 @@ target_sources(graphic
 	PRIVATE
 	src/engine/GraphicEngine.cpp
 	src/engine/utils/StaticPluginLoader.cpp
+	src/entity/GraphicEntity.cpp
 	src/message/GraphicMessage.cpp
 	src/message/GraphicMessageHandler.cpp
 	src/message/implem/NewGraphicEntityMessage.cpp
+	src/message/implem/MoveGraphicEntityMessage.cpp
 	src/resource/ResourceLoader.cpp
 )
 

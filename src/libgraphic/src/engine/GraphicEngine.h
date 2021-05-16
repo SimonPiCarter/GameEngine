@@ -67,7 +67,6 @@ protected:
 	Ogre::CompositorWorkspace *_workspace;
 
 	SDL_Window *_sdlWindow;
-	//SdlInputHandler *mInputHandler;
 
 	StaticPluginLoader _staticPluginLoader;
 
