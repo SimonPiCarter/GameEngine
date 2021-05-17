@@ -16,8 +16,9 @@
 
 #include <SDL_syswm.h>
 
-GraphicEngine::GraphicEngine(Ogre::ColourValue backgroundColour_p, ResourceHandler const *resourceHandler_p) :
+GraphicEngine::GraphicEngine(GameMessageHandler * gameMessageHandler_p, ResourceHandler const *resourceHandler_p) :
 	GraphicMessageHandler(this),
+	_gameMessageHandler(gameMessageHandler_p),
 	_resourceHandler(resourceHandler_p),
 	_root(nullptr),
 	_renderWindow(nullptr),
@@ -31,7 +32,7 @@ GraphicEngine::GraphicEngine(Ogre::ColourValue backgroundColour_p, ResourceHandl
 	_writeAccessFolder(""),
 	_quit( false ),
 	_alwaysAskForConfig( true ),
-	_backgroundColour(backgroundColour_p)
+	_backgroundColour(Ogre::ColourValue(0.2f, 0.4f, 0.6f))
 {
 	if( isWriteAccessFolder(_pluginsFolder, "Ogre.log"))
 	{
@@ -271,18 +272,11 @@ void GraphicEngine::run(double elapsedTime_p)
 		case SDL_WINDOWEVENT:
 			handleWindowEvent( evt );
 			break;
-		case SDL_KEYUP:
-			if(evt.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-			{
-				_quit = true;
-			}
-			break;
-		case SDL_QUIT:
-			_quit = true;
-			break;
 		default:
 			break;
 		}
+		// give back event to event handler
+		_gameMessageHandler->registerMessage(new SDLEventGameMessage(evt));
 	}
 
 	if( _renderWindow->isVisible() )

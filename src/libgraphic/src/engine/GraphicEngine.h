@@ -13,20 +13,20 @@
 #include <unordered_map>
 
 #include "message/GraphicMessageHandler.h"
+#include "message/game/GameMessageHandler.h"
 
 class ResourceHandler;
 
 class GraphicEngine : public GraphicMessageHandler
 {
 public:
-	GraphicEngine(Ogre::ColourValue backgroundColour_p, ResourceHandler const *resourceHandler_p);
+	GraphicEngine(GameMessageHandler *gameMessageHandler_p, ResourceHandler const *resourceHandler_p);
 
 	void initWindow(const std::string &windowTitle_p);
 	void tearDown();
 
 	void handleFrame(double elapsedTime_p);
 	void run(double elapsedTime_p);
-
 
 	void setQuit(void)                                      { _quit = true; }
 	bool getQuit(void) const                                { return _quit; }
@@ -46,6 +46,7 @@ public:
 	std::unordered_map<std::string, Ogre::SceneNode *> & getMapSceneNode() { return _mapSceneNode; }
 	std::unordered_map<std::string, Ogre::SceneNode *> const & getMapSceneNode() const { return _mapSceneNode; }
 protected:
+	GameMessageHandler * const _gameMessageHandler;
 	ResourceHandler const * const _resourceHandler;
 	std::unordered_map<std::string, Ogre::SceneNode *> _mapSceneNode;
 

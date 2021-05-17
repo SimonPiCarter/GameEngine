@@ -18,11 +18,10 @@ target_sources(graphic
 	src/resource/ResourceLoader.cpp
 )
 
-target_link_libraries(graphic PUBLIC ${OGRE_LIBRARIES} ${SDL2_LIBRARIES} common)
+target_link_libraries(graphic PUBLIC ${OGRE_LIBRARIES} common)
 
 target_include_directories (graphic
 PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
 	$<INSTALL_INTERFACE:include>
-	${SDL2_INCLUDE_DIRS}
 )
