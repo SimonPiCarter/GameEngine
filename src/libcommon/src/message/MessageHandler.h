@@ -67,6 +67,17 @@ public:
 		return !_handleMsg.empty();
 	}
 
+	/// @brief will pop all message and swap list of messages
+	void handleAllMessages()
+	{
+		// handle all messages
+		while(popMessage())
+		{
+			// NA (handle of message is done in popMessage)
+		}
+		swapMessages();
+	}
+
 	/// @brief check if message handler has messahe to handle
 	bool hasMessage()
 	{

@@ -250,11 +250,7 @@ void GraphicEngine::tearDown()
 //-----------------------------------------------------------------------------------
 void GraphicEngine::handleFrame(double elapsedTime_p)
 {
-	while(popMessage())
-	{
-		// NA (handle of message is done in popMessage)
-	}
-	swapMessages();
+	handleAllMessages();
 	run(elapsedTime_p);
 }
 

@@ -58,11 +58,7 @@ public:
 		while( !_graphic.getQuit() )
 		{
 			// handle game message
-			while(popMessage())
-			{
-				// NA (handle of message is done in popMessage)
-			}
-			swapMessages();
+			handleAllMessages();
 
 			// handle frame
 			_graphic.handleFrame(timeSinceLast);
