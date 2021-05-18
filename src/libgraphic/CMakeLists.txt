@@ -13,6 +13,8 @@ target_sources(graphic
 	src/entity/GraphicEntity.cpp
 	src/message/GraphicMessage.cpp
 	src/message/GraphicMessageHandler.cpp
+	src/message/camera/LookAtCameraMessage.cpp
+	src/message/camera/MoveCameraMessage.cpp
 	src/message/entity/AnimateGraphicEntityMessage.cpp
 	src/message/entity/DestroyGraphicEntityMessage.cpp
 	src/message/entity/NewGraphicEntityMessage.cpp

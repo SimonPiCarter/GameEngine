@@ -3,10 +3,11 @@
 #include "resource/ResourceLoader.h"
 #include "entity/GraphicEntity.h"
 
-#include "OgreSceneManager.h"
-#include "OgreNode.h"
 #include "Animation/OgreSkeletonInstance.h"
+#include "OgreCamera.h"
 #include "OgreItem.h"
+#include "OgreNode.h"
+#include "OgreSceneManager.h"
 
 GraphicMessageHandler::GraphicMessageHandler(GraphicEngine *engine_p) : _engine(engine_p) {}
 GraphicMessageHandler::~GraphicMessageHandler() {}
@@ -46,6 +47,28 @@ void destroyAttachedObject(Ogre::SceneNode * node_l)
 		destroyAttachedObject(pChildNode_l);
 	}
 }
+}
+//////////////////////////////////
+//                              //
+//          Camera              //
+//                              //
+//////////////////////////////////
+
+void GraphicMessageHandler::visitLookAtCamera(LookAtCameraMessage const &msg_p)
+{
+	_engine->getCamera()->lookAt(Ogre::Vector3(msg_p.getVector()[0], msg_p.getVector()[1], msg_p.getVector()[2]));
+}
+
+void GraphicMessageHandler::visitMoveCamera(MoveCameraMessage const &msg_p)
+{
+	_engine->getCamera()->setPosition( Ogre::Vector3(msg_p.getVector()[0], msg_p.getVector()[1], msg_p.getVector()[2]));
+}
+
+void GraphicMessageHandler::visitRotateCamera(RotateCameraMessage const &msg_p)
+{
+	_engine->getCamera()->roll(Ogre::Degree(msg_p.getVector()[2]));
+	_engine->getCamera()->pitch(Ogre::Degree(msg_p.getVector()[0]));
+	_engine->getCamera()->yaw(Ogre::Degree(msg_p.getVector()[1]));
 }
 
 //////////////////////////////////

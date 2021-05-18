@@ -3,6 +3,10 @@
 #include <message/MessageHandler.h>
 
 #include "GraphicMessage.h"
+// camera
+#include "camera/LookAtCameraMessage.h"
+#include "camera/MoveCameraMessage.h"
+#include "camera/RotateCameraMessage.h"
 // entity
 #include "entity/AnimateGraphicEntityMessage.h"
 #include "entity/DestroyGraphicEntityMessage.h"
@@ -34,6 +38,11 @@ public:
 	// visit methods
 	// NoOp (used in test)
 	void visitNoOp(NoOpGraphicMessage const &msg_p);
+
+	// Entity
+	void visitLookAtCamera(LookAtCameraMessage const &msg_p);
+	void visitMoveCamera(MoveCameraMessage const &msg_p);
+	void visitRotateCamera(RotateCameraMessage const &msg_p);
 
 	// Entity
 	void visitAnimateGraphicEntity(AnimateGraphicEntityMessage const &msg_p);
