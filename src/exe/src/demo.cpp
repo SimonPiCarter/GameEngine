@@ -5,10 +5,12 @@
 #include "message/entity/MoveGraphicEntityMessage.h"
 #include "message/entity/AnimateGraphicEntityMessage.h"
 #include "message/entity/RotateGraphicEntityMessage.h"
-#include "message/scene/NewSceneMessage.h"
+#include "message/scene/DestroySceneMessage.h"
 #include "message/scene/MoveSceneMessage.h"
+#include "message/scene/NewSceneMessage.h"
 
 #include "OgreRenderWindow.h"
+#include "OgreSceneManager.h"
 
 #include <chrono>
 #include <iostream>
@@ -58,6 +60,8 @@ public:
 			// handle game message
 			handleAllMessages();
 
+			_graphic.getSceneManager()->updateAllAnimations();
+
 			// handle frame
 			_graphic.handleFrame(timeSinceLast);
 
@@ -67,9 +71,12 @@ public:
 				std::this_thread::sleep_for(std::chrono::milliseconds(500));
 			}
 
-			_graphic.registerMessage(new MoveGraphicEntityMessage(&entity3_l, {2.*timeSinceLast, 0., 0.}));
-			_graphic.registerMessage(new RotateGraphicEntityMessage(&entity2_l, {30.*timeSinceLast, 0., 0.}));
-			_graphic.registerMessage(new MoveSceneMessage("test", {-0.5*timeSinceLast, 0., 0.}));
+			if(!_deleted)
+			{
+				_graphic.registerMessage(new MoveGraphicEntityMessage(&entity3_l, {2.*timeSinceLast, 0., 0.}));
+				_graphic.registerMessage(new RotateGraphicEntityMessage(&entity2_l, {30.*timeSinceLast, 0., 0.}));
+				_graphic.registerMessage(new MoveSceneMessage("test", {-0.5*timeSinceLast, 0., 0.}));
+			}
 
 			const std::chrono::time_point<std::chrono::system_clock> end_l = std::chrono::system_clock::now();
 
@@ -90,6 +97,13 @@ public:
 			if(evt.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 			{
 				_graphic.setQuit();
+			} else if (evt.key.keysym.scancode == SDL_SCANCODE_Q)
+			{
+				if(!_deleted)
+				{
+					_graphic.registerMessage(new DestroySceneMessage("test"));
+					_deleted = true;
+				}
 			}
 			break;
 		case SDL_QUIT:
@@ -101,6 +115,7 @@ public:
 	}
 
 private:
+	bool _deleted = false;
 };
 
 int main(int argc, char **argv)

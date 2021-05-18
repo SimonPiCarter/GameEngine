@@ -47,14 +47,10 @@ public:
 	std::unordered_map<std::string, Ogre::SceneNode *> & getMapSceneNode() { return _mapSceneNode; }
 	std::unordered_map<std::string, Ogre::SceneNode *> const & getMapSceneNode() const { return _mapSceneNode; }
 
-	void registerAnimationState(AnimationState &animationState_p);
 protected:
 	GameMessageHandler * const _gameMessageHandler;
 	ResourceHandler const * const _resourceHandler;
 	std::unordered_map<std::string, Ogre::SceneNode *> _mapSceneNode;
-
-	/// @brief the list of animation to update on every frame
-	std::list<AnimationState *> _listAnimation;
 
 	/// internal stuff
 

@@ -502,33 +502,6 @@ void GraphicEngine::run(double elapsedTime_p)
 		_gameMessageHandler->registerMessage(new SDLEventGameMessage(evt));
 	}
 
-	auto it_l = _listAnimation.begin();
-	while(it_l != _listAnimation.end())
-	{
-		AnimationState & state_l = **it_l;
-
-		// if enabled add time
-		if(state_l.animation->getEnabled())
-		{
-			state_l.animation->addTime(elapsedTime_p);
-			++ it_l;
-		}
-		else
-		{
-			// reset time
-			state_l.animation->setTime(0.);
-			// removed from the list animation to update
-			it_l = _listAnimation.erase(it_l);
-		}
-	}
-
 	if( _renderWindow->isVisible() )
 		_quit |= !_root->renderOneFrame();
-}
-
-void GraphicEngine::registerAnimationState(AnimationState &animationState_p)
-{
-	assert(!animationState_p.registered);
-	animationState_p.registered = true;
-	_listAnimation.push_back(&animationState_p);
 }

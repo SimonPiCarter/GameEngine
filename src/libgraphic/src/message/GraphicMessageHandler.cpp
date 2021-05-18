@@ -31,15 +31,10 @@ void GraphicMessageHandler::visitNoOp(NoOpGraphicMessage const &)
 void GraphicMessageHandler::visitAnimateGraphicEntity(AnimateGraphicEntityMessage const &msg_p)
 {
 	assert(msg_p.getEntity());
-	AnimationState & state_l = msg_p.getEntity()->getAnimationState(msg_p.getAnimation());
-	assert(state_l.animation);
-	state_l.animation->setEnabled(msg_p.isEnable());
-	state_l.animation->setLoop(msg_p.isLoop());
-
-	if(msg_p.isEnable() && !state_l.registered)
-	{
-		_engine->registerAnimationState(state_l);
-	}
+	Ogre::SkeletonAnimation * anim_l = msg_p.getEntity()->getAnimationState(msg_p.getAnimation());
+	assert(anim_l);
+	anim_l->setEnabled(msg_p.isEnable());
+	anim_l->setLoop(msg_p.isLoop());
 }
 
 void GraphicMessageHandler::visitMoveGraphicEntity(MoveGraphicEntityMessage const &msg_p)
