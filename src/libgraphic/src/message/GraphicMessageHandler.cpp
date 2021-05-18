@@ -5,9 +5,8 @@
 
 #include "OgreSceneManager.h"
 #include "OgreNode.h"
+#include "Animation/OgreSkeletonInstance.h"
 #include "OgreItem.h"
-
-#include <iostream>
 
 GraphicMessageHandler::GraphicMessageHandler(GraphicEngine *engine_p) : _engine(engine_p) {}
 GraphicMessageHandler::~GraphicMessageHandler() {}
@@ -43,11 +42,24 @@ void GraphicMessageHandler::visitNewGraphicEntity(NewGraphicEntityMessage const 
 	sceneNode->scale(msg_p.getScale()[0], msg_p.getScale()[1], msg_p.getScale()[2]);
 
 	msg_p.getEntity()->setItem(item_l);
-
 }
 
 void GraphicMessageHandler::visitMoveGraphicEntity(MoveGraphicEntityMessage const &msg_p)
 {
 	assert(msg_p.getEntity()->getItem());
 	msg_p.getEntity()->getItem()->getParentNode()->translate(msg_p.getVector()[0], msg_p.getVector()[1], msg_p.getVector()[2]);
+}
+
+void GraphicMessageHandler::visitAnimateGraphicEntity(AnimateGraphicEntityMessage const &msg_p)
+{
+	assert(msg_p.getEntity());
+	AnimationState & state_l = msg_p.getEntity()->getAnimationState(msg_p.getAnimation());
+	assert(state_l.animation);
+	state_l.animation->setEnabled(msg_p.isEnable());
+	state_l.animation->setLoop(msg_p.isLoop());
+
+	if(msg_p.isEnable() && !state_l.registered)
+	{
+		_engine->registerAnimationState(state_l);
+	}
 }

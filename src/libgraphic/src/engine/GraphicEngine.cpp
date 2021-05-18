@@ -247,38 +247,6 @@ void GraphicEngine::tearDown()
 	SDL_Quit();
 }
 
-//-----------------------------------------------------------------------------------
-void GraphicEngine::handleFrame(double elapsedTime_p)
-{
-	handleAllMessages();
-	run(elapsedTime_p);
-}
-
-
-//-----------------------------------------------------------------------------------
-void GraphicEngine::run(double elapsedTime_p)
-{
-	Ogre::WindowEventUtilities::messagePump();
-
-	SDL_Event evt;
-	while( SDL_PollEvent( &evt ) )
-	{
-		switch( evt.type )
-		{
-		case SDL_WINDOWEVENT:
-			handleWindowEvent( evt );
-			break;
-		default:
-			break;
-		}
-		// give back event to event handler
-		_gameMessageHandler->registerMessage(new SDLEventGameMessage(evt));
-	}
-
-	if( _renderWindow->isVisible() )
-		_quit |= !_root->renderOneFrame();
-}
-
 void GraphicEngine::setupResources()
 {
 	// Load resource paths from config file
@@ -504,4 +472,63 @@ void GraphicEngine::handleWindowEvent(const SDL_Event& evt_p)
 			_renderWindow->setVisible(false);
 			break;
 	}
+}
+
+//-----------------------------------------------------------------------------------
+void GraphicEngine::handleFrame(double elapsedTime_p)
+{
+	handleAllMessages();
+	run(elapsedTime_p);
+}
+
+
+//-----------------------------------------------------------------------------------
+void GraphicEngine::run(double elapsedTime_p)
+{
+	Ogre::WindowEventUtilities::messagePump();
+
+	SDL_Event evt;
+	while( SDL_PollEvent( &evt ) )
+	{
+		switch( evt.type )
+		{
+		case SDL_WINDOWEVENT:
+			handleWindowEvent( evt );
+			break;
+		default:
+			break;
+		}
+		// give back event to event handler
+		_gameMessageHandler->registerMessage(new SDLEventGameMessage(evt));
+	}
+
+	auto it_l = _listAnimation.begin();
+	while(it_l != _listAnimation.end())
+	{
+		AnimationState & state_l = **it_l;
+
+		// if enabled add time
+		if(state_l.animation->getEnabled())
+		{
+			state_l.animation->addTime(elapsedTime_p);
+			++ it_l;
+		}
+		else
+		{
+			// reset time
+			state_l.animation->setTime(0.);
+			// removed from the list animation to update
+			it_l = _listAnimation.erase(it_l);
+		}
+	}
+
+	if( _renderWindow->isVisible() )
+		_quit |= !_root->renderOneFrame();
+}
+
+void GraphicEngine::registerAnimationState(AnimationState &animationState_p)
+{
+	assert(!animationState_p.registered);
+	animationState_p.registered = true;
+	_listAnimation.push_back(&animationState_p);
 }
