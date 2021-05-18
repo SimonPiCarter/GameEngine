@@ -28,7 +28,7 @@ GraphicEngine::GraphicEngine(GameMessageHandler * gameMessageHandler_p, Resource
 	_workspace(nullptr),
 	_sdlWindow(nullptr),
 	_pluginsFolder("./"),
-	_resourcePath("Data/"),
+	_resourcePath("./"),
 	_writeAccessFolder(""),
 	_quit( false ),
 	_alwaysAskForConfig( true ),
