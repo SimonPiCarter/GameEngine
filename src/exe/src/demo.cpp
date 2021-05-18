@@ -97,12 +97,21 @@ public:
 			if(evt.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 			{
 				_graphic.setQuit();
-			} else if (evt.key.keysym.scancode == SDL_SCANCODE_Q)
+			}
+			if (evt.key.keysym.scancode == SDL_SCANCODE_Q)
 			{
 				if(!_deleted)
 				{
 					_graphic.registerMessage(new DestroySceneMessage("test"));
 					_deleted = true;
+				}
+			}
+			if (evt.key.keysym.scancode == SDL_SCANCODE_V)
+			{
+				if(!_deleted)
+				{
+					_visible = !_visible;
+					_graphic.registerMessage(new VisibilitySceneMessage("test", _visible));
 				}
 			}
 			break;
@@ -116,6 +125,7 @@ public:
 
 private:
 	bool _deleted = false;
+	bool _visible = true;
 };
 
 int main(int argc, char **argv)
