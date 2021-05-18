@@ -5,6 +5,8 @@
 #include "message/entity/MoveGraphicEntityMessage.h"
 #include "message/entity/AnimateGraphicEntityMessage.h"
 #include "message/entity/RotateGraphicEntityMessage.h"
+#include "message/scene/NewSceneMessage.h"
+#include "message/scene/MoveSceneMessage.h"
 
 #include "OgreRenderWindow.h"
 
@@ -38,10 +40,11 @@ public:
 		GraphicEntity entity1_l;
 		GraphicEntity entity2_l;
 		GraphicEntity entity3_l;
+		_graphic.registerMessage(new NewSceneMessage("test", "root", {1., 2., 3.}));
 
-		_graphic.registerMessage(new NewGraphicEntityMessage(&entity1_l, "Cube", {0., 0., 0.}, {1., 1., 1.}, "root"));
-		_graphic.registerMessage(new NewGraphicEntityMessage(&entity2_l, "Cube", {-2., -2., 0.}, {1., 1., 1.}, "root"));
-		_graphic.registerMessage(new NewGraphicEntityMessage(&entity3_l, "Cube", {-4., -4., 0.}, {1., 1., 1.}, "root"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(&entity1_l, "Cube", {0., 0., 0.}, {1., 1., 1.}, "test"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(&entity2_l, "Cube", {-2., -2., 0.}, {1., 1., 1.}, "test"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(&entity3_l, "Cube", {-4., -4., 0.}, {1., 1., 1.}, "test"));
 		_graphic.registerMessage(new AnimateGraphicEntityMessage(&entity1_l, "my_animation", true, true));
 
 		std::chrono::time_point<std::chrono::system_clock> start_l = std::chrono::system_clock::now();
@@ -66,6 +69,7 @@ public:
 
 			_graphic.registerMessage(new MoveGraphicEntityMessage(&entity3_l, {2.*timeSinceLast, 0., 0.}));
 			_graphic.registerMessage(new RotateGraphicEntityMessage(&entity2_l, {30.*timeSinceLast, 0., 0.}));
+			_graphic.registerMessage(new MoveSceneMessage("test", {-0.5*timeSinceLast, 0., 0.}));
 
 			const std::chrono::time_point<std::chrono::system_clock> end_l = std::chrono::system_clock::now();
 
