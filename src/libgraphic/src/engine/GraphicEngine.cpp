@@ -193,17 +193,6 @@ void GraphicEngine::initWindow(const std::string &windowTitle_p)
 
 	_mapSceneNode["root"] = _sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC );
 
-	//---------------------------------------------------------------------------------------
-	//
-	//---------------------------------------------------------------------------------------
-
-	Ogre::Light *light = _sceneManager->createLight();
-	Ogre::SceneNode *lightNode = _sceneManager->getRootSceneNode()->createChildSceneNode();
-	lightNode->attachObject( light );
-	light->setPowerScale( Ogre::Math::PI ); //Since we don't do HDR, counter the PBS' division by PI
-	light->setType( Ogre::Light::LT_DIRECTIONAL );
-	light->setDirection( Ogre::Vector3( -1, -1, -1 ).normalisedCopy() );
-
 	//mInputHandler = new SdlInputHandler( _sdlWindow, mCurrentGameState,
 	//                                     mCurrentGameState, mCurrentGameState );
 

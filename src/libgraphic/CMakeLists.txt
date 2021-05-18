@@ -18,6 +18,10 @@ target_sources(graphic
 	src/message/entity/NewGraphicEntityMessage.cpp
 	src/message/entity/MoveGraphicEntityMessage.cpp
 	src/message/entity/RotateGraphicEntityMessage.cpp
+	src/message/light/DestroyLightMessage.cpp
+	src/message/light/MoveLightMessage.cpp
+	src/message/light/NewLightMessage.cpp
+	src/message/light/RotateLightMessage.cpp
 	src/message/scene/DestroySceneMessage.cpp
 	src/message/scene/MoveSceneMessage.cpp
 	src/message/scene/NewSceneMessage.cpp

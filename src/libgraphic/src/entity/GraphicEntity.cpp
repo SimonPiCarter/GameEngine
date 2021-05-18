@@ -5,6 +5,7 @@
 
 GraphicEntity::GraphicEntity()
 	: _item(nullptr)
+	, _light(nullptr)
 {}
 
 Ogre::Item * GraphicEntity::getItem() const
@@ -15,6 +16,16 @@ Ogre::Item * GraphicEntity::getItem() const
 void GraphicEntity::setItem(Ogre::Item * item_p)
 {
 	_item = item_p;
+}
+
+Ogre::Light * GraphicEntity::getLight() const
+{
+	return _light;
+}
+
+void GraphicEntity::setLight(Ogre::Light * light_p)
+{
+	_light = light_p;
 }
 
 Ogre::SkeletonAnimation *GraphicEntity::getAnimationState(std::string const &animState_p)

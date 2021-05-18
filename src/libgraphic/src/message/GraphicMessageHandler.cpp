@@ -122,6 +122,75 @@ void GraphicMessageHandler::visitRotateGraphicEntity(RotateGraphicEntityMessage 
 
 //////////////////////////////////
 //                              //
+//           Light              //
+//                              //
+//////////////////////////////////
+
+
+void GraphicMessageHandler::visitDestroyLight(DestroyLightMessage const &msg_p)
+{
+	assert(msg_p.getEntity());
+	assert(msg_p.getEntity()->getLight());
+	// destroy attached object from parent node (which only contains this entity)
+	Ogre::SceneNode * node_l = msg_p.getEntity()->getItem()->getParentSceneNode();
+	destroyAttachedObject(node_l);
+	// destroy node related to this entity
+	Ogre::SceneNode * parentNode_l = node_l->getParentSceneNode();
+	assert(parentNode_l);
+	// Destroy scene and all children
+	parentNode_l->removeAndDestroyChild(node_l);
+}
+
+void GraphicMessageHandler::visitMoveLight(MoveLightMessage const &msg_p)
+{
+	assert(msg_p.getEntity());
+	assert(msg_p.getEntity()->getLight());
+	assert(msg_p.getEntity()->getLight()->getParentNode());
+	msg_p.getEntity()->getLight()->getParentNode()->translate(msg_p.getVector()[0], msg_p.getVector()[1], msg_p.getVector()[2]);
+}
+
+void GraphicMessageHandler::visitNewLight(NewLightMessage const &msg_p)
+{
+	Ogre::SceneManager *sceneManager_l = _engine->getSceneManager();
+
+	Ogre::SceneNode * rootNode_l = _engine->getMapSceneNode()[msg_p.getParent()];
+	assert(rootNode_l);
+
+	Ogre::Light *light_l = sceneManager_l->createLight();
+	Ogre::SceneNode *lightNode = rootNode_l->createChildSceneNode(Ogre::SCENE_DYNAMIC,
+		Ogre::Vector3(msg_p.getPosition()[0], msg_p.getPosition()[1], msg_p.getPosition()[2]));
+	lightNode->attachObject(light_l);
+	light_l->setPowerScale(Ogre::Math::PI); //Since we don't do HDR, counter the PBS' division by PI
+	light_l->setDirection(Ogre::Vector3(msg_p.getDirection()[0], msg_p.getDirection()[1], msg_p.getDirection()[2]).normalisedCopy());
+	if(msg_p.getType() == LightType::Directional)
+	{
+		light_l->setType(Ogre::Light::LT_DIRECTIONAL);
+	}
+	if(msg_p.getType() == LightType::Point)
+	{
+		light_l->setType(Ogre::Light::LT_DIRECTIONAL);
+	}
+	if(msg_p.getType() == LightType::Spotlight)
+	{
+		light_l->setType(Ogre::Light::LT_SPOTLIGHT);
+	}
+
+	msg_p.getEntity()->setLight(light_l);
+}
+
+void GraphicMessageHandler::visitRotateLight(RotateLightMessage const &msg_p)
+{
+	assert(msg_p.getEntity());
+	assert(msg_p.getEntity()->getLight());
+	assert(msg_p.getEntity()->getLight()->getParentNode());
+
+	msg_p.getEntity()->getLight()->getParentNode()->roll(Ogre::Degree(msg_p.getVector()[2]));
+	msg_p.getEntity()->getLight()->getParentNode()->pitch(Ogre::Degree(msg_p.getVector()[0]));
+	msg_p.getEntity()->getLight()->getParentNode()->yaw(Ogre::Degree(msg_p.getVector()[1]));
+}
+
+//////////////////////////////////
+//                              //
 //          Scene               //
 //                              //
 //////////////////////////////////

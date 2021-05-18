@@ -9,6 +9,11 @@
 #include "entity/MoveGraphicEntityMessage.h"
 #include "entity/NewGraphicEntityMessage.h"
 #include "entity/RotateGraphicEntityMessage.h"
+// light
+#include "light/DestroyLightMessage.h"
+#include "light/MoveLightMessage.h"
+#include "light/NewLightMessage.h"
+#include "light/RotateLightMessage.h"
 // scene
 #include "scene/DestroySceneMessage.h"
 #include "scene/MoveSceneMessage.h"
@@ -36,6 +41,12 @@ public:
 	void visitMoveGraphicEntity(MoveGraphicEntityMessage const &msg_p);
 	void visitNewGraphicEntity(NewGraphicEntityMessage const &msg_p);
 	void visitRotateGraphicEntity(RotateGraphicEntityMessage const &msg_p);
+
+	// Light
+	void visitDestroyLight(DestroyLightMessage const &msg_p);
+	void visitMoveLight(MoveLightMessage const &msg_p);
+	void visitNewLight(NewLightMessage const &msg_p);
+	void visitRotateLight(RotateLightMessage const &msg_p);
 
 	// Scene
 	void visitDestroyScene(DestroySceneMessage const &msg_p);
