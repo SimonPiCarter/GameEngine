@@ -12,7 +12,7 @@ class MoveGraphicEntityMessage : public GraphicMessage
 {
 public:
 	///
-	/// @brief create
+	/// @brief move a graphic entity
 	/// @param entity_p the entity to move
 	/// @param vector_p the vector with the coordinate to translate the Entity
 	MoveGraphicEntityMessage(GraphicEntity * entity_p, std::array<double, 3> const &vector_p);

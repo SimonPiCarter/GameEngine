@@ -63,7 +63,8 @@ void GraphicMessageHandler::visitNewGraphicEntity(NewGraphicEntityMessage const 
 	//with the mesh pointer:
 	Ogre::Item *item_l = sceneManager->createItem( v2Mesh_l, Ogre::SCENE_DYNAMIC );
 
-	Ogre::SceneNode * rootNode_l = _engine->getMapSceneNode().at(msg_p.getScene());
+	Ogre::SceneNode * rootNode_l = _engine->getMapSceneNode()[msg_p.getScene()];
+	assert(rootNode_l);
 	Ogre::SceneNode *sceneNode = rootNode_l->
 		createChildSceneNode( Ogre::SCENE_DYNAMIC, Ogre::Vector3(msg_p.getPosition()[0], msg_p.getPosition()[1], msg_p.getPosition()[2]) );
 	sceneNode->attachObject(item_l);
@@ -82,3 +83,49 @@ void GraphicMessageHandler::visitRotateGraphicEntity(RotateGraphicEntityMessage 
 	msg_p.getEntity()->getItem()->getParentNode()->pitch(Ogre::Degree(msg_p.getVector()[0]));
 	msg_p.getEntity()->getItem()->getParentNode()->yaw(Ogre::Degree(msg_p.getVector()[1]));
 }
+
+//////////////////////////////////
+//                              //
+//          Scene               //
+//                              //
+//////////////////////////////////
+
+
+void GraphicMessageHandler::visitDestroyScene(DestroySceneMessage const &msg_p)
+{
+	Ogre::SceneNode * sceneNode_l = _engine->getMapSceneNode()[msg_p.getId()];
+	assert(sceneNode_l);
+	Ogre::SceneNode * parentNode_l = sceneNode_l->getParentSceneNode();
+	assert(parentNode_l);
+	// Destroy scene and all children
+	parentNode_l->removeAndDestroyChild(sceneNode_l);
+	// remove from map of scenes
+	_engine->getMapSceneNode().erase(_engine->getMapSceneNode().find(msg_p.getId()));
+}
+
+void GraphicMessageHandler::visitMoveScene(MoveSceneMessage const &msg_p)
+{
+	Ogre::SceneNode * sceneNode_l = _engine->getMapSceneNode()[msg_p.getId()];
+	assert(sceneNode_l);
+	sceneNode_l->translate(msg_p.getVector()[0], msg_p.getVector()[1], msg_p.getVector()[2]);
+}
+
+void GraphicMessageHandler::visitNewScene(NewSceneMessage const &msg_p)
+{
+	Ogre::SceneNode * rootNode_l = _engine->getMapSceneNode()[msg_p.getParent()];
+	assert(rootNode_l);
+	Ogre::SceneNode *sceneNode = rootNode_l->createChildSceneNode( Ogre::SCENE_DYNAMIC,
+		Ogre::Vector3(msg_p.getPosition()[0], msg_p.getPosition()[1], msg_p.getPosition()[2]) );
+	_engine->getMapSceneNode()[msg_p.getId()] = sceneNode;
+}
+
+void GraphicMessageHandler::visitRotateScene(RotateSceneMessage const &msg_p)
+{
+	Ogre::SceneNode * sceneNode_l = _engine->getMapSceneNode()[msg_p.getId()];
+	assert(sceneNode_l);
+
+	sceneNode_l->roll(Ogre::Degree(msg_p.getVector()[2]));
+	sceneNode_l->pitch(Ogre::Degree(msg_p.getVector()[0]));
+	sceneNode_l->yaw(Ogre::Degree(msg_p.getVector()[1]));
+}
+
