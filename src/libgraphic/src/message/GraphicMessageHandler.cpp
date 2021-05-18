@@ -85,11 +85,34 @@ void GraphicMessageHandler::visitRotateGraphicEntity(RotateGraphicEntityMessage 
 //                              //
 //////////////////////////////////
 
+namespace
+{
+void destroyAttachedObject(Ogre::SceneNode * node_l)
+{
+	// Destroy all the attached objects
+	Ogre::SceneNode::ObjectIterator itObject_l = node_l->getAttachedObjectIterator();
+
+	while ( itObject_l.hasMoreElements() )
+		node_l->getCreator()->destroyMovableObject(itObject_l.getNext());
+
+	// Recurse to child SceneNodes
+	Ogre::SceneNode::NodeVecIterator itChild_l = node_l->getChildIterator();
+
+	while ( itChild_l.hasMoreElements() )
+	{
+		Ogre::SceneNode* pChildNode_l = static_cast<Ogre::SceneNode*>(itChild_l.getNext());
+		destroyAttachedObject(pChildNode_l);
+	}
+}
+}
 
 void GraphicMessageHandler::visitDestroyScene(DestroySceneMessage const &msg_p)
 {
 	Ogre::SceneNode * sceneNode_l = _engine->getMapSceneNode()[msg_p.getId()];
 	assert(sceneNode_l);
+
+	destroyAttachedObject(sceneNode_l);
+
 	Ogre::SceneNode * parentNode_l = sceneNode_l->getParentSceneNode();
 	assert(parentNode_l);
 	// Destroy scene and all children
