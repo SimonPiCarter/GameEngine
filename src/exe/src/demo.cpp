@@ -1,9 +1,9 @@
 #include "engine/GraphicEngine.h"
 #include "resource/Resource.h"
 #include "entity/GraphicEntity.h"
-#include "message/implem/NewGraphicEntityMessage.h"
-#include "message/implem/MoveGraphicEntityMessage.h"
-#include "message/implem/AnimateGraphicEntityMessage.h"
+#include "message/entity/NewGraphicEntityMessage.h"
+#include "message/entity/MoveGraphicEntityMessage.h"
+#include "message/entity/AnimateGraphicEntityMessage.h"
 
 #include "OgreRenderWindow.h"
 

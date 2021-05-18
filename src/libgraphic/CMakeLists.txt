@@ -1,8 +1,6 @@
 
 cmake_minimum_required( VERSION 3.14 )
 
-add_compile_options("-Wno-ignored-attributes")
-
 # -------------
 # Target
 # -------------
@@ -15,9 +13,9 @@ target_sources(graphic
 	src/entity/GraphicEntity.cpp
 	src/message/GraphicMessage.cpp
 	src/message/GraphicMessageHandler.cpp
-	src/message/implem/AnimateGraphicEntityMessage.cpp
-	src/message/implem/NewGraphicEntityMessage.cpp
-	src/message/implem/MoveGraphicEntityMessage.cpp
+	src/message/entity/AnimateGraphicEntityMessage.cpp
+	src/message/entity/NewGraphicEntityMessage.cpp
+	src/message/entity/MoveGraphicEntityMessage.cpp
 	src/resource/ResourceLoader.cpp
 )
 

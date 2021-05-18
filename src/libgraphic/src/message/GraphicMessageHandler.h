@@ -3,9 +3,9 @@
 #include <message/MessageHandler.h>
 
 #include "GraphicMessage.h"
-#include "implem/NewGraphicEntityMessage.h"
-#include "implem/MoveGraphicEntityMessage.h"
-#include "implem/AnimateGraphicEntityMessage.h"
+#include "entity/NewGraphicEntityMessage.h"
+#include "entity/MoveGraphicEntityMessage.h"
+#include "entity/AnimateGraphicEntityMessage.h"
 
 #include <Animation/OgreSkeletonAnimation.h>
 
