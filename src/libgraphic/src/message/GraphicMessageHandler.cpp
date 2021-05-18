@@ -21,6 +21,34 @@ void GraphicMessageHandler::visitNoOp(NoOpGraphicMessage const &)
 	// NA
 }
 
+//////////////////////////////////
+//                              //
+//          Entity              //
+//                              //
+//////////////////////////////////
+
+
+void GraphicMessageHandler::visitAnimateGraphicEntity(AnimateGraphicEntityMessage const &msg_p)
+{
+	assert(msg_p.getEntity());
+	AnimationState & state_l = msg_p.getEntity()->getAnimationState(msg_p.getAnimation());
+	assert(state_l.animation);
+	state_l.animation->setEnabled(msg_p.isEnable());
+	state_l.animation->setLoop(msg_p.isLoop());
+
+	if(msg_p.isEnable() && !state_l.registered)
+	{
+		_engine->registerAnimationState(state_l);
+	}
+}
+
+void GraphicMessageHandler::visitMoveGraphicEntity(MoveGraphicEntityMessage const &msg_p)
+{
+	assert(msg_p.getEntity());
+	assert(msg_p.getEntity()->getItem());
+	assert(msg_p.getEntity()->getItem()->getParentNode());
+	msg_p.getEntity()->getItem()->getParentNode()->translate(msg_p.getVector()[0], msg_p.getVector()[1], msg_p.getVector()[2]);
+}
 
 void GraphicMessageHandler::visitNewGraphicEntity(NewGraphicEntityMessage const &msg_p)
 {
@@ -44,22 +72,13 @@ void GraphicMessageHandler::visitNewGraphicEntity(NewGraphicEntityMessage const 
 	msg_p.getEntity()->setItem(item_l);
 }
 
-void GraphicMessageHandler::visitMoveGraphicEntity(MoveGraphicEntityMessage const &msg_p)
-{
-	assert(msg_p.getEntity()->getItem());
-	msg_p.getEntity()->getItem()->getParentNode()->translate(msg_p.getVector()[0], msg_p.getVector()[1], msg_p.getVector()[2]);
-}
-
-void GraphicMessageHandler::visitAnimateGraphicEntity(AnimateGraphicEntityMessage const &msg_p)
+void GraphicMessageHandler::visitRotateGraphicEntity(RotateGraphicEntityMessage const &msg_p)
 {
 	assert(msg_p.getEntity());
-	AnimationState & state_l = msg_p.getEntity()->getAnimationState(msg_p.getAnimation());
-	assert(state_l.animation);
-	state_l.animation->setEnabled(msg_p.isEnable());
-	state_l.animation->setLoop(msg_p.isLoop());
+	assert(msg_p.getEntity()->getItem());
+	assert(msg_p.getEntity()->getItem()->getParentNode());
 
-	if(msg_p.isEnable() && !state_l.registered)
-	{
-		_engine->registerAnimationState(state_l);
-	}
+	msg_p.getEntity()->getItem()->getParentNode()->roll(Ogre::Degree(msg_p.getVector()[2]));
+	msg_p.getEntity()->getItem()->getParentNode()->pitch(Ogre::Degree(msg_p.getVector()[0]));
+	msg_p.getEntity()->getItem()->getParentNode()->yaw(Ogre::Degree(msg_p.getVector()[1]));
 }

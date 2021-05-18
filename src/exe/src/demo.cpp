@@ -4,6 +4,7 @@
 #include "message/entity/NewGraphicEntityMessage.h"
 #include "message/entity/MoveGraphicEntityMessage.h"
 #include "message/entity/AnimateGraphicEntityMessage.h"
+#include "message/entity/RotateGraphicEntityMessage.h"
 
 #include "OgreRenderWindow.h"
 
@@ -37,22 +38,11 @@ public:
 		GraphicEntity entity1_l;
 		GraphicEntity entity2_l;
 		GraphicEntity entity3_l;
-		{
-			NewGraphicEntityMessage * msg_l = new NewGraphicEntityMessage(&entity1_l, "Cube", {0., 0., 0.}, {1., 1., 1.}, "root");
-			_graphic.registerMessage(msg_l);
-		}
-		{
-			NewGraphicEntityMessage * msg_l = new NewGraphicEntityMessage(&entity2_l, "Cube", {-2., -2., 0.}, {1., 1., 1.}, "root");
-			_graphic.registerMessage(msg_l);
-		}
-		{
-			NewGraphicEntityMessage * msg_l = new NewGraphicEntityMessage(&entity3_l, "Cube", {-4., -4., 0.}, {1., 1., 1.}, "root");
-			_graphic.registerMessage(msg_l);
-		}
-		{
-			AnimateGraphicEntityMessage * msg_l = new AnimateGraphicEntityMessage(&entity1_l, "my_animation", true, true);
-			_graphic.registerMessage(msg_l);
-		}
+
+		_graphic.registerMessage(new NewGraphicEntityMessage(&entity1_l, "Cube", {0., 0., 0.}, {1., 1., 1.}, "root"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(&entity2_l, "Cube", {-2., -2., 0.}, {1., 1., 1.}, "root"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(&entity3_l, "Cube", {-4., -4., 0.}, {1., 1., 1.}, "root"));
+		_graphic.registerMessage(new AnimateGraphicEntityMessage(&entity1_l, "my_animation", true, true));
 
 		std::chrono::time_point<std::chrono::system_clock> start_l = std::chrono::system_clock::now();
 
@@ -74,8 +64,8 @@ public:
 				std::this_thread::sleep_for(std::chrono::milliseconds(500));
 			}
 
-			MoveGraphicEntityMessage * msg_l = new MoveGraphicEntityMessage(&entity3_l, {2.*timeSinceLast, 0., 0.});
-			_graphic.registerMessage(msg_l);
+			_graphic.registerMessage(new MoveGraphicEntityMessage(&entity3_l, {2.*timeSinceLast, 0., 0.}));
+			_graphic.registerMessage(new RotateGraphicEntityMessage(&entity2_l, {30.*timeSinceLast, 0., 0.}));
 
 			const std::chrono::time_point<std::chrono::system_clock> end_l = std::chrono::system_clock::now();
 
