@@ -1,8 +1,6 @@
 
 cmake_minimum_required( VERSION 3.14 )
 
-add_compile_options("-Wno-ignored-attributes")
-
 # -------------
 # Target
 # -------------
@@ -15,9 +13,22 @@ target_sources(graphic
 	src/entity/GraphicEntity.cpp
 	src/message/GraphicMessage.cpp
 	src/message/GraphicMessageHandler.cpp
-	src/message/implem/AnimateGraphicEntityMessage.cpp
-	src/message/implem/NewGraphicEntityMessage.cpp
-	src/message/implem/MoveGraphicEntityMessage.cpp
+	src/message/camera/LookAtCameraMessage.cpp
+	src/message/camera/MoveCameraMessage.cpp
+	src/message/entity/AnimateGraphicEntityMessage.cpp
+	src/message/entity/DestroyGraphicEntityMessage.cpp
+	src/message/entity/NewGraphicEntityMessage.cpp
+	src/message/entity/MoveGraphicEntityMessage.cpp
+	src/message/entity/RotateGraphicEntityMessage.cpp
+	src/message/light/DestroyLightMessage.cpp
+	src/message/light/MoveLightMessage.cpp
+	src/message/light/NewLightMessage.cpp
+	src/message/light/RotateLightMessage.cpp
+	src/message/scene/DestroySceneMessage.cpp
+	src/message/scene/MoveSceneMessage.cpp
+	src/message/scene/NewSceneMessage.cpp
+	src/message/scene/RotateSceneMessage.cpp
+	src/message/scene/VisibilitySceneMessage.cpp
 	src/resource/ResourceLoader.cpp
 )
 

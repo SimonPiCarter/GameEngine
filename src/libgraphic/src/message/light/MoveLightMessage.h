@@ -5,17 +5,16 @@
 #include <string>
 #include <array>
 
-
 class GraphicEntity;
 
-class MoveGraphicEntityMessage : public GraphicMessage
+class MoveLightMessage : public GraphicMessage
 {
 public:
 	///
 	/// @brief create
-	/// @param entity_p the entity to move
-	/// @param vector_p the vector with the coordinate to translate the Entity
-	MoveGraphicEntityMessage(GraphicEntity * entity_p, std::array<double, 3> const &vector_p);
+	/// @param id_p the scene to move
+	/// @param vector_p the vector with the coordinate to translate the scene
+	MoveLightMessage(GraphicEntity * entity_p, std::array<double, 3> const &vector_p);
 
 	virtual void visit(GraphicMessageHandler &handler_p);
 

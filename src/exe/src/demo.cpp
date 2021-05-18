@@ -1,11 +1,17 @@
 #include "engine/GraphicEngine.h"
 #include "resource/Resource.h"
 #include "entity/GraphicEntity.h"
-#include "message/implem/NewGraphicEntityMessage.h"
-#include "message/implem/MoveGraphicEntityMessage.h"
-#include "message/implem/AnimateGraphicEntityMessage.h"
+#include "message/entity/NewGraphicEntityMessage.h"
+#include "message/entity/MoveGraphicEntityMessage.h"
+#include "message/entity/AnimateGraphicEntityMessage.h"
+#include "message/entity/RotateGraphicEntityMessage.h"
+#include "message/light/NewLightMessage.h"
+#include "message/scene/DestroySceneMessage.h"
+#include "message/scene/MoveSceneMessage.h"
+#include "message/scene/NewSceneMessage.h"
 
 #include "OgreRenderWindow.h"
+#include "OgreSceneManager.h"
 
 #include <chrono>
 #include <iostream>
@@ -37,22 +43,14 @@ public:
 		GraphicEntity entity1_l;
 		GraphicEntity entity2_l;
 		GraphicEntity entity3_l;
-		{
-			NewGraphicEntityMessage * msg_l = new NewGraphicEntityMessage(&entity1_l, "Cube", {0., 0., 0.}, {1., 1., 1.}, "root");
-			_graphic.registerMessage(msg_l);
-		}
-		{
-			NewGraphicEntityMessage * msg_l = new NewGraphicEntityMessage(&entity2_l, "Cube", {-2., -2., 0.}, {1., 1., 1.}, "root");
-			_graphic.registerMessage(msg_l);
-		}
-		{
-			NewGraphicEntityMessage * msg_l = new NewGraphicEntityMessage(&entity3_l, "Cube", {-4., -4., 0.}, {1., 1., 1.}, "root");
-			_graphic.registerMessage(msg_l);
-		}
-		{
-			AnimateGraphicEntityMessage * msg_l = new AnimateGraphicEntityMessage(&entity1_l, "my_animation", true, true);
-			_graphic.registerMessage(msg_l);
-		}
+		GraphicEntity light_l;
+		_graphic.registerMessage(new NewSceneMessage("test", "root", {1., 2., 3.}));
+
+		_graphic.registerMessage(new NewGraphicEntityMessage(&entity1_l, "Cube", {0., 0., 0.}, {1., 1., 1.}, "test"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(&entity2_l, "Cube", {-2., -2., 0.}, {1., 1., 1.}, "test"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(&entity3_l, "Cube", {-4., -4., 0.}, {1., 1., 1.}, "test"));
+		_graphic.registerMessage(new AnimateGraphicEntityMessage(&entity1_l, "my_animation", true, true));
+		_graphic.registerMessage(new NewLightMessage(&light_l, "root", {1., 1., 1.}, {-1, -1, -1}, LightType::Directional));
 
 		std::chrono::time_point<std::chrono::system_clock> start_l = std::chrono::system_clock::now();
 
@@ -65,6 +63,8 @@ public:
 			// handle game message
 			handleAllMessages();
 
+			_graphic.getSceneManager()->updateAllAnimations();
+
 			// handle frame
 			_graphic.handleFrame(timeSinceLast);
 
@@ -74,8 +74,12 @@ public:
 				std::this_thread::sleep_for(std::chrono::milliseconds(500));
 			}
 
-			MoveGraphicEntityMessage * msg_l = new MoveGraphicEntityMessage(&entity3_l, {2.*timeSinceLast, 0., 0.});
-			_graphic.registerMessage(msg_l);
+			if(!_deleted)
+			{
+				_graphic.registerMessage(new MoveGraphicEntityMessage(&entity3_l, {2.*timeSinceLast, 0., 0.}));
+				_graphic.registerMessage(new RotateGraphicEntityMessage(&entity2_l, {30.*timeSinceLast, 0., 0.}));
+				_graphic.registerMessage(new MoveSceneMessage("test", {-0.5*timeSinceLast, 0., 0.}));
+			}
 
 			const std::chrono::time_point<std::chrono::system_clock> end_l = std::chrono::system_clock::now();
 
@@ -97,6 +101,22 @@ public:
 			{
 				_graphic.setQuit();
 			}
+			if (evt.key.keysym.scancode == SDL_SCANCODE_Q)
+			{
+				if(!_deleted)
+				{
+					_graphic.registerMessage(new DestroySceneMessage("test"));
+					_deleted = true;
+				}
+			}
+			if (evt.key.keysym.scancode == SDL_SCANCODE_V)
+			{
+				if(!_deleted)
+				{
+					_visible = !_visible;
+					_graphic.registerMessage(new VisibilitySceneMessage("test", _visible));
+				}
+			}
 			break;
 		case SDL_QUIT:
 			_graphic.setQuit();
@@ -107,6 +127,8 @@ public:
 	}
 
 private:
+	bool _deleted = false;
+	bool _visible = true;
 };
 
 int main(int argc, char **argv)

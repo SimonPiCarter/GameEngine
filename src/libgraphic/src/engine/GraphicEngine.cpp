@@ -28,7 +28,7 @@ GraphicEngine::GraphicEngine(GameMessageHandler * gameMessageHandler_p, Resource
 	_workspace(nullptr),
 	_sdlWindow(nullptr),
 	_pluginsFolder("./"),
-	_resourcePath("Data/"),
+	_resourcePath("./"),
 	_writeAccessFolder(""),
 	_quit( false ),
 	_alwaysAskForConfig( true ),
@@ -192,17 +192,6 @@ void GraphicEngine::initWindow(const std::string &windowTitle_p)
 	_workspace = setupCompositor();
 
 	_mapSceneNode["root"] = _sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC );
-
-	//---------------------------------------------------------------------------------------
-	//
-	//---------------------------------------------------------------------------------------
-
-	Ogre::Light *light = _sceneManager->createLight();
-	Ogre::SceneNode *lightNode = _sceneManager->getRootSceneNode()->createChildSceneNode();
-	lightNode->attachObject( light );
-	light->setPowerScale( Ogre::Math::PI ); //Since we don't do HDR, counter the PBS' division by PI
-	light->setType( Ogre::Light::LT_DIRECTIONAL );
-	light->setDirection( Ogre::Vector3( -1, -1, -1 ).normalisedCopy() );
 
 	//mInputHandler = new SdlInputHandler( _sdlWindow, mCurrentGameState,
 	//                                     mCurrentGameState, mCurrentGameState );
@@ -502,33 +491,6 @@ void GraphicEngine::run(double elapsedTime_p)
 		_gameMessageHandler->registerMessage(new SDLEventGameMessage(evt));
 	}
 
-	auto it_l = _listAnimation.begin();
-	while(it_l != _listAnimation.end())
-	{
-		AnimationState & state_l = **it_l;
-
-		// if enabled add time
-		if(state_l.animation->getEnabled())
-		{
-			state_l.animation->addTime(elapsedTime_p);
-			++ it_l;
-		}
-		else
-		{
-			// reset time
-			state_l.animation->setTime(0.);
-			// removed from the list animation to update
-			it_l = _listAnimation.erase(it_l);
-		}
-	}
-
 	if( _renderWindow->isVisible() )
 		_quit |= !_root->renderOneFrame();
-}
-
-void GraphicEngine::registerAnimationState(AnimationState &animationState_p)
-{
-	assert(!animationState_p.registered);
-	animationState_p.registered = true;
-	_listAnimation.push_back(&animationState_p);
 }

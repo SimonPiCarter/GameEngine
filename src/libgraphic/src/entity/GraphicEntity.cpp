@@ -5,6 +5,7 @@
 
 GraphicEntity::GraphicEntity()
 	: _item(nullptr)
+	, _light(nullptr)
 {}
 
 Ogre::Item * GraphicEntity::getItem() const
@@ -17,17 +18,19 @@ void GraphicEntity::setItem(Ogre::Item * item_p)
 	_item = item_p;
 }
 
-AnimationState &GraphicEntity::getAnimationState(std::string const &animState_p)
+Ogre::Light * GraphicEntity::getLight() const
 {
-	auto it_l = _mapState.find(animState_p);
-	if(it_l != _mapState.end())
-	{
-		return it_l->second;
-	}
+	return _light;
+}
+
+void GraphicEntity::setLight(Ogre::Light * light_p)
+{
+	_light = light_p;
+}
+
+Ogre::SkeletonAnimation *GraphicEntity::getAnimationState(std::string const &animState_p)
+{
 	Ogre::SkeletonInstance* skeletonInstance_l = _item->getSkeletonInstance();
 	assert(skeletonInstance_l);
-	AnimationState & state_l = _mapState[animState_p];
-	state_l.animation = skeletonInstance_l->getAnimation(animState_p);
-	assert(state_l.animation);
-	return state_l;
+	return skeletonInstance_l->getAnimation(animState_p);;
 }
