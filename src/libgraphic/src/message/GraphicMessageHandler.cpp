@@ -23,6 +23,33 @@ void GraphicMessageHandler::visitNoOp(NoOpGraphicMessage const &)
 
 //////////////////////////////////
 //                              //
+//          Utils               //
+//                              //
+//////////////////////////////////
+
+namespace
+{
+void destroyAttachedObject(Ogre::SceneNode * node_l)
+{
+	// Destroy all the attached objects
+	Ogre::SceneNode::ObjectIterator itObject_l = node_l->getAttachedObjectIterator();
+
+	while ( itObject_l.hasMoreElements() )
+		node_l->getCreator()->destroyMovableObject(itObject_l.getNext());
+
+	// Recurse to child SceneNodes
+	Ogre::SceneNode::NodeVecIterator itChild_l = node_l->getChildIterator();
+
+	while ( itChild_l.hasMoreElements() )
+	{
+		Ogre::SceneNode* pChildNode_l = static_cast<Ogre::SceneNode*>(itChild_l.getNext());
+		destroyAttachedObject(pChildNode_l);
+	}
+}
+}
+
+//////////////////////////////////
+//                              //
 //          Entity              //
 //                              //
 //////////////////////////////////
@@ -35,6 +62,20 @@ void GraphicMessageHandler::visitAnimateGraphicEntity(AnimateGraphicEntityMessag
 	assert(anim_l);
 	anim_l->setEnabled(msg_p.isEnable());
 	anim_l->setLoop(msg_p.isLoop());
+}
+
+void GraphicMessageHandler::visitDestroyGraphicEntity(DestroyGraphicEntityMessage const &msg_p)
+{
+	assert(msg_p.getEntity());
+	assert(msg_p.getEntity()->getItem());
+	// destroy attached object from parent node (which only contains this entity)
+	Ogre::SceneNode * node_l = msg_p.getEntity()->getItem()->getParentSceneNode();
+	destroyAttachedObject(node_l);
+	// destroy node related to this entity
+	Ogre::SceneNode * parentNode_l = node_l->getParentSceneNode();
+	assert(parentNode_l);
+	// Destroy scene and all children
+	parentNode_l->removeAndDestroyChild(node_l);
 }
 
 void GraphicMessageHandler::visitMoveGraphicEntity(MoveGraphicEntityMessage const &msg_p)
@@ -84,27 +125,6 @@ void GraphicMessageHandler::visitRotateGraphicEntity(RotateGraphicEntityMessage 
 //          Scene               //
 //                              //
 //////////////////////////////////
-
-namespace
-{
-void destroyAttachedObject(Ogre::SceneNode * node_l)
-{
-	// Destroy all the attached objects
-	Ogre::SceneNode::ObjectIterator itObject_l = node_l->getAttachedObjectIterator();
-
-	while ( itObject_l.hasMoreElements() )
-		node_l->getCreator()->destroyMovableObject(itObject_l.getNext());
-
-	// Recurse to child SceneNodes
-	Ogre::SceneNode::NodeVecIterator itChild_l = node_l->getChildIterator();
-
-	while ( itChild_l.hasMoreElements() )
-	{
-		Ogre::SceneNode* pChildNode_l = static_cast<Ogre::SceneNode*>(itChild_l.getNext());
-		destroyAttachedObject(pChildNode_l);
-	}
-}
-}
 
 void GraphicMessageHandler::visitDestroyScene(DestroySceneMessage const &msg_p)
 {

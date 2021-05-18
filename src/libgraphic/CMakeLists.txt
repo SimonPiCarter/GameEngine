@@ -14,6 +14,7 @@ target_sources(graphic
 	src/message/GraphicMessage.cpp
 	src/message/GraphicMessageHandler.cpp
 	src/message/entity/AnimateGraphicEntityMessage.cpp
+	src/message/entity/DestroyGraphicEntityMessage.cpp
 	src/message/entity/NewGraphicEntityMessage.cpp
 	src/message/entity/MoveGraphicEntityMessage.cpp
 	src/message/entity/RotateGraphicEntityMessage.cpp
