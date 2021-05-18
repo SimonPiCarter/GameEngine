@@ -3,6 +3,7 @@
 #include "entity/GraphicEntity.h"
 #include "message/implem/NewGraphicEntityMessage.h"
 #include "message/implem/MoveGraphicEntityMessage.h"
+#include "message/implem/AnimateGraphicEntityMessage.h"
 
 #include "OgreRenderWindow.h"
 
@@ -20,6 +21,7 @@ public:
 	virtual void init() override
 	{
 		_resourceHandler.addResource({"athena", "athene.mesh", true});
+		_resourceHandler.addResource({"Cube", "Cube.mesh", false});
 		_graphic.initWindow("demo");
 	}
 	virtual void run() override
@@ -30,22 +32,25 @@ public:
 			_graphic.tearDown();
 		}
 
-
 		Ogre::RenderWindow *renderWindow_l = _graphic.getRenderWindow();
 
 		GraphicEntity entity1_l;
 		GraphicEntity entity2_l;
 		GraphicEntity entity3_l;
 		{
-			NewGraphicEntityMessage * msg_l = new NewGraphicEntityMessage(&entity1_l, "athena", {0., 0., 0.}, {0.1, 0.1, 0.1}, "root");
+			NewGraphicEntityMessage * msg_l = new NewGraphicEntityMessage(&entity1_l, "Cube", {0., 0., 0.}, {1., 1., 1.}, "root");
 			_graphic.registerMessage(msg_l);
 		}
 		{
-			NewGraphicEntityMessage * msg_l = new NewGraphicEntityMessage(&entity2_l, "athena", {1., 0., 0.}, {0.1, 0.1, 0.1}, "root");
+			NewGraphicEntityMessage * msg_l = new NewGraphicEntityMessage(&entity2_l, "Cube", {-2., -2., 0.}, {1., 1., 1.}, "root");
 			_graphic.registerMessage(msg_l);
 		}
 		{
-			NewGraphicEntityMessage * msg_l = new NewGraphicEntityMessage(&entity3_l, "athena", {2., 0., 0.}, {0.1, 0.1, 0.1}, "root");
+			NewGraphicEntityMessage * msg_l = new NewGraphicEntityMessage(&entity3_l, "Cube", {-4., -4., 0.}, {1., 1., 1.}, "root");
+			_graphic.registerMessage(msg_l);
+		}
+		{
+			AnimateGraphicEntityMessage * msg_l = new AnimateGraphicEntityMessage(&entity1_l, "my_animation", true, true);
 			_graphic.registerMessage(msg_l);
 		}
 
