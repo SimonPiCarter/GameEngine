@@ -13,6 +13,7 @@
 #include "scene/MoveSceneMessage.h"
 #include "scene/NewSceneMessage.h"
 #include "scene/RotateSceneMessage.h"
+#include "scene/VisibilitySceneMessage.h"
 
 #include <Animation/OgreSkeletonAnimation.h>
 
@@ -39,6 +40,7 @@ public:
 	void visitMoveScene(MoveSceneMessage const &msg_p);
 	void visitNewScene(NewSceneMessage const &msg_p);
 	void visitRotateScene(RotateSceneMessage const &msg_p);
+	void visitVisibilityScene(VisibilitySceneMessage const &msg_p);
 
 protected:
 	/// @brief method to be extended to handle message

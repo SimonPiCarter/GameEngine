@@ -21,6 +21,7 @@ target_sources(graphic
 	src/message/scene/MoveSceneMessage.cpp
 	src/message/scene/NewSceneMessage.cpp
 	src/message/scene/RotateSceneMessage.cpp
+	src/message/scene/VisibilitySceneMessage.cpp
 	src/resource/ResourceLoader.cpp
 )
 

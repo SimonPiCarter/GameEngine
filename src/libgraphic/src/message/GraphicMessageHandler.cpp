@@ -124,3 +124,9 @@ void GraphicMessageHandler::visitRotateScene(RotateSceneMessage const &msg_p)
 	sceneNode_l->yaw(Ogre::Degree(msg_p.getVector()[1]));
 }
 
+void GraphicMessageHandler::visitVisibilityScene(VisibilitySceneMessage const &msg_p)
+{
+	Ogre::SceneNode * sceneNode_l = _engine->getMapSceneNode()[msg_p.getId()];
+	assert(sceneNode_l);
+	sceneNode_l->setVisible(msg_p.getVisibility());
+}
