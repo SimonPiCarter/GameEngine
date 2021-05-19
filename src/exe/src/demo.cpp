@@ -10,7 +10,7 @@
 #include "message/scene/MoveSceneMessage.h"
 #include "message/scene/NewSceneMessage.h"
 
-#include "OgreRenderWindow.h"
+#include "OgreWindow.h"
 #include "OgreSceneManager.h"
 
 #include <chrono>
@@ -38,7 +38,7 @@ public:
 			_graphic.tearDown();
 		}
 
-		Ogre::RenderWindow *renderWindow_l = _graphic.getRenderWindow();
+		Ogre::Window *renderWindow_l = _graphic.getRenderWindow();
 
 		GraphicEntity entity1_l;
 		GraphicEntity entity2_l;

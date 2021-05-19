@@ -34,7 +34,7 @@ public:
 
 	ResourceHandler const * getResourceHandler() const      { return _resourceHandler; }
 	Ogre::Root* getRoot(void) const                         { return _root; }
-	Ogre::RenderWindow* getRenderWindow(void) const         { return _renderWindow; }
+	Ogre::Window* getRenderWindow(void) const         { return _renderWindow; }
 	Ogre::SceneManager* getSceneManager(void) const         { return _sceneManager; }
 	Ogre::Camera* getCamera(void) const                     { return _camera; }
 	Ogre::CompositorWorkspace* getCompositorWorkspace(void) const { return _workspace; }
@@ -62,7 +62,7 @@ protected:
 	bool _quit;
 
 	Ogre::Root *_root;
-	Ogre::RenderWindow *_renderWindow;
+	Ogre::Window *_renderWindow;
 	Ogre::SceneManager *_sceneManager;
 	Ogre::Camera *_camera;
 	Ogre::ColourValue _backgroundColour;

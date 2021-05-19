@@ -3,10 +3,11 @@
 #include "OgreRoot.h"
 #include "OgreException.h"
 #include "OgreConfigFile.h"
-#include "OgreRenderWindow.h"
+#include "OgreWindow.h"
 #include "OgreCamera.h"
 #include "OgreFileSystemLayer.h"
 #include "OgreWindowEventUtilities.h"
+#include "OgrePlatformInformation.h"
 #include "Compositor/OgreCompositorManager2.h"
 
 #include "OgreHlmsUnlit.h"
@@ -15,6 +16,7 @@
 #include "OgreArchiveManager.h"
 
 #include <SDL_syswm.h>
+#include <fstream>
 
 GraphicEngine::GraphicEngine(GameMessageHandler * gameMessageHandler_p, ResourceHandler const *resourceHandler_p) :
 	GraphicMessageHandler(this),
@@ -367,24 +369,17 @@ void GraphicEngine::loadResources()
 //-----------------------------------------------------------------------------------
 void GraphicEngine::chooseSceneManager()
 {
-	Ogre::InstancingThreadedCullingMethod threadedCullingMethod =
-			Ogre::INSTANCING_CULLING_SINGLETHREAD;
 #if OGRE_DEBUG_MODE
-	//Debugging multithreaded code is a PITA, disable it.
-	const size_t numThreads = 1;
+        //Debugging multithreaded code is a PITA, disable it.
+        const size_t numThreads = 1;
 #else
-	//getNumLogicalCores() may return 0 if couldn't detect
-	const size_t numThreads = std::max<size_t>( 1, Ogre::PlatformInformation::getNumLogicalCores() );
-	//See doxygen documentation regarding culling methods.
-	//In some cases you may still want to use single thread.
-	//if( numThreads > 1 )
-	//	threadedCullingMethod = Ogre::INSTANCING_CULLING_THREADED;
+        //getNumLogicalCores() may return 0 if couldn't detect
+        const size_t numThreads = std::max<size_t>( 1, Ogre::PlatformInformation::getNumLogicalCores() );
 #endif
-	// Create the SceneManager, in this case a generic one
-	_sceneManager = _root->createSceneManager( Ogre::ST_GENERIC,
-												numThreads,
-												threadedCullingMethod,
-												"ExampleSMInstance" );
+        // Create the SceneManager, in this case a generic one
+        _sceneManager = _root->createSceneManager( Ogre::ST_GENERIC,
+                                                   numThreads,
+                                                   "ExampleSMInstance" );
 
 	_sceneManager->addRenderQueueListener(_overlaySystem);
 	_sceneManager->getRenderQueue()->setSortRenderQueue(
@@ -420,7 +415,7 @@ Ogre::CompositorWorkspace* GraphicEngine::setupCompositor(void)
 													Ogre::IdString() );
 	}
 
-	return compositorManager->addWorkspace( _sceneManager, _renderWindow, _camera,
+	return compositorManager->addWorkspace( _sceneManager, _renderWindow->getTexture(), _camera,
 											workspaceName_l, true );
 }
 
@@ -438,28 +433,20 @@ void GraphicEngine::handleWindowEvent(const SDL_Event& evt_p)
 		case SDL_WINDOWEVENT_SIZE_CHANGED:
 			int w,h;
 			SDL_GetWindowSize( _sdlWindow, &w, &h );
-#if OGRE_PLATFORM == OGRE_PLATFORM_LINUX
-			_renderWindow->resize( w, h );
-#else
 			_renderWindow->windowMovedOrResized();
-#endif
 			break;
 		case SDL_WINDOWEVENT_RESIZED:
-#if OGRE_PLATFORM == OGRE_PLATFORM_LINUX
-			_renderWindow->resize( evt_p.window.data1, evt_p.window.data2 );
-#else
 			_renderWindow->windowMovedOrResized();
-#endif
 			break;
 		case SDL_WINDOWEVENT_CLOSE:
 			_quit = true;
 			break;
-		case SDL_WINDOWEVENT_SHOWN:
-			_renderWindow->setVisible(true);
-			break;
-		case SDL_WINDOWEVENT_HIDDEN:
-			_renderWindow->setVisible(false);
-			break;
+		//case SDL_WINDOWEVENT_SHOWN:
+		//	_renderWindow->setVisible(true);
+		//	break;
+		//case SDL_WINDOWEVENT_HIDDEN:
+		//	_renderWindow->setVisible(false);
+		//	break;
 	}
 }
 
