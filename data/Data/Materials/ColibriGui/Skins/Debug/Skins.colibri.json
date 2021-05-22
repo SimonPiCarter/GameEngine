@@ -1,0 +1,83 @@
+{
+    "skins" :
+    {
+        "ButtonSkin" :
+        {
+            "material" : "ButtonSkin",
+            "tex_resolution" : [64, 96],
+            "grid_uv" :
+            {
+                "center2" : [0, 0, 64, 32],
+                "enclosing" : [[0, 0, 64, 32], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [10, 10]
+            }
+        },
+        "ButtonSkinDisabled" :
+        {
+            "copy_from" : "ButtonSkin",
+            "material" : "ButtonSkinDisabled"
+        },
+        "ButtonSkinHighlightedCursor" :
+        {
+            "copy_from" : "ButtonSkin",
+            "material" : "ButtonSkinBrighter"
+        },
+        "ButtonSkinHighlightedButton" :
+        {
+            "copy_from" : "ButtonSkin",
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 32, 64, 32], [4, 4]]
+            }
+        },
+        "ButtonSkinHighlightedButtonAndCursor" :
+        {
+            "copy_from" : "ButtonSkinHighlightedButton",
+            "material" : "ButtonSkinBrighter"
+        },
+        "ButtonSkinPressed" :
+        {
+            "copy_from" : "ButtonSkin",
+            "material" : "ButtonSkin",
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 64, 64, 32], [4, 4]]
+            }
+        }
+    },
+
+    "skin_packs" :
+    {
+        "ButtonSkin" :
+        {
+            "all" : "ButtonSkin",
+            "disabled" : "ButtonSkinDisabled",
+            "idle" : "ButtonSkin",
+            "highlighted_cursor" : "ButtonSkinHighlightedCursor",
+            "highlighted_button" : "ButtonSkinHighlightedButton",
+            "highlighted_button_and_cursor" : "ButtonSkinHighlightedButtonAndCursor",
+            "pressed" : "ButtonSkinPressed"
+        }
+    },
+
+    "default_skin_packs" :
+    {
+        "Window"                : "ButtonSkin",
+        "Button"                : "ButtonSkin",
+        "Spinner"               : "ButtonSkin",
+        "SpinnerBtnDecrement"   : "ButtonSkin",
+        "SpinnerBtnIncrement"   : "ButtonSkin",
+        "Checkbox"              : "ButtonSkin",
+        "CheckboxTickmarkUnchecked"     : "ButtonSkin",
+        "CheckboxTickmarkChecked"       : "ButtonSkin",
+        "CheckboxTickmarkThirdState"    : "ButtonSkin",
+        "Editbox"               : "ButtonSkin",
+        "ProgressbarLayer0"     : "ButtonSkin",
+        "ProgressbarLayer1"     : "ButtonSkin",
+        "SliderLine"            : "ButtonSkin",
+        "SliderHandle"          : "ButtonSkin"
+    }
+}
