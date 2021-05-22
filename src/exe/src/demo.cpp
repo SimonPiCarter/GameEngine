@@ -52,10 +52,31 @@ private:
 	GraphicEngine &_graphic;
 };
 
+class ReturnListener : public Listener
+{
+public:
+	ReturnListener(central_menu::Menu *&menu_p) : _menu(menu_p) {}
+	virtual void run()
+	{
+		delete _menu;
+		// to avoid double deletion
+		_menu = nullptr;
+	}
+private:
+	// pointer to reset menu to nullptr and delete it (hence pointer to pointer)
+	central_menu::Menu *&_menu;
+};
+
 class DemoEngine : public GameEngine
 {
 public:
-	DemoEngine(std::string const &path_p) : GameEngine(path_p) {}
+	DemoEngine(std::string const &path_p)
+		: GameEngine(path_p)
+		, _quit(_graphic)
+		, _destroy(_deleted, _graphic)
+		// we take reference to the pointer hence it is ok to give it before init
+		, _return(_menu)
+	{}
 
 	virtual void init() override
 	{
@@ -71,12 +92,11 @@ public:
 			_graphic.tearDown();
 		}
 
-		QuitListener quit_l(_graphic);
-		DestroyListener destroy_l(_deleted, _graphic);
-		central_menu::Menu * menu_l = new central_menu::Menu("Main",
+		_menu = new central_menu::Menu("Main",
 		{
-			{"destroy_scene", &destroy_l},
-			{"quit", &quit_l}
+			{"destroy_scene", &_destroy},
+			{"quit", &_quit},
+			{"return", &_return}
 		}, _graphic
 		);
 
@@ -135,7 +155,7 @@ public:
 			start_l = end_l;
 		}
 
-		delete menu_l;
+		delete _menu;
 
 		_graphic.tearDown();
 	}
@@ -166,6 +186,19 @@ public:
 					_graphic.registerMessage(new VisibilitySceneMessage("test", _visible));
 				}
 			}
+			if (evt.key.keysym.scancode == SDL_SCANCODE_F5)
+			{
+				if(!_menu)
+				{
+					_menu = new central_menu::Menu("Main",
+					{
+						{"destroy_scene", &_destroy},
+						{"quit", &_quit},
+						{"return", &_return}
+					}, _graphic
+					);
+				}
+			}
 			break;
 		case SDL_QUIT:
 			_graphic.setQuit();
@@ -178,6 +211,13 @@ public:
 private:
 	bool _deleted = false;
 	bool _visible = true;
+
+	central_menu::Menu * _menu;
+
+	QuitListener _quit;
+	DestroyListener _destroy;
+	ReturnListener _return;
+
 };
 
 int main(int argc, char **argv)
