@@ -12,6 +12,7 @@ target_sources(graphic
 	src/engine/utils/StaticPluginLoader.cpp
 	src/engine/utils/SdlInputHandler.cpp
 	src/entity/GraphicEntity.cpp
+	src/menu/CentralMenu.cpp
 	src/message/GraphicMessage.cpp
 	src/message/GraphicMessageHandler.cpp
 	src/message/camera/LookAtCameraMessage.cpp
