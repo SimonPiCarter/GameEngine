@@ -7,6 +7,7 @@
 #include "OgreCamera.h"
 #include "OgreItem.h"
 #include "OgreNode.h"
+#include "OgreMaterialManager.h"
 #include "OgreSceneManager.h"
 
 GraphicMessageHandler::GraphicMessageHandler(GraphicEngine *engine_p) : _engine(engine_p) {}
@@ -121,6 +122,10 @@ void GraphicMessageHandler::visitNewGraphicEntity(NewGraphicEntityMessage const 
 	//Notice we use the name of the imported model. We could also use the overload
 	//with the mesh pointer:
 	Ogre::Item *item_l = sceneManager->createItem( v2Mesh_l, Ogre::SCENE_DYNAMIC );
+	if(!res_l._material.empty())
+	{
+		item_l->setDatablockOrMaterialName(res_l._material);
+	}
 
 	Ogre::SceneNode * rootNode_l = _engine->getMapSceneNode()[msg_p.getScene()];
 	assert(rootNode_l);

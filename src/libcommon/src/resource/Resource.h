@@ -8,6 +8,8 @@ struct Resource
 	std::string _id;
 	std::string _meshPath;
 	bool _v1Mesh;
+	/// @brief in case we want to overwrite the material of the mesh, leave empty to use the mesh original one
+	std::string _material;
 };
 
 class ResourceHandler
