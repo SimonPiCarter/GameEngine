@@ -23,5 +23,5 @@ public:
 protected:
 	std::unordered_map<std::string, Resource> _mapResources;
 
-	std::string const &_rootPath;
+	std::string const _rootPath;
 };
