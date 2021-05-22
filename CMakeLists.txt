@@ -46,5 +46,5 @@ find_package(Threads REQUIRED)
 # Sub directories
 # ----------------------------
 
-add_subdirectory(test)
+#add_subdirectory(test)
 add_subdirectory(src)
