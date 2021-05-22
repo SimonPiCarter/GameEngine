@@ -18,6 +18,38 @@
 #include <thread>
 
 #include "engine/GameEngine.h"
+#include "menu/CentralMenu.h"
+
+class QuitListener : public Listener
+{
+public:
+	QuitListener(GraphicEngine &graphic_p)
+		: _graphic(graphic_p) {}
+
+	virtual void run()
+	{
+		_graphic.setQuit();
+	}
+private:
+	GraphicEngine &_graphic;
+};
+
+class DestroyListener : public Listener
+{
+public:
+	DestroyListener(bool &delete_p, GraphicEngine &graphic_p)
+		: _delete(delete_p), _graphic(graphic_p) {}
+
+	virtual void run()
+	{
+		if(!_delete)
+			_graphic.registerMessage(new DestroySceneMessage("test"));
+		_delete = true;
+	}
+private:
+	bool &_delete;
+	GraphicEngine &_graphic;
+};
 
 class DemoEngine : public GameEngine
 {
@@ -37,6 +69,15 @@ public:
 			//User cancelled config
 			_graphic.tearDown();
 		}
+
+		QuitListener quit_l(_graphic);
+		DestroyListener destroy_l(_deleted, _graphic);
+		central_menu::Menu * menu_l = new central_menu::Menu("Main",
+		{
+			{"destroy_scene", &destroy_l},
+			{"quit", &quit_l}
+		}, _graphic
+		);
 
 		Ogre::Window *renderWindow_l = _graphic.getRenderWindow();
 
@@ -87,6 +128,8 @@ public:
 			timeSinceLast = std::min( 1.0, timeSinceLast/1000. ); //Prevent from going haywire.
 			start_l = end_l;
 		}
+
+		delete menu_l;
 
 		_graphic.tearDown();
 	}
