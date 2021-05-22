@@ -80,8 +80,11 @@ public:
 
 	virtual void init() override
 	{
-		_resourceHandler.addResource({"athena", "athene.mesh", true});
-		_resourceHandler.addResource({"Cube", "Cube.mesh", false});
+		_resourceHandler.addResource({"athena", "athene.mesh", true, ""});
+		_resourceHandler.addResource({"Cube", "Cube.mesh", false, ""});
+		_resourceHandler.addResource({"CubeGreen", "Cube.mesh", false, "Green"});
+		_resourceHandler.addResource({"CubeYellow", "Cube.mesh", false, "Yellow"});
+		_resourceHandler.addResource({"CubeRed", "Cube.mesh", false, "Red"});
 		_graphic.initWindow("demo");
 	}
 	virtual void run() override
@@ -114,8 +117,8 @@ public:
 		_graphic.registerMessage(new NewSceneMessage("test", "root", {1., 2., 3.}));
 
 		_graphic.registerMessage(new NewGraphicEntityMessage(&entity1_l, "Cube", {0., 0., 0.}, {1., 1., 1.}, "test"));
-		_graphic.registerMessage(new NewGraphicEntityMessage(&entity2_l, "Cube", {-2., -2., 0.}, {1., 1., 1.}, "test"));
-		_graphic.registerMessage(new NewGraphicEntityMessage(&entity3_l, "Cube", {-4., -4., 0.}, {1., 1., 1.}, "test"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(&entity2_l, "CubeGreen", {-2., -2., 0.}, {1., 1., 1.}, "test"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(&entity3_l, "CubeYellow", {-4., -4., 0.}, {1., 1., 1.}, "test"));
 		_graphic.registerMessage(new AnimateGraphicEntityMessage(&entity1_l, "my_animation", true, true));
 		_graphic.registerMessage(new NewLightMessage(&light_l, "root", {1., 1., 1.}, {-1, -1, -1}, LightType::Directional));
 

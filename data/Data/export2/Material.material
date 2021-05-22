@@ -6,3 +6,27 @@ hlms Material pbs
 
     diffuse_map     blue.png
 }
+
+hlms Yellow pbs
+{
+    roughness   0.4
+    fresnel     1.33
+
+    diffuse_map     yellow.png
+}
+
+hlms Green pbs
+{
+    roughness   0.4
+    fresnel     1.33
+
+    diffuse_map     green.png
+}
+
+hlms Red pbs
+{
+    roughness   0.4
+    fresnel     1.33
+
+    diffuse_map     red.png
+}
