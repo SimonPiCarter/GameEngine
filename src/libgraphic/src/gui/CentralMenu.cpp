@@ -76,7 +76,7 @@ Menu::Menu(std::string const &title_p, std::vector<ButtonData> const &data_p, Gr
 	layout_l->layout();
 
 	// no scroll here!
-	//_window->sizeScrollToFit();
+	_window->setMaxScroll(Ogre::Vector2(0,0));
 }
 
 Menu::~Menu()
