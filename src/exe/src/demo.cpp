@@ -22,7 +22,7 @@
 class DemoEngine : public GameEngine
 {
 public:
-	DemoEngine() : GameEngine() {}
+	DemoEngine(std::string const &path_p) : GameEngine(path_p) {}
 
 	virtual void init() override
 	{
@@ -133,7 +133,12 @@ private:
 
 int main(int argc, char **argv)
 {
-	DemoEngine engine_l;
+	if(argc != 2)
+	{
+		std::cerr<<"expected call : "<<argv[0] << "path_to_data_folder"<<std::endl;
+		return -1;
+	}
+	DemoEngine engine_l(argv[1]);
 
 	engine_l.init();
 	engine_l.run();

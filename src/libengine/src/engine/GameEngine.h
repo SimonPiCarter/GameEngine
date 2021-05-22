@@ -8,7 +8,7 @@
 class GameEngine : public GameMessageHandler
 {
 public:
-	GameEngine();
+	GameEngine(std::string const &resourcePath_p);
 	virtual ~GameEngine();
 
 	virtual void init() = 0;

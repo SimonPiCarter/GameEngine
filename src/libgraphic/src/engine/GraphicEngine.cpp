@@ -18,6 +18,8 @@
 #include <SDL_syswm.h>
 #include <fstream>
 
+#include "resource/Resource.h"
+
 GraphicEngine::GraphicEngine(GameMessageHandler * gameMessageHandler_p, ResourceHandler const *resourceHandler_p) :
 	GraphicMessageHandler(this),
 	_gameMessageHandler(gameMessageHandler_p),
@@ -29,8 +31,10 @@ GraphicEngine::GraphicEngine(GameMessageHandler * gameMessageHandler_p, Resource
 	_overlaySystem(nullptr),
 	_workspace(nullptr),
 	_sdlWindow(nullptr),
+	_inputHandler(nullptr),
+	_colibriManager(nullptr),
 	_pluginsFolder("./"),
-	_resourcePath("./"),
+	_resourcePath(resourceHandler_p->getRootPath()),
 	_writeAccessFolder(""),
 	_quit( false ),
 	_alwaysAskForConfig( true ),
@@ -240,39 +244,22 @@ void GraphicEngine::tearDown()
 
 void GraphicEngine::setupResources()
 {
-	// Load resource paths from config file
-	Ogre::ConfigFile cf_l;
-	cf_l.load(_resourcePath + "resources2.cfg");
 
-	// Go through all sections & settings in the file
-	Ogre::ConfigFile::SectionIterator seci = cf_l.getSectionIterator();
 
-	Ogre::String secName, typeName, archName;
-	while( seci.hasMoreElements() )
 	{
-		secName = seci.peekNextKey();
-		Ogre::ConfigFile::SettingsMultiMap *settings = seci.getNext();
 
-		if( secName != "Hlms" )
-		{
-			Ogre::ConfigFile::SettingsMultiMap::iterator i;
-			for (i = settings->begin(); i != settings->end(); ++i)
-			{
-				typeName = i->first;
-				archName = i->second;
-				Ogre::ResourceGroupManager::getSingleton().addResourceLocation( archName, typeName, secName );
-			}
-		}
 	}
+
+	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath, "FileSystem", "Popular");
+	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/export2", "FileSystem", "Popular");
+	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"Materials/ColibriGui/Skins/DarkGloss", "FileSystem", "Popular");
+	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Materials/ColibriGui/Skins/Debug", "FileSystem", "Popular");
 }
 
 //-----------------------------------------------------------------------------------
     void GraphicEngine::registerHlms()
     {
-        Ogre::ConfigFile cf;
-        cf.load( _resourcePath + "resources2.cfg" );
-
-        Ogre::String rootHlmsFolder = cf.getSetting( "DoNotUseAsResource", "Hlms", "" );
+        Ogre::String rootHlmsFolder = _resourcePath;
 
         if( rootHlmsFolder.empty() )
             rootHlmsFolder = "./";

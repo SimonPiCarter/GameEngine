@@ -1,8 +1,8 @@
 #include "GameEngine.h"
 
-GameEngine::GameEngine()
+GameEngine::GameEngine(std::string const &resourcePath_p)
 	: GameMessageHandler(this)
-	, _resourceHandler()
+	, _resourceHandler(resourcePath_p)
 	, _graphic(this, &_resourceHandler)
 {}
 
