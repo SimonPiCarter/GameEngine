@@ -8,6 +8,9 @@
 #include "Threading/OgreUniformScalableTask.h"
 #include "OgreOverlaySystem.h"
 #include "OgreOverlayManager.h"
+#include "OgreLogManager.h"
+
+#include "ColibriGui/ColibriManager.h"
 
 #include <SDL.h>
 #include <unordered_map>
@@ -15,10 +18,33 @@
 #include "message/GraphicMessageHandler.h"
 #include "message/game/GameMessageHandler.h"
 #include "entity/GraphicEntity.h"
+#include "utils/SdlInputHandler.h"
+#include "utils/InputListeners.h"
 
 class ResourceHandler;
 
-class GraphicEngine : public GraphicMessageHandler
+class ColibriLogListener : public Colibri::LogListener
+{
+	virtual void log( const char *text, Colibri::LogSeverity::LogSeverity severity )
+	{
+		Ogre::LogManager::getSingleton().logMessage( text );
+	}
+};
+class ColibriListener : public Colibri::ColibriListener
+{
+	void setClipboardText( const char *text )
+	{
+		SDL_SetClipboardText( text );
+	}
+
+	virtual bool getClipboardText( char * colibrigui_nonnull * const colibrigui_nullable outText )
+	{
+		*outText = SDL_GetClipboardText();
+		return *outText != 0;
+	}
+};
+
+class GraphicEngine : public GraphicMessageHandler, public MouseListener, public KeyboardListener
 {
 public:
 	GraphicEngine(GameMessageHandler *gameMessageHandler_p, ResourceHandler const *resourceHandler_p);
@@ -32,6 +58,7 @@ public:
 	void setQuit(void)                                      { _quit = true; }
 	bool getQuit(void) const                                { return _quit; }
 
+	Colibri::ColibriManager * getColibriManager()           { return _colibriManager; }
 	ResourceHandler const * getResourceHandler() const      { return _resourceHandler; }
 	Ogre::Root* getRoot(void) const                         { return _root; }
 	Ogre::Window* getRenderWindow(void) const         { return _renderWindow; }
@@ -54,6 +81,8 @@ protected:
 
 	/// internal stuff
 
+	Colibri::ColibriManager *_colibriManager;
+
 	std::string const _pluginsFolder;
 	std::string const _resourcePath;
 	std::string _writeAccessFolder;
@@ -72,6 +101,7 @@ protected:
 	Ogre::CompositorWorkspace *_workspace;
 
 	SDL_Window *_sdlWindow;
+	SdlInputHandler * _inputHandler;
 
 	StaticPluginLoader _staticPluginLoader;
 
@@ -90,4 +120,16 @@ protected:
 	virtual Ogre::CompositorWorkspace* setupCompositor();
 
 	void handleWindowEvent(const SDL_Event& evt_p);
+
+	ColibriLogListener _colibriLogListener;
+	ColibriListener _colibriListener;
+
+	void _handleSdlEvents( const SDL_Event& evt );
+	void mouseMoved( const SDL_Event &arg );
+	void mousePressed( const SDL_MouseButtonEvent &arg, Ogre::uint8 id );
+	void mouseReleased( const SDL_MouseButtonEvent &arg, Ogre::uint8 id );
+	void textEditing( const SDL_TextEditingEvent &arg );
+	void textInput( const SDL_TextInputEvent &arg );
+	void keyPressed( const SDL_KeyboardEvent &arg );
+	void keyReleased( const SDL_KeyboardEvent &arg );
 };

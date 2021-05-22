@@ -15,10 +15,18 @@
 #include "OgreHlmsManager.h"
 #include "OgreArchiveManager.h"
 
+#include "ColibriGui/ColibriManager.h"
+#include "ColibriGui/Text/ColibriShaperManager.h"
+#include "ColibriGui/Text/ColibriShaper.h"
+#include "ColibriGui/Ogre/CompositorPassColibriGuiProvider.h"
+#include "ColibriGui/Ogre/OgreHlmsColibri.h"
+#include "hb.h"
+
 #include <SDL_syswm.h>
 #include <fstream>
 
 #include "resource/Resource.h"
+
 
 GraphicEngine::GraphicEngine(GameMessageHandler * gameMessageHandler_p, ResourceHandler const *resourceHandler_p) :
 	GraphicMessageHandler(this),
@@ -191,6 +199,7 @@ void GraphicEngine::initWindow(const std::string &windowTitle_p)
 																	fullscreen_l, &params_l );
 
 	_overlaySystem = OGRE_NEW Ogre::v1::OverlaySystem();
+
 	setupResources();
 	loadResources();
 	chooseSceneManager();
@@ -199,8 +208,17 @@ void GraphicEngine::initWindow(const std::string &windowTitle_p)
 
 	_mapSceneNode["root"] = _sceneManager->getRootSceneNode( Ogre::SCENE_DYNAMIC );
 
-	//mInputHandler = new SdlInputHandler( _sdlWindow, mCurrentGameState,
-	//                                     mCurrentGameState, mCurrentGameState );
+	_inputHandler = new SdlInputHandler( _sdlWindow, this,
+	                                     this, nullptr );
+
+	_colibriManager->setCanvasSize( Ogre::Vector2( 1920.0f, 1080.0f ),
+								Ogre::Vector2( _renderWindow->getWidth(), _renderWindow->getHeight() ) );
+
+	_colibriManager->setOgre( getRoot(),
+								getRoot()->getRenderSystem()->getVaoManager(),
+								getSceneManager() );
+	_colibriManager->loadSkins( (getResourcePath() +
+								"/Materials/ColibriGui/Skins/DarkGloss/Skins.colibri.json").c_str() );
 
 #if OGRE_PROFILING
         Ogre::Profiler::getSingleton().setEnabled( true );
@@ -209,8 +227,8 @@ void GraphicEngine::initWindow(const std::string &windowTitle_p)
     #endif
     #if OGRE_PROFILING == OGRE_PROFILING_INTERNAL_OFFLINE
         Ogre::Profiler::getSingleton().getOfflineProfiler().setDumpPathsOnShutdown(
-                    mWriteAccessFolder + "ProfilePerFrame",
-                    mWriteAccessFolder + "ProfileAccum" );
+                    _writeAccessFolder + "ProfilePerFrame",
+                    _writeAccessFolder + "ProfileAccum" );
     #endif
 #endif
 }
@@ -222,15 +240,16 @@ void GraphicEngine::tearDown()
 	if( _sceneManager )
 		_sceneManager->removeRenderQueueListener( _overlaySystem );
 
+	delete _colibriManager;
+	_colibriManager = nullptr;
 	OGRE_DELETE _overlaySystem;
 	_overlaySystem = nullptr;
 
-	//delete mInputHandler;
-	//mInputHandler = nullptr;
+	delete _inputHandler;
+	_inputHandler = nullptr;
 
 	OGRE_DELETE _root;
 	_root = nullptr;
-
 	if( _sdlWindow )
 	{
 		// Restore desktop resolution on exit
@@ -244,11 +263,61 @@ void GraphicEngine::tearDown()
 
 void GraphicEngine::setupResources()
 {
-
-
+	struct ShaperSettings
 	{
+		const char *locale;
+		const char *fullpath;
+		hb_script_t script;
+		Colibri::HorizReadingDir::HorizReadingDir horizReadingDir;
+		bool useKerning;
+		bool allowsVerticalLayout;
+		ShaperSettings( const char *_locale, const char *_fullpath, hb_script_t _script,
+						bool _useKerning=false,
+						Colibri::HorizReadingDir::HorizReadingDir _horizReadingDir=
+				Colibri::HorizReadingDir::LTR,
+						bool _allowsVerticalLayout=false ) :
+			locale( _locale ),
+			fullpath( _fullpath ),
+			script( _script ),
+			horizReadingDir( _horizReadingDir ),
+			useKerning( _useKerning ),
+			allowsVerticalLayout( _allowsVerticalLayout )
+		{
 
+		}
+	};
+
+	ShaperSettings shaperSettings[1] =
+	{
+		ShaperSettings( "en", "Fonts/DejaVuSerif.ttf", HB_SCRIPT_LATIN, true ),
+	};
+
+	_colibriManager = new Colibri::ColibriManager( &_colibriLogListener,
+													&_colibriListener );
+	Colibri::ShaperManager *shaperManager = _colibriManager->getShaperManager();
+
+	for( size_t i=0; i<sizeof( shaperSettings ) / sizeof( shaperSettings[0] ); ++i )
+	{
+		Colibri::Shaper *shaper;
+		const std::string fullPath = _resourcePath + shaperSettings[i].fullpath;
+		shaper = shaperManager->addShaper( shaperSettings[i].script, fullPath.c_str(),
+											shaperSettings[i].locale );
+		if( shaperSettings[i].useKerning )
+			shaper->addFeatures( Colibri::Shaper::KerningOn );
 	}
+
+	size_t defaultFont = 0; //"en"
+	shaperManager->setDefaultShaper( defaultFont + 1u,
+										shaperSettings[defaultFont].horizReadingDir,
+										shaperSettings[defaultFont].allowsVerticalLayout );
+
+	if( defaultFont == 1 )
+		_colibriManager->setSwapRTLControls( true );
+
+	Ogre::CompositorPassColibriGuiProvider *compoProvider =
+			OGRE_NEW Ogre::CompositorPassColibriGuiProvider( _colibriManager );
+	Ogre::CompositorManager2 *compositorManager = _root->getCompositorManager2();
+	compositorManager->setCompositorPassProvider( compoProvider );
 
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath, "FileSystem", "Popular");
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/export2", "FileSystem", "Popular");
@@ -270,6 +339,7 @@ void GraphicEngine::setupResources()
 
         Ogre::HlmsUnlit *hlmsUnlit = 0;
         Ogre::HlmsPbs *hlmsPbs = 0;
+		Ogre::HlmsColibri *hlmsColibri = 0;
 
         //For retrieval of the paths to the different folders needed
         Ogre::String mainFolderPath;
@@ -279,27 +349,27 @@ void GraphicEngine::setupResources()
 
         Ogre::ArchiveManager &archiveManager = Ogre::ArchiveManager::getSingleton();
 
-        {
-            //Create & Register HlmsUnlit
-            //Get the path to all the subdirectories used by HlmsUnlit
-            Ogre::HlmsUnlit::getDefaultPaths( mainFolderPath, libraryFoldersPaths );
-            Ogre::Archive *archiveUnlit = archiveManager.load( rootHlmsFolder + mainFolderPath,
-                                                               "FileSystem", true );
-            Ogre::ArchiveVec archiveUnlitLibraryFolders;
-            libraryFolderPathIt = libraryFoldersPaths.begin();
-            libraryFolderPathEn = libraryFoldersPaths.end();
-            while( libraryFolderPathIt != libraryFolderPathEn )
-            {
-                Ogre::Archive *archiveLibrary =
-                        archiveManager.load( rootHlmsFolder + *libraryFolderPathIt, "FileSystem", true );
-                archiveUnlitLibraryFolders.push_back( archiveLibrary );
-                ++libraryFolderPathIt;
-            }
+		{
+			//Create & Register HlmsColibri
+			//Get the path to all the subdirectories used by HlmsColibri
+			Ogre::HlmsColibri::getDefaultPaths( mainFolderPath, libraryFoldersPaths );
+			Ogre::Archive *archiveUnlit = archiveManager.load( rootHlmsFolder + mainFolderPath,
+																"FileSystem", true );
+			Ogre::ArchiveVec archiveUnlitLibraryFolders;
+			libraryFolderPathIt = libraryFoldersPaths.begin();
+			libraryFolderPathEn = libraryFoldersPaths.end();
+			while( libraryFolderPathIt != libraryFolderPathEn )
+			{
+				Ogre::Archive *archiveLibrary =
+						archiveManager.load( rootHlmsFolder + *libraryFolderPathIt, "FileSystem", true );
+				archiveUnlitLibraryFolders.push_back( archiveLibrary );
+				++libraryFolderPathIt;
+			}
 
-            //Create and register the unlit Hlms
-            hlmsUnlit = OGRE_NEW Ogre::HlmsUnlit( archiveUnlit, &archiveUnlitLibraryFolders );
-            Ogre::Root::getSingleton().getHlmsManager()->registerHlms( hlmsUnlit );
-        }
+			//Create and register the unlit Hlms
+			hlmsColibri = OGRE_NEW Ogre::HlmsColibri( archiveUnlit, &archiveUnlitLibraryFolders );
+			Ogre::Root::getSingleton().getHlmsManager()->registerHlms( hlmsColibri );
+		}
 
         {
             //Create & Register HlmsPbs
@@ -463,8 +533,154 @@ void GraphicEngine::run(double elapsedTime_p)
 		}
 		// give back event to event handler
 		_gameMessageHandler->registerMessage(new SDLEventGameMessage(evt));
+
+		_inputHandler->_handleSdlEvents(evt);
+	}
+
+	static bool tried = false;
+	if( !tried )
+	{
+		_inputHandler->setGrabMousePointer( false );
+		_inputHandler->setMouseVisible( true );
+		_inputHandler->setMouseRelative( false );
+		tried = true;
+	}
+
+	_colibriManager->update(elapsedTime_p);
+
+	const bool isTextInputActive_l = SDL_IsTextInputActive();
+
+	if( _colibriManager->focusedWantsTextInput() && !isTextInputActive_l )
+		SDL_StartTextInput();
+	else if( !_colibriManager->focusedWantsTextInput() && isTextInputActive_l )
+		SDL_StopTextInput();
+
+	if( isTextInputActive_l )
+	{
+		static SDL_Rect oldRect = { 0, 0, 0, 0 };
+		//We tried to update this only inside ColibriGuiGameState::keyPressed
+		//but it didn't work well in Linux with fcitx
+		Ogre::Vector2 imeOffset = _colibriManager->getImeLocation();
+		SDL_Rect rect;
+		rect.x = imeOffset.x;
+		rect.y = imeOffset.y;
+		rect.w = 0;
+		rect.h = 0;
+		if( oldRect.x != rect.x || oldRect.y != rect.y )
+			SDL_SetTextInputRect( &rect );
 	}
 
 	if( _renderWindow->isVisible() )
 		_quit |= !_root->renderOneFrame();
+}
+
+void GraphicEngine::mouseMoved( const SDL_Event &arg )
+{
+	float width  = static_cast<float>( getRenderWindow()->getWidth() );
+	float height = static_cast<float>( getRenderWindow()->getHeight() );
+
+	if( arg.type == SDL_MOUSEMOTION )
+	{
+		Ogre::Vector2 mousePos( arg.motion.x / width, arg.motion.y / height );
+		_colibriManager->setMouseCursorMoved( mousePos * _colibriManager->getCanvasSize() );
+	}
+	else if( arg.type == SDL_MOUSEWHEEL )
+	{
+		Ogre::Vector2 mouseScroll( arg.wheel.x, -arg.wheel.y );
+		_colibriManager->setScroll( mouseScroll * 50.0f *
+									_colibriManager->getCanvasSize() *
+									_colibriManager->getPixelSize() );
+	}
+}
+//-----------------------------------------------------------------------------------
+void GraphicEngine::mousePressed( const SDL_MouseButtonEvent &arg, Ogre::uint8 id )
+{
+	float width  = static_cast<float>( getRenderWindow()->getWidth() );
+	float height = static_cast<float>( getRenderWindow()->getHeight() );
+
+	Ogre::Vector2 mousePos( arg.x / width, arg.y / height );
+	_colibriManager->setMouseCursorMoved( mousePos * _colibriManager->getCanvasSize() );
+	_colibriManager->setMouseCursorPressed( true, false );
+}
+//-----------------------------------------------------------------------------------
+void GraphicEngine::mouseReleased( const SDL_MouseButtonEvent &arg, Ogre::uint8 id )
+{
+	_colibriManager->setMouseCursorReleased();
+}
+//-----------------------------------------------------------------------------------
+void GraphicEngine::textEditing( const SDL_TextEditingEvent &arg )
+{
+	_colibriManager->setTextEdit( arg.text, arg.start, arg.length );
+}
+//-----------------------------------------------------------------------------------
+void GraphicEngine::textInput( const SDL_TextInputEvent &arg )
+{
+	_colibriManager->setTextInput( arg.text );
+}
+//-----------------------------------------------------------------------------------
+void GraphicEngine::keyPressed( const SDL_KeyboardEvent &arg )
+{
+	const bool isTextInputActive = SDL_IsTextInputActive();
+	const bool isTextMultiline = _colibriManager->isTextMultiline();
+
+	if( (arg.keysym.sym == SDLK_w && !isTextInputActive) || arg.keysym.sym == SDLK_UP )
+		_colibriManager->setKeyDirectionPressed( Colibri::Borders::Top );
+	else if( (arg.keysym.sym == SDLK_s && !isTextInputActive) || arg.keysym.sym == SDLK_DOWN )
+		_colibriManager->setKeyDirectionPressed( Colibri::Borders::Bottom );
+	else if( (arg.keysym.sym == SDLK_a && !isTextInputActive) || arg.keysym.sym == SDLK_LEFT )
+		_colibriManager->setKeyDirectionPressed( Colibri::Borders::Left );
+	else if( (arg.keysym.sym == SDLK_d && !isTextInputActive) || arg.keysym.sym == SDLK_RIGHT )
+		_colibriManager->setKeyDirectionPressed( Colibri::Borders::Right );
+	else if( ((arg.keysym.sym == SDLK_RETURN ||
+				arg.keysym.sym == SDLK_KP_ENTER) && !isTextMultiline) ||
+				(arg.keysym.sym == SDLK_SPACE && !isTextInputActive) )
+	{
+		_colibriManager->setKeyboardPrimaryPressed();
+	}
+	else if( isTextInputActive )
+	{
+		if( (arg.keysym.sym == SDLK_RETURN || arg.keysym.sym == SDLK_KP_ENTER) && isTextMultiline )
+			_colibriManager->setTextSpecialKeyPressed( SDLK_RETURN, arg.keysym.mod );
+		else
+		{
+			_colibriManager->setTextSpecialKeyPressed( arg.keysym.sym & ~SDLK_SCANCODE_MASK,
+														arg.keysym.mod );
+		}
+	}
+}
+//-----------------------------------------------------------------------------------
+void GraphicEngine::keyReleased( const SDL_KeyboardEvent &arg )
+{
+	if( (arg.keysym.mod & ~(KMOD_NUM|KMOD_CAPS)) != 0 )
+	{
+		return;
+	}
+
+	const bool isTextInputActive = SDL_IsTextInputActive();
+	const bool isTextMultiline = _colibriManager->isTextMultiline();
+
+	if( (arg.keysym.sym == SDLK_w && !isTextInputActive) || arg.keysym.sym == SDLK_UP )
+		_colibriManager->setKeyDirectionReleased( Colibri::Borders::Top );
+	else if( (arg.keysym.sym == SDLK_s && !isTextInputActive) || arg.keysym.sym == SDLK_DOWN )
+		_colibriManager->setKeyDirectionReleased( Colibri::Borders::Bottom );
+	else if( (arg.keysym.sym == SDLK_a && !isTextInputActive) || arg.keysym.sym == SDLK_LEFT )
+		_colibriManager->setKeyDirectionReleased( Colibri::Borders::Left );
+	else if( (arg.keysym.sym == SDLK_d && !isTextInputActive) || arg.keysym.sym == SDLK_RIGHT )
+		_colibriManager->setKeyDirectionReleased( Colibri::Borders::Right );
+	else if( ((arg.keysym.sym == SDLK_RETURN ||
+				arg.keysym.sym == SDLK_KP_ENTER) && !isTextMultiline) ||
+				(arg.keysym.sym == SDLK_SPACE && !isTextInputActive) )
+	{
+		_colibriManager->setKeyboardPrimaryReleased();
+	}
+	else if( isTextInputActive )
+	{
+		if( (arg.keysym.sym == SDLK_RETURN || arg.keysym.sym == SDLK_KP_ENTER) && isTextMultiline )
+			_colibriManager->setTextSpecialKeyReleased( SDLK_RETURN, arg.keysym.mod );
+		else
+		{
+			_colibriManager->setTextSpecialKeyReleased( arg.keysym.sym & ~SDLK_SCANCODE_MASK,
+														arg.keysym.mod );
+		}
+	}
 }
