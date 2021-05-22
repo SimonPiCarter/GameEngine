@@ -19,6 +19,7 @@
 
 #include "engine/GameEngine.h"
 #include "gui/CentralMenu.h"
+#include "gui/RichLabel.h"
 
 class QuitListener : public Listener
 {
@@ -78,6 +79,11 @@ public:
 			{"quit", &quit_l}
 		}, _graphic
 		);
+
+		std::vector<InfoLabel> content_l;
+		content_l.push_back({"F5", 255, 255, 0});
+		content_l.push_back({" : Menu\n", 255, 255, 255});
+		RichLabel * label_l = new RichLabel(content_l, 20, 20, 400, 50, 10, _graphic);
 
 		Ogre::Window *renderWindow_l = _graphic.getRenderWindow();
 
