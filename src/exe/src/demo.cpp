@@ -18,7 +18,7 @@
 #include <thread>
 
 #include "engine/GameEngine.h"
-#include "menu/CentralMenu.h"
+#include "gui/CentralMenu.h"
 
 class QuitListener : public Listener
 {
