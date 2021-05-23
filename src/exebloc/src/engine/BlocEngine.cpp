@@ -49,7 +49,7 @@ void BlocEngine::run()
 	BlocModel model_l(form_l, "CubeYellow");
 	this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(model_l, {5,5,0}));
 
-	_graphic.registerMessage(new NewSceneMessage("main", "root", {-5.,-5.,0.}));
+	_graphic.registerMessage(new NewSceneMessage("main", "root", {-5.,-5.,-5.}));
 	_graphic.registerMessage(new NewLightMessage(&light_l, "main", {1., 1., 1.}, {-1, -1, -1}, LightType::Directional));
 
 	std::chrono::time_point<std::chrono::system_clock> start_l = std::chrono::system_clock::now();
@@ -140,6 +140,28 @@ void BlocEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 				{
 					_graphic.registerMessage(new MoveSceneMessage("currentBloc", {-1.,0.,0.}));
 					_currentBloc->setX(_currentBloc->getPosition()[0]-1);
+				}
+			}
+		}
+		if (evt.key.keysym.scancode == SDL_SCANCODE_UP)
+		{
+			if(_currentBloc)
+			{
+				if(_map.checkPosition(_currentBloc, {_currentBloc->getPosition()[0], _currentBloc->getPosition()[1]+1, _currentBloc->getPosition()[2]}))
+				{
+					_graphic.registerMessage(new MoveSceneMessage("currentBloc", {0.,1.,0.}));
+					_currentBloc->setY(_currentBloc->getPosition()[1]+1);
+				}
+			}
+		}
+		if (evt.key.keysym.scancode == SDL_SCANCODE_DOWN)
+		{
+			if(_currentBloc)
+			{
+				if(_map.checkPosition(_currentBloc, {_currentBloc->getPosition()[0]-1, _currentBloc->getPosition()[1]-1, _currentBloc->getPosition()[2]}))
+				{
+					_graphic.registerMessage(new MoveSceneMessage("currentBloc", {0.,-1.,0.}));
+					_currentBloc->setY(_currentBloc->getPosition()[1]-1);
 				}
 			}
 		}
