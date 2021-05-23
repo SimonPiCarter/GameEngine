@@ -5,3 +5,4 @@ add_subdirectory(liblogic)
 add_subdirectory(libengine)
 
 add_subdirectory(exe)
+add_subdirectory(exebloc)
