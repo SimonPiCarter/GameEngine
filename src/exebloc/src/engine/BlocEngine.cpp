@@ -47,9 +47,10 @@ void BlocEngine::run()
 		{{ {true, true, false}, {false, false, false}, {false, false, false} }}
 	}};
 	BlocModel model_l(form_l, "CubeYellow");
-	this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(model_l, {0,0,0}));
+	this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(model_l, {5,5,0}));
 
-	_graphic.registerMessage(new NewLightMessage(&light_l, "root", {1., 1., 1.}, {-1, -1, -1}, LightType::Directional));
+	_graphic.registerMessage(new NewSceneMessage("main", "root", {-5.,-5.,0.}));
+	_graphic.registerMessage(new NewLightMessage(&light_l, "main", {1., 1., 1.}, {-1, -1, -1}, LightType::Directional));
 
 	std::chrono::time_point<std::chrono::system_clock> start_l = std::chrono::system_clock::now();
 
@@ -91,7 +92,7 @@ void BlocEngine::run()
 				this->BlocMessageHandler::registerMessage(new FreezeBlocMessage(_currentBloc));
 				_currentBloc = nullptr;
 				// Spawn next one
-				this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(model_l, {0,0,0}));
+				this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(model_l, {5,5,0}));
 			}
 		}
 		if(_map.checkLose())
@@ -114,14 +115,33 @@ void BlocEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 	SDL_Event const &evt(msg_p.getEvent());
 	switch( evt.type )
 	{
+	case SDL_KEYDOWN:
 	case SDL_KEYUP:
 		if(evt.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 		{
 			_graphic.setQuit();
 		}
-		if (evt.key.keysym.scancode == SDL_SCANCODE_Q)
+		if (evt.key.keysym.scancode == SDL_SCANCODE_RIGHT)
 		{
-			// NA
+			if(_currentBloc)
+			{
+				if(_map.checkPosition(_currentBloc, {_currentBloc->getPosition()[0]+1, _currentBloc->getPosition()[1], _currentBloc->getPosition()[2]}))
+				{
+					_graphic.registerMessage(new MoveSceneMessage("currentBloc", {1.,0.,0.}));
+					_currentBloc->setX(_currentBloc->getPosition()[0]+1);
+				}
+			}
+		}
+		if (evt.key.keysym.scancode == SDL_SCANCODE_LEFT)
+		{
+			if(_currentBloc)
+			{
+				if(_map.checkPosition(_currentBloc, {_currentBloc->getPosition()[0]-1, _currentBloc->getPosition()[1], _currentBloc->getPosition()[2]}))
+				{
+					_graphic.registerMessage(new MoveSceneMessage("currentBloc", {-1.,0.,0.}));
+					_currentBloc->setX(_currentBloc->getPosition()[0]-1);
+				}
+			}
 		}
 		break;
 	case SDL_QUIT:

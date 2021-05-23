@@ -82,9 +82,12 @@ bool BlocMap::checkPosition(Bloc * bloc_p, std::array<unsigned long, 3> const &p
 {
 	std::array<std::array<std::array<bool, 3>, 3>, 3> const & form_l = bloc_p->getModel().getForm();
 
-	assert(position_p[0] + bloc_p->getModel().getMaxCorner()[0] < 9);
-	assert(position_p[1] + bloc_p->getModel().getMaxCorner()[1] < 9);
-	assert(position_p[1] + bloc_p->getModel().getMaxCorner()[2] < 10);
+	if(position_p[0] + bloc_p->getModel().getMaxCorner()[0] > 9
+	|| position_p[1] + bloc_p->getModel().getMaxCorner()[1] > 9
+	|| position_p[1] + bloc_p->getModel().getMaxCorner()[2] > 10)
+	{
+		return false;
+	}
 
 	// for each sub bloc in the form
 	for(size_t i = 0 ; i < 3 ; ++ i)

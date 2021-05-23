@@ -27,7 +27,7 @@ void BlocMessageHandler::visitSpawnBloc(SpawnBlocMessage const &msg_p)
 
 	std::array<std::array<std::array<bool, 3>, 3>, 3> const & form_l = bloc_l->getModel().getForm();
 
-	graphic_l.registerMessage(new NewSceneMessage("currentBloc", "root", {msg_p.getPosition()[0], msg_p.getPosition()[1], msg_p.getPosition()[2]}));
+	graphic_l.registerMessage(new NewSceneMessage("currentBloc", "main", {msg_p.getPosition()[0], msg_p.getPosition()[1], msg_p.getPosition()[2]}));
 	for(size_t i = 0 ; i < 3 ; ++ i)
 	{
 		for(size_t j = 0 ; j < 3 ; ++ j)
