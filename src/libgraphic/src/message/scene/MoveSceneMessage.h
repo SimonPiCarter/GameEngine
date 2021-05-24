@@ -13,14 +13,16 @@ public:
 	/// @brief create
 	/// @param id_p the scene to move
 	/// @param vector_p the vector with the coordinate to translate the scene
-	MoveSceneMessage(std::string const &id_p, std::array<double, 3> const &vector_p);
+	MoveSceneMessage(std::string const &id_p, std::array<double, 3> const &vector_p, bool translate_p=true);
 
 	virtual void visit(GraphicMessageHandler &handler_p);
 
 	std::string const &getId() const { return _id; }
 	const std::array<double, 3> &getVector() const { return _vector; }
+	bool const & isTranslate() const { return _translate; }
 
 private:
 	std::string const _id;
 	const std::array<double, 3> _vector;
+	bool const _translate;
 };

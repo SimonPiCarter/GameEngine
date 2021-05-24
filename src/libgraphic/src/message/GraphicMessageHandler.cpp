@@ -242,7 +242,13 @@ void GraphicMessageHandler::visitMoveScene(MoveSceneMessage const &msg_p)
 {
 	Ogre::SceneNode * sceneNode_l = _engine->getMapSceneNode()[msg_p.getId()];
 	assert(sceneNode_l);
-	sceneNode_l->translate(msg_p.getVector()[0], msg_p.getVector()[1], msg_p.getVector()[2]);
+	if(msg_p.isTranslate())
+	{
+		sceneNode_l->translate(msg_p.getVector()[0], msg_p.getVector()[1], msg_p.getVector()[2]);
+	} else
+	{
+		sceneNode_l->setPosition(msg_p.getVector()[0], msg_p.getVector()[1], msg_p.getVector()[2]);
+	}
 }
 
 void GraphicMessageHandler::visitNewScene(NewSceneMessage const &msg_p)

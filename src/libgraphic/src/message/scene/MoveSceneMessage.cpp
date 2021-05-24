@@ -2,10 +2,11 @@
 
 #include "message/GraphicMessageHandler.h"
 
-MoveSceneMessage::MoveSceneMessage(std::string const &id_p, std::array<double, 3> const &vector_p)
+MoveSceneMessage::MoveSceneMessage(std::string const &id_p, std::array<double, 3> const &vector_p, bool translate_p)
 	: GraphicMessage("")
 	, _id(id_p)
 	, _vector(vector_p)
+	, _translate(translate_p)
 {}
 
 void MoveSceneMessage::visit(GraphicMessageHandler &handler_p)
