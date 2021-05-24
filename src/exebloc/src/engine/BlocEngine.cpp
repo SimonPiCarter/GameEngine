@@ -51,7 +51,24 @@ void BlocEngine::run()
 
 	_graphic.registerMessage(new NewSceneMessage("main", "root", {-5.,-5.,-20.}));
 	_graphic.registerMessage(new NewLightMessage(&light_l, "main", {1., 1., 1.}, {-1, -1, -1}, LightType::Directional));
+
+	std::vector<GraphicEntity *> borders_l;
+	borders_l.push_back(new GraphicEntity());
+	_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {-1, 5, 9}, {0.5,0.5,0.5}, "main"));
+	borders_l.push_back(new GraphicEntity());
+	_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {9, 5, 9}, {0.5,0.5,0.5}, "main"));
+	for(size_t i = 0 ; i < 9 ; ++i)
+	{
+		borders_l.push_back(new GraphicEntity());
+		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {i, 5, 9}, {0.5,0.5,0.5}, "main"));
+		borders_l.push_back(new GraphicEntity());
+		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {-1, 5, i}, {0.5,0.5,0.5}, "main"));
+		borders_l.push_back(new GraphicEntity());
+		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {9, 5, i}, {0.5,0.5,0.5}, "main"));
+	}
+
 	_graphic.registerMessage(new RotateSceneMessage("main", {90, 0, 0}));
+
 
 	std::chrono::time_point<std::chrono::system_clock> start_l = std::chrono::system_clock::now();
 
@@ -113,6 +130,10 @@ void BlocEngine::run()
 		start_l = end_l;
 	}
 
+	for(GraphicEntity* ent_l : borders_l)
+	{
+		delete ent_l;
+	}
 	_graphic.tearDown();
 }
 
