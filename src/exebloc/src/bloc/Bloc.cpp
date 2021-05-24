@@ -21,7 +21,7 @@ Bloc::Bloc(BlocModel const &model_p, std::array<unsigned long, 3> const &positio
 void Bloc::updateLevel(double level_p)
 {
 	_level = level_p;
-	_position[2] = std::ceil(_level);
+	_position[2] = std::ceil(_level - 1e-3);
 }
 
 /// @brief update _position[0]
