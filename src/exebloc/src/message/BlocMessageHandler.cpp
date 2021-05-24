@@ -11,6 +11,14 @@ BlocMessageHandler::BlocMessageHandler(BlocEngine *engine_p)
 
 void BlocMessageHandler::visitPopBloc(PopBlocMessage const &msg_p)
 {
+	// Redirect to map to move down all blocs and get the affected entities
+	std::set<GraphicEntity *> entitiesToDrop_l = _engine->getMap().popBloc(msg_p.getPos(), msg_p.getPopX(), msg_p.getPopY());
+	// Move all enitities
+	for(GraphicEntity *entity_l : entitiesToDrop_l)
+	{
+		_engine->getGraphic().registerMessage(new MoveGraphicEntityMessage(entity_l, {0,0,1}));
+	}
+	// Remove all entities to pop
 	for(GraphicEntity *entity_l : msg_p.getSet())
 	{
 		_engine->getGraphic().registerMessage(new DestroyGraphicEntityMessage(entity_l));

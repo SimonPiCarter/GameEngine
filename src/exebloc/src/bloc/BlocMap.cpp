@@ -1,7 +1,6 @@
 #include "BlocMap.h"
 
 #include <cassert>
-#include <set>
 
 #include "bloc/Bloc.h"
 #include "bloc/BlocModel.h"
@@ -71,9 +70,10 @@ void BlocMap::addBloc(GraphicEntity *entity_p, std::array<size_t, 3> const &pos_
 		}
 	}
 
+	// pop blocs
 	if(!entityToPop_l.empty())
 	{
-		_engine->MessageHandler<BlocMessage>::registerMessage(new PopBlocMessage(entityToPop_l));
+		_engine->MessageHandler<BlocMessage>::registerMessage(new PopBlocMessage(entityToPop_l, pos_p, checkX_l, checkY_l));
 	}
 }
 
@@ -110,8 +110,11 @@ bool BlocMap::checkPosition(Bloc * bloc_p, std::array<unsigned long, 3> const &p
 /// @brief check if the bloc has to freeze or not
 bool BlocMap::checkFreeze(Bloc * bloc_p) const
 {
+	// We are in between two pos therefore we need to check current level + under level
+	bool checkUnder_l = int(bloc_p->getLevel()) == int(bloc_p->getLevel()+0.05);
 	return bloc_p->getLevel() + bloc_p->getModel().getMaxCorner()[2] > 9.95
-		|| !checkPosition(bloc_p, bloc_p->getPosition());
+		|| !checkPosition(bloc_p, bloc_p->getPosition())
+		|| (checkUnder_l && !checkPosition(bloc_p, {bloc_p->getPosition()[0], bloc_p->getPosition()[1], bloc_p->getPosition()[2]+1}));
 }
 
 /// @brief check if the game is over
@@ -129,4 +132,47 @@ bool BlocMap::checkLose() const
 		}
 	}
 	return false;
+}
+
+std::set<GraphicEntity *> BlocMap::popBloc(std::array<size_t, 3> const &pos_p,
+	bool popX_p, bool popY_p)
+{
+	std::set<GraphicEntity *> entities_l;
+	// If upper line we return (nothing to do)
+	if(pos_p[2] == 0)
+	{
+		return entities_l;
+	}
+	if(popX_p)
+	{
+		for(size_t i = 0; i < 9; ++i)
+		{
+			size_t z = pos_p[2];
+			// While we have not met any empty bloc and out of bound
+			while(_map[i][pos_p[1]][z-1] && z > 1 )
+			{
+				_map[i][pos_p[1]][z] = _map[i][pos_p[1]][z-1];
+				entities_l.insert(_map[i][pos_p[1]][z]);
+				--z;
+			}
+			_map[i][pos_p[1]][z] = nullptr;
+		}
+	}
+	if(popY_p)
+	{
+		for(size_t i = 0; i < 9; ++i)
+		{
+			size_t z = pos_p[2];
+			// While we have not met any empty bloc and out of bound
+			while(_map[pos_p[0]][i][z-1] && z > 1)
+			{
+				_map[pos_p[0]][i][z] = _map[pos_p[0]][i][z-1];
+				entities_l.insert(_map[pos_p[0]][i][z]);
+				--z;
+			}
+			_map[pos_p[0]][i][z] = nullptr;
+		}
+	}
+
+	return entities_l;
 }

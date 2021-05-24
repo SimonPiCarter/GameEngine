@@ -21,14 +21,21 @@ public:
 class PopBlocMessage : public BlocMessage
 {
 public:
-	PopBlocMessage(std::set<GraphicEntity*> const &set_p)  : _set(set_p) {}
+	PopBlocMessage(std::set<GraphicEntity*> const &set_p, std::array<size_t, 3> const &pos_p,
+		bool popX_p, bool popY_p)  : _set(set_p), _pos(pos_p), _popX(popX_p), _popY(popY_p) {}
 
 	std::set<GraphicEntity*> const & getSet() const { return _set; }
+	std::array<size_t, 3> const &getPos() const { return _pos; }
+	bool const &getPopX() const { return _popX; }
+	bool const &getPopY() const { return _popY; }
 
 	/// @brief visitor method
 	virtual void visit(BlocMessageHandler &handler_p);
 private:
 	std::set<GraphicEntity*> const _set;
+	std::array<size_t, 3> const _pos;
+	bool const _popX;
+	bool const _popY;
 };
 
 class SpawnBlocMessage : public BlocMessage

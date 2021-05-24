@@ -42,15 +42,16 @@ void BlocEngine::run()
 
 	std::array<std::array<std::array<bool, 3>, 3>, 3> form_l =
 	{{
-		{{ {false, false, false}, {false, false, false}, {false, true, true} }},
-		{{ {false, true, false}, {false, true, false}, {false, true, false} }},
-		{{ {true, true, false}, {false, false, false}, {false, false, false} }}
+		{{ {false, true, false}, {false, false, false}, {false, false, false} }},
+		{{ {true, true, false}, {false, false, false}, {false, false, false} }},
+		{{ {false, true, false}, {false, false, false}, {false, false, false} }}
 	}};
 	BlocModel model_l(form_l, "CubeYellow");
 	this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(model_l, {5,5,0}));
 
-	_graphic.registerMessage(new NewSceneMessage("main", "root", {-5.,-5.,-5.}));
+	_graphic.registerMessage(new NewSceneMessage("main", "root", {-5.,-5.,-20.}));
 	_graphic.registerMessage(new NewLightMessage(&light_l, "main", {1., 1., 1.}, {-1, -1, -1}, LightType::Directional));
+	_graphic.registerMessage(new RotateSceneMessage("main", {90, 0, 0}));
 
 	std::chrono::time_point<std::chrono::system_clock> start_l = std::chrono::system_clock::now();
 
@@ -85,8 +86,13 @@ void BlocEngine::run()
 			if(_map.checkFreeze(_currentBloc))
 			{
 				// adjust back bloc
-				_graphic.registerMessage(new MoveSceneMessage("currentBloc", {0.,0.,_currentBloc->getPosition()[2] - 1 - _currentBloc->getLevel()}));
-				_currentBloc->updateLevel(_currentBloc->getPosition()[2] - 1);
+				_graphic.registerMessage(new MoveSceneMessage(
+					"currentBloc", {
+						_currentBloc->getPosition()[0],
+						_currentBloc->getPosition()[1],
+						std::min<unsigned long>(9, _currentBloc->getPosition()[2] - 1)}
+					, false));
+				_currentBloc->updateLevel(_currentBloc->getPosition()[2]);
 
 				// Freeze current bloc
 				this->BlocMessageHandler::registerMessage(new FreezeBlocMessage(_currentBloc));
@@ -140,28 +146,6 @@ void BlocEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 				{
 					_graphic.registerMessage(new MoveSceneMessage("currentBloc", {-1.,0.,0.}));
 					_currentBloc->setX(_currentBloc->getPosition()[0]-1);
-				}
-			}
-		}
-		if (evt.key.keysym.scancode == SDL_SCANCODE_UP)
-		{
-			if(_currentBloc)
-			{
-				if(_map.checkPosition(_currentBloc, {_currentBloc->getPosition()[0], _currentBloc->getPosition()[1]+1, _currentBloc->getPosition()[2]}))
-				{
-					_graphic.registerMessage(new MoveSceneMessage("currentBloc", {0.,1.,0.}));
-					_currentBloc->setY(_currentBloc->getPosition()[1]+1);
-				}
-			}
-		}
-		if (evt.key.keysym.scancode == SDL_SCANCODE_DOWN)
-		{
-			if(_currentBloc)
-			{
-				if(_map.checkPosition(_currentBloc, {_currentBloc->getPosition()[0]-1, _currentBloc->getPosition()[1]-1, _currentBloc->getPosition()[2]}))
-				{
-					_graphic.registerMessage(new MoveSceneMessage("currentBloc", {0.,-1.,0.}));
-					_currentBloc->setY(_currentBloc->getPosition()[1]-1);
 				}
 			}
 		}

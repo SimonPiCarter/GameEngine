@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <set>
 
 class Bloc;
 class BlocEngine;
@@ -22,6 +23,10 @@ public:
 
 	/// @brief check if the game is over
 	bool checkLose() const;
+
+	/// @brief drop down all blocs in map and return associated graphic entities
+	std::set<GraphicEntity *> popBloc(std::array<size_t, 3> const &pos_p,
+		bool popX_p, bool popY_p);
 
 protected:
 	/// @brief the material for each bloc in the map (if nullptr no bloc)
