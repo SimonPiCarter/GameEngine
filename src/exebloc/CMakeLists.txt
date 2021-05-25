@@ -15,6 +15,7 @@ target_sources(bloc
 	src/engine/BlocEngine.cpp
 	src/message/BlocMessage.cpp
 	src/message/BlocMessageHandler.cpp
+	src/utils/DataReader.cpp
 	src/demo.cpp
 )
 
