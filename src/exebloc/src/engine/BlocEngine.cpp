@@ -3,9 +3,11 @@
 #include "OgreWindow.h"
 #include "OgreSceneManager.h"
 #include <thread>
+#include <cstdlib>
 
 #include "bloc/Bloc.h"
 #include "bloc/BlocModel.h"
+#include "utils/DataReader.h"
 
 BlocEngine::BlocEngine(std::string const &path_p)
 	: GameEngine(path_p)
@@ -21,7 +23,6 @@ void BlocEngine::init()
 	_resourceHandler.addResource({"CubeRed", "Cube.mesh", false, "Red"});
 	_graphic.initWindow("demo");
 }
-#include <iostream>
 
 void BlocEngine::run()
 {
@@ -40,32 +41,24 @@ void BlocEngine::run()
 
 	GraphicEntity light_l;
 
-	std::array<std::array<std::array<bool, 3>, 3>, 3> form_l =
-	{{
-		{{ {false, true, false}, {false, false, false}, {false, false, false} }},
-		{{ {true, true, false}, {false, false, false}, {false, false, false} }},
-		{{ {false, true, false}, {false, false, false}, {false, false, false} }}
-	}};
-	std::array<std::array<std::array<bool, 3>, 3>, 3> form2_l =
-	{{
-		{{ {true, true, true}, {false, false, false}, {false, false, false} }},
-		{{ {false, true, false}, {false, false, false}, {false, false, false} }},
-		{{ {false, false, false}, {false, false, false}, {false, false, false} }}
-	}};
-	std::array<std::array<std::array<bool, 3>, 3>, 3> form3_l =
-	{{
-		{{ {false, true, false}, {false, false, false}, {false, false, false} }},
-		{{ {true, true, true}, {false, false, false}, {false, false, false} }},
-		{{ {false, false, false}, {false, false, false}, {false, false, false} }}
-	}};
-	std::array<std::array<std::array<bool, 3>, 3>, 3> form4_l =
-	{{
-		{{ {true, false, false}, {false, false, false}, {false, false, false} }},
-		{{ {true, true, false}, {false, false, false}, {false, false, false} }},
-		{{ {true, false, false}, {false, false, false}, {false, false, false} }}
-	}};
-	BlocModel model_l({BlocForm(form_l), BlocForm(form2_l), BlocForm(form3_l), BlocForm(form4_l)}, "CubeYellow");
-	this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(model_l, {5,5,0}));
+	std::list<std::list<pattern_t>> data_l = readData(_graphic.getResourcePath()+"/bloc/models.txt");
+
+	std::vector<BlocModel *> models_l;
+	std::vector<std::string> resources_l = {"CubeGreen", "CubeYellow", "CubeRed"};
+
+	for(std::list<pattern_t> const & modelData_l : data_l)
+	{
+		std::vector<BlocForm> forms_l;
+		for(pattern_t const & pattern_l : modelData_l)
+		{
+			forms_l.push_back(BlocForm(pattern_l));
+		}
+		for(std::string const &res_l : resources_l)
+		{
+			models_l.push_back(new BlocModel(forms_l, res_l));
+		}
+	}
+	this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(*models_l[0], {5,5,0}));
 
 	_graphic.registerMessage(new NewSceneMessage("main", "root", {-5.,2.,-20.}));
 	_graphic.registerMessage(new NewLightMessage(&light_l, "main", {1., 1., 1.}, {-1, -1, -1}, LightType::Directional));
@@ -132,7 +125,7 @@ void BlocEngine::run()
 				this->BlocMessageHandler::registerMessage(new FreezeBlocMessage(_currentBloc));
 				_currentBloc = nullptr;
 				// Spawn next one
-				this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(model_l, {5,5,0}));
+				this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(*models_l[rand()%models_l.size()], {5,5,0}));
 				// Reset speed
 				_speed = false;
 			}
@@ -152,6 +145,10 @@ void BlocEngine::run()
 	for(GraphicEntity* ent_l : borders_l)
 	{
 		delete ent_l;
+	}
+	for(BlocModel *model_l : models_l)
+	{
+		delete model_l;
 	}
 	_graphic.tearDown();
 }
