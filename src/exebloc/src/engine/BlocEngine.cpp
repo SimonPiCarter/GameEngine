@@ -163,6 +163,7 @@ void BlocEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 	switch( evt.type )
 	{
 	case SDL_KEYDOWN:
+		break;
 	case SDL_KEYUP:
 		if(evt.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 		{
@@ -196,6 +197,10 @@ void BlocEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 			{
 				this->BlocMessageHandler::registerMessage(new RotateBlocMessage(_currentBloc));
 			}
+		}
+		if (evt.key.keysym.scancode == SDL_SCANCODE_S)
+		{
+			_speed = !_speed;
 		}
 		break;
 	case SDL_QUIT:
