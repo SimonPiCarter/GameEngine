@@ -1,9 +1,10 @@
 #include "Bloc.h"
 
 #include <cmath>
+#include <cassert>
 
 Bloc::Bloc(BlocModel const &model_p, std::array<unsigned long, 3> const &position_p, double level_p)
-	: _model(model_p), _position(position_p), _level(level_p)
+	: _model(model_p), _position(position_p), _level(level_p), _index(0)
 {
 	for(size_t i = 0 ; i < 3 ; ++ i)
 	{
@@ -40,6 +41,21 @@ void Bloc::setY(unsigned long y)
 BlocModel const &Bloc::getModel() const
 {
 	return _model;
+}
+
+/// @brief current form getter
+BlocForm const &Bloc::getForm() const
+{
+	return _model.getForm(_index);
+}
+void Bloc::setFormIndex(size_t index_p)
+{
+	assert(_model.getForms().size() > index_p);
+	_index = index_p;
+}
+size_t const &Bloc::getFormIndex() const
+{
+	return _index;
 }
 
 /// @brief _position getter

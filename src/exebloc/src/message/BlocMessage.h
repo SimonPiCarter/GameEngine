@@ -71,3 +71,18 @@ public:
 private:
 	Bloc * const _bloc;
 };
+
+class RotateBlocMessage : public BlocMessage
+{
+public:
+	RotateBlocMessage(Bloc * bloc_p);
+
+	/// @brief _bloc getter
+	Bloc * getBloc() const;
+
+	/// @brief visitor method
+	virtual void visit(BlocMessageHandler &handler_p);
+
+private:
+	Bloc * const _bloc;
+};

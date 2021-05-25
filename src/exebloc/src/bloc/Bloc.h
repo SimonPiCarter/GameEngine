@@ -23,6 +23,12 @@ public:
 	/// @brief _model getter
 	BlocModel const &getModel() const;
 
+	/// @brief current form getter
+	BlocForm const &getForm() const;
+
+	void setFormIndex(size_t index_p);
+	size_t const &getFormIndex() const;
+
 	/// @brief _position getter
 	std::array<unsigned long, 3> const &getPosition() const;
 
@@ -41,4 +47,6 @@ protected:
 	double _level;
 	/// @brief the pointers to GraphicEntity (used to load the bloc in the map)
 	std::array<std::array<std::array<GraphicEntity *, 3>, 3>, 3> _entities;
+	/// @brief current form index
+	size_t _index;
 };

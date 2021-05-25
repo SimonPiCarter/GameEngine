@@ -9,6 +9,7 @@ add_executable(bloc)
 target_sources(bloc
 	PRIVATE
 	src/bloc/Bloc.cpp
+	src/bloc/BlocForm.cpp
 	src/bloc/BlocMap.cpp
 	src/bloc/BlocModel.cpp
 	src/engine/BlocEngine.cpp

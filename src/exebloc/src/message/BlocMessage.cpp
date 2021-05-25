@@ -39,3 +39,15 @@ void FreezeBlocMessage::visit(BlocMessageHandler &handler_p)
 {
 	handler_p.visitFreezeBloc(*this);
 }
+
+RotateBlocMessage::RotateBlocMessage(Bloc * bloc_p) : _bloc(bloc_p) {}
+
+Bloc * RotateBlocMessage::getBloc() const
+{
+	return _bloc;
+}
+
+void RotateBlocMessage::visit(BlocMessageHandler &handler_p)
+{
+	handler_p.visitRotateBloc(*this);
+}

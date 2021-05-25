@@ -33,4 +33,6 @@ private:
 	Bloc * _currentBloc = nullptr;
 
 	BlocMap _map;
+
+	bool _speed = false;
 };

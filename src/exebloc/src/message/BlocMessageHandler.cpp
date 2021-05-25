@@ -2,6 +2,7 @@
 
 #include "bloc/Bloc.h"
 #include "message/entity/DestroyGraphicEntityMessage.h"
+#include "message/entity/MoveGraphicEntityMessage.h"
 #include "engine/BlocEngine.h"
 #include "engine/GraphicEngine.h"
 
@@ -33,9 +34,10 @@ void BlocMessageHandler::visitSpawnBloc(SpawnBlocMessage const &msg_p)
 
 	GraphicEngine &graphic_l(_engine->getGraphic());
 
-	std::array<std::array<std::array<bool, 3>, 3>, 3> const & form_l = bloc_l->getModel().getForm();
+	std::array<std::array<std::array<bool, 3>, 3>, 3> const & form_l = bloc_l->getForm().getForm();
 
-	graphic_l.registerMessage(new NewSceneMessage("currentBloc", "main", {msg_p.getPosition()[0], msg_p.getPosition()[1], msg_p.getPosition()[2]}));
+	graphic_l.registerMessage(new NewSceneMessage("currentBloc", "main",
+		{double(msg_p.getPosition()[0]), double(msg_p.getPosition()[1]), double(msg_p.getPosition()[2])}));
 	for(size_t i = 0 ; i < 3 ; ++ i)
 	{
 		for(size_t j = 0 ; j < 3 ; ++ j)
@@ -47,7 +49,8 @@ void BlocMessageHandler::visitSpawnBloc(SpawnBlocMessage const &msg_p)
 					continue;
 				}
 				GraphicEntity * entity_l = new GraphicEntity();
-				graphic_l.registerMessage(new NewGraphicEntityMessage(entity_l, bloc_l->getModel().getMaterial(), {i,j,k}, {0.5,0.5,0.5}, "currentBloc"));
+				graphic_l.registerMessage(new NewGraphicEntityMessage(entity_l, bloc_l->getModel().getMaterial()
+					, {double(i),double(j),double(k)}, {0.5,0.5,0.5}, "currentBloc"));
 				bloc_l->getEntities()[i][j][k] = entity_l;
 			}
 		}
@@ -75,3 +78,94 @@ void BlocMessageHandler::visitFreezeBloc(FreezeBlocMessage const &msg_p)
 	delete bloc_l;
 }
 
+namespace
+{
+
+	struct GraphicData
+	{
+		std::array<size_t, 3> old_pos;
+		GraphicEntity * entity;
+	};
+
+	std::list<GraphicData> getData(Bloc const *bloc_p)
+	{
+		std::list<GraphicData> list_l;
+		for(size_t i = 0 ; i < 3 ; ++ i)
+		{
+			for(size_t j = 0 ; j < 3 ; ++ j)
+			{
+				for(size_t k = 0 ; k < 3 ; ++ k)
+				{
+					if(bloc_p->getEntities()[i][j][k])
+					{
+						// store entity with old position
+						list_l.push_back({{i,j,k}, bloc_p->getEntities()[i][j][k]});
+					}
+				}
+			}
+		}
+		return list_l;
+	}
+
+	void resetEntities(Bloc * bloc_p)
+	{
+		for(size_t i = 0 ; i < 3 ; ++ i)
+		{
+			for(size_t j = 0 ; j < 3 ; ++ j)
+			{
+				for(size_t k = 0 ; k < 3 ; ++ k)
+				{
+					bloc_p->getEntities()[i][j][k] = nullptr;
+				}
+			}
+		}
+	}
+}
+void BlocMessageHandler::visitRotateBloc(RotateBlocMessage const &msg_p)
+{
+	Bloc * bloc_l = msg_p.getBloc();
+	size_t nextIndex_l = (bloc_l->getFormIndex() + 1) % bloc_l->getModel().getForms().size();
+
+	bool found_l = false;
+	// While we have not found a valid index
+	while(!found_l && bloc_l->getFormIndex() != nextIndex_l)
+	{
+		if(!_engine->getMap().checkFreeze(bloc_l, &bloc_l->getModel().getForms().at(nextIndex_l)))
+		{
+			found_l = true;
+		} else
+		{
+			nextIndex_l = (nextIndex_l + 1) % bloc_l->getModel().getForms().size();
+		}
+	}
+
+	bloc_l->setFormIndex(nextIndex_l);
+	BlocForm const &newForm_l = bloc_l->getForm();
+	// update graphic
+	std::list<GraphicData> list_l = getData(bloc_l);
+	resetEntities(bloc_l);
+	for(size_t i = 0 ; i < 3 ; ++ i)
+	{
+		for(size_t j = 0 ; j < 3 ; ++ j)
+		{
+			for(size_t k = 0 ; k < 3 ; ++ k)
+			{
+				if(newForm_l.getForm()[i][j][k])
+				{
+					// store back in bloc
+					GraphicData data_l = list_l.front();
+					list_l.pop_front();
+					bloc_l->getEntities()[i][j][k] = data_l.entity;
+					// move bloc
+					// IMPORTANT to use relative transformation to avoid desync between level and position
+					_engine->getGraphic().registerMessage(new MoveGraphicEntityMessage(data_l.entity,
+						{
+							double(i) - double(data_l.old_pos[0]),
+							double(j) - double(data_l.old_pos[1]),
+							double(k) - double(data_l.old_pos[2]),
+						}));
+				}
+			}
+		}
+	}
+}

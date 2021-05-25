@@ -17,6 +17,8 @@ public:
 
 	void visitFreezeBloc(FreezeBlocMessage const &msg_p);
 
+	void visitRotateBloc(RotateBlocMessage const &msg_p);
+
 private:
 	BlocEngine *_engine;
 

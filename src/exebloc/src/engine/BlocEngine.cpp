@@ -46,7 +46,25 @@ void BlocEngine::run()
 		{{ {true, true, false}, {false, false, false}, {false, false, false} }},
 		{{ {false, true, false}, {false, false, false}, {false, false, false} }}
 	}};
-	BlocModel model_l(form_l, "CubeYellow");
+	std::array<std::array<std::array<bool, 3>, 3>, 3> form2_l =
+	{{
+		{{ {true, true, true}, {false, false, false}, {false, false, false} }},
+		{{ {false, true, false}, {false, false, false}, {false, false, false} }},
+		{{ {false, false, false}, {false, false, false}, {false, false, false} }}
+	}};
+	std::array<std::array<std::array<bool, 3>, 3>, 3> form3_l =
+	{{
+		{{ {false, true, false}, {false, false, false}, {false, false, false} }},
+		{{ {true, true, true}, {false, false, false}, {false, false, false} }},
+		{{ {false, false, false}, {false, false, false}, {false, false, false} }}
+	}};
+	std::array<std::array<std::array<bool, 3>, 3>, 3> form4_l =
+	{{
+		{{ {true, false, false}, {false, false, false}, {false, false, false} }},
+		{{ {true, true, false}, {false, false, false}, {false, false, false} }},
+		{{ {true, false, false}, {false, false, false}, {false, false, false} }}
+	}};
+	BlocModel model_l({BlocForm(form_l), BlocForm(form2_l), BlocForm(form3_l), BlocForm(form4_l)}, "CubeYellow");
 	this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(model_l, {5,5,0}));
 
 	_graphic.registerMessage(new NewSceneMessage("main", "root", {-5.,-5.,-20.}));
@@ -60,11 +78,11 @@ void BlocEngine::run()
 	for(size_t i = 0 ; i < 9 ; ++i)
 	{
 		borders_l.push_back(new GraphicEntity());
-		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {i, 5, 9}, {0.5,0.5,0.5}, "main"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {double(i), 5, 9}, {0.5,0.5,0.5}, "main"));
 		borders_l.push_back(new GraphicEntity());
-		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {-1, 5, i}, {0.5,0.5,0.5}, "main"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {-1, 5, double(i)}, {0.5,0.5,0.5}, "main"));
 		borders_l.push_back(new GraphicEntity());
-		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {9, 5, i}, {0.5,0.5,0.5}, "main"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {9, 5, double(i)}, {0.5,0.5,0.5}, "main"));
 	}
 
 	_graphic.registerMessage(new RotateSceneMessage("main", {90, 0, 0}));
@@ -91,7 +109,7 @@ void BlocEngine::run()
 			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		}
 
-		double move_l = timeSinceLast_l;
+		double move_l = timeSinceLast_l * (_speed ? 10. : 1.);
 		// Update bloc
 		if(_currentBloc)
 		{
@@ -105,9 +123,9 @@ void BlocEngine::run()
 				// adjust back bloc
 				_graphic.registerMessage(new MoveSceneMessage(
 					"currentBloc", {
-						_currentBloc->getPosition()[0],
-						_currentBloc->getPosition()[1],
-						std::min<unsigned long>(9, _currentBloc->getPosition()[2] - 1)}
+						double(_currentBloc->getPosition()[0]),
+						double(_currentBloc->getPosition()[1]),
+						double(std::min<unsigned long>(9, _currentBloc->getPosition()[2] - 1))}
 					, false));
 				_currentBloc->updateLevel(_currentBloc->getPosition()[2]);
 
@@ -116,6 +134,8 @@ void BlocEngine::run()
 				_currentBloc = nullptr;
 				// Spawn next one
 				this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(model_l, {5,5,0}));
+				// Reset speed
+				_speed = false;
 			}
 		}
 		if(_map.checkLose())
@@ -152,7 +172,7 @@ void BlocEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 		{
 			if(_currentBloc)
 			{
-				if(_map.checkPosition(_currentBloc, {_currentBloc->getPosition()[0]+1, _currentBloc->getPosition()[1], _currentBloc->getPosition()[2]}))
+				if(_map.checkPosition(_currentBloc->getForm(), {_currentBloc->getPosition()[0]+1, _currentBloc->getPosition()[1], _currentBloc->getPosition()[2]}))
 				{
 					_graphic.registerMessage(new MoveSceneMessage("currentBloc", {1.,0.,0.}));
 					_currentBloc->setX(_currentBloc->getPosition()[0]+1);
@@ -163,11 +183,18 @@ void BlocEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 		{
 			if(_currentBloc)
 			{
-				if(_map.checkPosition(_currentBloc, {_currentBloc->getPosition()[0]-1, _currentBloc->getPosition()[1], _currentBloc->getPosition()[2]}))
+				if(_map.checkPosition(_currentBloc->getForm(), {_currentBloc->getPosition()[0]-1, _currentBloc->getPosition()[1], _currentBloc->getPosition()[2]}))
 				{
 					_graphic.registerMessage(new MoveSceneMessage("currentBloc", {-1.,0.,0.}));
 					_currentBloc->setX(_currentBloc->getPosition()[0]-1);
 				}
+			}
+		}
+		if (evt.key.keysym.scancode == SDL_SCANCODE_R)
+		{
+			if(_currentBloc)
+			{
+				this->BlocMessageHandler::registerMessage(new RotateBlocMessage(_currentBloc));
 			}
 		}
 		break;

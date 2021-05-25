@@ -5,6 +5,7 @@
 
 class Bloc;
 class BlocEngine;
+class BlocForm;
 class GraphicEntity;
 
 class BlocMap
@@ -16,10 +17,10 @@ public:
 	void addBloc(GraphicEntity *entity_p, std::array<size_t, 3> const &pos_p);
 
 	/// @brief check that position is free for bloc at given position
-	bool checkPosition(Bloc * bloc_p, std::array<unsigned long, 3> const &position_p) const;
+	bool checkPosition(BlocForm const &bloc_p, std::array<unsigned long, 3> const &position_p) const;
 
-	/// @brief check if the bloc has to freeze or not
-	bool checkFreeze(Bloc * bloc_p) const;
+	/// @brief check if the bloc has to freeze or not (form_p is optional)
+	bool checkFreeze(Bloc * bloc_p, BlocForm const *form_p=nullptr) const;
 
 	/// @brief check if the game is over
 	bool checkLose() const;
