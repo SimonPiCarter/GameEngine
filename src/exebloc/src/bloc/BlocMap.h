@@ -8,6 +8,8 @@ class BlocEngine;
 class BlocForm;
 class GraphicEntity;
 
+#define MAP_SIZE 20
+
 class BlocMap
 {
 public:
@@ -31,7 +33,7 @@ public:
 
 protected:
 	/// @brief the material for each bloc in the map (if nullptr no bloc)
-	std::array<std::array<std::array<GraphicEntity *, 9>, 9>, 10> _map;
+	std::array<std::array<std::array<GraphicEntity *, 9>, 9>, MAP_SIZE> _map;
 
 	/// @brief pointer to the engine to send messages
 	BlocEngine * const _engine;

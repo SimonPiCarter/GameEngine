@@ -67,18 +67,17 @@ void BlocEngine::run()
 	BlocModel model_l({BlocForm(form_l), BlocForm(form2_l), BlocForm(form3_l), BlocForm(form4_l)}, "CubeYellow");
 	this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(model_l, {5,5,0}));
 
-	_graphic.registerMessage(new NewSceneMessage("main", "root", {-5.,-5.,-20.}));
+	_graphic.registerMessage(new NewSceneMessage("main", "root", {-5.,2.,-20.}));
 	_graphic.registerMessage(new NewLightMessage(&light_l, "main", {1., 1., 1.}, {-1, -1, -1}, LightType::Directional));
 
 	std::vector<GraphicEntity *> borders_l;
-	borders_l.push_back(new GraphicEntity());
-	_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {-1, 5, 9}, {0.5,0.5,0.5}, "main"));
-	borders_l.push_back(new GraphicEntity());
-	_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {9, 5, 9}, {0.5,0.5,0.5}, "main"));
-	for(size_t i = 0 ; i < 9 ; ++i)
+	for(long i = -1 ; i <= 9 ; ++i)
 	{
 		borders_l.push_back(new GraphicEntity());
-		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {double(i), 5, 9}, {0.5,0.5,0.5}, "main"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {double(i), 5, 19}, {0.5,0.5,0.5}, "main"));
+	}
+	for(size_t i = 0 ; i < 19 ; ++i)
+	{
 		borders_l.push_back(new GraphicEntity());
 		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {-1, 5, double(i)}, {0.5,0.5,0.5}, "main"));
 		borders_l.push_back(new GraphicEntity());
@@ -125,7 +124,7 @@ void BlocEngine::run()
 					"currentBloc", {
 						double(_currentBloc->getPosition()[0]),
 						double(_currentBloc->getPosition()[1]),
-						double(std::min<unsigned long>(9, _currentBloc->getPosition()[2] - 1))}
+						double(std::min<unsigned long>(MAP_SIZE-1, _currentBloc->getPosition()[2] - 1))}
 					, false));
 				_currentBloc->updateLevel(_currentBloc->getPosition()[2]);
 

@@ -14,7 +14,7 @@ BlocMap::BlocMap(BlocEngine *engine_p)
 	{
 		for(size_t j = 0 ; j < 9 ; ++ j)
 		{
-			for(size_t k = 0 ; k < 10 ; ++ k)
+			for(size_t k = 0 ; k < MAP_SIZE ; ++ k)
 			{
 				_map[i][j][k] = nullptr;
 			}
@@ -84,7 +84,7 @@ bool BlocMap::checkPosition(BlocForm const & bloc_p, std::array<unsigned long, 3
 
 	if(position_p[0] + bloc_p.getMaxCorner()[0] >= 9
 	|| position_p[1] + bloc_p.getMaxCorner()[1] >= 9
-	|| position_p[2] + bloc_p.getMaxCorner()[2] >= 10)
+	|| position_p[2] + bloc_p.getMaxCorner()[2] >= MAP_SIZE)
 	{
 		return false;
 	}
@@ -113,7 +113,7 @@ bool BlocMap::checkFreeze(Bloc * bloc_p, BlocForm const *form_p) const
 	BlocForm const &form_l = form_p ? *form_p : bloc_p->getForm();
 	// We are in between two pos therefore we need to check current level + under level
 	bool checkUnder_l = int(bloc_p->getLevel()) == int(bloc_p->getLevel()+0.05);
-	return bloc_p->getLevel() + form_l.getMaxCorner()[2] > 9.95
+	return bloc_p->getLevel() + form_l.getMaxCorner()[2] > MAP_SIZE - 0.05
 		|| !checkPosition(form_l, bloc_p->getPosition())
 		|| (checkUnder_l && !checkPosition(form_l, {bloc_p->getPosition()[0], bloc_p->getPosition()[1], bloc_p->getPosition()[2]+1}));
 }
@@ -121,7 +121,7 @@ bool BlocMap::checkFreeze(Bloc * bloc_p, BlocForm const *form_p) const
 /// @brief check if the game is over
 bool BlocMap::checkLose() const
 {
-	// check 10th level for any bloc
+	// check upper level for any bloc
 	for(size_t i = 0; i < 9; ++i)
 	{
 		for(size_t j = 0; j < 9; ++j)
