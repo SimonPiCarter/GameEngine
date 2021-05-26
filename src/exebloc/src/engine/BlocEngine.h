@@ -9,10 +9,13 @@
 #include "gui/RichLabel.h"
 
 #include "message/BlocMessageHandler.h"
+#include "BlocType.h"
 
 #include "bloc/BlocMap.h"
 
 class Bloc;
+
+std::string getScene(BlocType type_p);
 
 class BlocEngine : public GameEngine, public BlocMessageHandler
 {
@@ -26,11 +29,15 @@ public:
 
 	GraphicEngine & getGraphic() { return _graphic; }
 
-	void setCurrentBloc(Bloc *bloc_p) { _currentBloc = bloc_p; }
+	void setBloc(BlocType const &type_p, Bloc *bloc_p) { _mapBlocs[type_p] = bloc_p; }
 	BlocMap & getMap() { return _map; }
 
+	Bloc * getCurrentBloc() { return _mapBlocs[BlocType::CURRENT_BLOC]; }
+	Bloc * getNextBloc() { return _mapBlocs[BlocType::NEXT_BLOC]; }
+
 private:
-	Bloc * _currentBloc = nullptr;
+	std::unordered_map<BlocType, Bloc *> _mapBlocs;
+	BlocModel * _nextModel = nullptr;
 
 	BlocMap _map;
 

@@ -9,6 +9,18 @@
 #include "bloc/BlocModel.h"
 #include "utils/DataReader.h"
 
+std::string getScene(BlocType type_p)
+{
+	switch(type_p)
+	{
+		case BlocType::CURRENT_BLOC:
+			return "currentBloc";
+		case BlocType::NEXT_BLOC:
+			return "nextBloc";
+	}
+	throw std::logic_error("unknown type");
+}
+
 BlocEngine::BlocEngine(std::string const &path_p)
 	: GameEngine(path_p)
 	, BlocMessageHandler(this)
@@ -63,6 +75,7 @@ void BlocEngine::run()
 	_graphic.registerMessage(new NewSceneMessage("main", "root", {-5.,2.,-20.}));
 	_graphic.registerMessage(new NewLightMessage(&light_l, "main", {1., 1., 1.}, {-1, -1, -1}, LightType::Directional));
 
+	/// BORDERS
 	std::vector<GraphicEntity *> borders_l;
 	for(long i = -1 ; i <= 9 ; ++i)
 	{
@@ -76,6 +89,10 @@ void BlocEngine::run()
 		borders_l.push_back(new GraphicEntity());
 		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {9, 5, double(i)}, {0.5,0.5,0.5}, "main"));
 	}
+
+	// NEXT BLOC
+	_nextModel = models_l[rand()%models_l.size()];
+	this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(*_nextModel, {15,10,0}, BlocType::NEXT_BLOC));
 
 	_graphic.registerMessage(new RotateSceneMessage("main", {90, 0, 0}));
 
@@ -103,32 +120,42 @@ void BlocEngine::run()
 
 		double move_l = timeSinceLast_l * (_speed ? 10. : 1.);
 		// Update bloc
-		if(_currentBloc)
+		if(getCurrentBloc())
 		{
 			// update freefall movement of bloc
-			_currentBloc->updateLevel(_currentBloc->getLevel()+move_l);
-			_graphic.registerMessage(new MoveSceneMessage("currentBloc", {0.,0.,move_l}));
+			getCurrentBloc()->updateLevel(getCurrentBloc()->getLevel()+move_l);
+			_graphic.registerMessage(new MoveSceneMessage(getScene(BlocType::CURRENT_BLOC), {0.,0.,move_l}));
 
 			// check for freeze
-			if(_map.checkFreeze(_currentBloc))
+			if(_map.checkFreeze(getCurrentBloc()))
 			{
 				// adjust back bloc
 				_graphic.registerMessage(new MoveSceneMessage(
-					"currentBloc", {
-						double(_currentBloc->getPosition()[0]),
-						double(_currentBloc->getPosition()[1]),
-						double(std::min<unsigned long>(MAP_SIZE-1, _currentBloc->getPosition()[2] - 1))}
+					getScene(BlocType::CURRENT_BLOC), {
+						double(getCurrentBloc()->getPosition()[0]),
+						double(getCurrentBloc()->getPosition()[1]),
+						double(std::min<unsigned long>(MAP_SIZE-1, getCurrentBloc()->getPosition()[2] - 1))}
 					, false));
-				_currentBloc->updateLevel(_currentBloc->getPosition()[2]);
+				getCurrentBloc()->updateLevel(getCurrentBloc()->getPosition()[2]);
 
 				// Freeze current bloc
-				this->BlocMessageHandler::registerMessage(new FreezeBlocMessage(_currentBloc));
-				_currentBloc = nullptr;
+				this->BlocMessageHandler::registerMessage(new FreezeBlocMessage(getCurrentBloc()));
+				setBloc(BlocType::CURRENT_BLOC, nullptr);
 				// Spawn next one
-				this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(*models_l[rand()%models_l.size()], {5,5,0}));
+				this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(*this->_nextModel, {5,5,0}));
+				// update next bloc
+				this->_nextModel = models_l[rand()%models_l.size()];
+				_graphic.registerMessage(new DestroySceneMessage(getScene(BlocType::NEXT_BLOC)));
+				delete getNextBloc();
+				setBloc(BlocType::NEXT_BLOC, nullptr);
+				this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(*_nextModel, {15,10,0}, BlocType::NEXT_BLOC));
 				// Reset speed
 				_speed = false;
 			}
+		}
+		if(getNextBloc())
+		{
+			_graphic.registerMessage(new RotateSceneMessage(getScene(BlocType::NEXT_BLOC), {0.,0.,timeSinceLast_l*45.}));
 		}
 		if(_map.checkLose())
 		{
@@ -167,31 +194,31 @@ void BlocEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 		}
 		if (evt.key.keysym.scancode == SDL_SCANCODE_RIGHT)
 		{
-			if(_currentBloc)
+			if(getCurrentBloc())
 			{
-				if(_map.checkPosition(_currentBloc->getForm(), {_currentBloc->getPosition()[0]+1, _currentBloc->getPosition()[1], _currentBloc->getPosition()[2]}))
+				if(_map.checkPosition(getCurrentBloc()->getForm(), {getCurrentBloc()->getPosition()[0]+1, getCurrentBloc()->getPosition()[1], getCurrentBloc()->getPosition()[2]}))
 				{
-					_graphic.registerMessage(new MoveSceneMessage("currentBloc", {1.,0.,0.}));
-					_currentBloc->setX(_currentBloc->getPosition()[0]+1);
+					_graphic.registerMessage(new MoveSceneMessage(getScene(BlocType::CURRENT_BLOC), {1.,0.,0.}));
+					getCurrentBloc()->setX(getCurrentBloc()->getPosition()[0]+1);
 				}
 			}
 		}
 		if (evt.key.keysym.scancode == SDL_SCANCODE_LEFT)
 		{
-			if(_currentBloc)
+			if(getCurrentBloc())
 			{
-				if(_map.checkPosition(_currentBloc->getForm(), {_currentBloc->getPosition()[0]-1, _currentBloc->getPosition()[1], _currentBloc->getPosition()[2]}))
+				if(_map.checkPosition(getCurrentBloc()->getForm(), {getCurrentBloc()->getPosition()[0]-1, getCurrentBloc()->getPosition()[1], getCurrentBloc()->getPosition()[2]}))
 				{
-					_graphic.registerMessage(new MoveSceneMessage("currentBloc", {-1.,0.,0.}));
-					_currentBloc->setX(_currentBloc->getPosition()[0]-1);
+					_graphic.registerMessage(new MoveSceneMessage(getScene(BlocType::CURRENT_BLOC), {-1.,0.,0.}));
+					getCurrentBloc()->setX(getCurrentBloc()->getPosition()[0]-1);
 				}
 			}
 		}
 		if (evt.key.keysym.scancode == SDL_SCANCODE_R)
 		{
-			if(_currentBloc)
+			if(getCurrentBloc())
 			{
-				this->BlocMessageHandler::registerMessage(new RotateBlocMessage(_currentBloc));
+				this->BlocMessageHandler::registerMessage(new RotateBlocMessage(getCurrentBloc()));
 			}
 		}
 		if (evt.key.keysym.scancode == SDL_SCANCODE_S)

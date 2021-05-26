@@ -7,8 +7,8 @@ void PopBlocMessage::visit(BlocMessageHandler &handler_p)
 	handler_p.visitPopBloc(*this);
 }
 
-SpawnBlocMessage::SpawnBlocMessage(BlocModel const &model_p, std::array<unsigned long, 3> const &position_p)
-	: _model(model_p), _position(position_p)
+SpawnBlocMessage::SpawnBlocMessage(BlocModel const &model_p, std::array<unsigned long, 3> const &position_p, BlocType const &type_p)
+	: _model(model_p), _position(position_p), _type(type_p)
 {}
 
 /// @brief _model getter
@@ -21,6 +21,12 @@ BlocModel const &SpawnBlocMessage::getModel() const
 std::array<unsigned long, 3> const &SpawnBlocMessage::getPosition() const
 {
 	return _position;
+}
+
+/// @brief _type getter
+BlocType SpawnBlocMessage::getType() const
+{
+	return _type;
 }
 
 void SpawnBlocMessage::visit(BlocMessageHandler &handler_p)

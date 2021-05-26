@@ -102,6 +102,22 @@ void GraphicMessageHandler::visitDestroyGraphicEntity(DestroyGraphicEntityMessag
 	parentNode_l->removeAndDestroyChild(node_l);
 }
 
+void GraphicMessageHandler::visitLinkGraphicEntity(LinkGraphicEntityMessage const &msg_p)
+{
+	assert(msg_p.getEntity());
+	assert(msg_p.getEntity()->getItem());
+	// destroy attached object from parent node (which only contains this entity)
+	Ogre::SceneNode * node_l = msg_p.getEntity()->getItem()->getParentSceneNode();
+	// get parent node if any
+	Ogre::SceneNode * parentNode_l = node_l->getParentSceneNode();
+	if(parentNode_l)
+	{
+		parentNode_l->removeChild(node_l);
+	}
+	Ogre::SceneNode * newParent_l = _engine->getMapSceneNode()[msg_p.getScene()];
+	newParent_l->addChild(node_l);
+}
+
 void GraphicMessageHandler::visitMoveGraphicEntity(MoveGraphicEntityMessage const &msg_p)
 {
 	assert(msg_p.getEntity());
@@ -228,12 +244,19 @@ void GraphicMessageHandler::visitDestroyScene(DestroySceneMessage const &msg_p)
 	Ogre::SceneNode * sceneNode_l = _engine->getMapSceneNode()[msg_p.getId()];
 	assert(sceneNode_l);
 
-	destroyAttachedObject(sceneNode_l);
-
 	Ogre::SceneNode * parentNode_l = sceneNode_l->getParentSceneNode();
 	assert(parentNode_l);
-	// Destroy scene and all children
-	parentNode_l->removeAndDestroyChild(sceneNode_l);
+
+	if(msg_p.getDestroyChildren())
+	{
+		destroyAttachedObject(sceneNode_l);
+		// Destroy scene and all children
+		parentNode_l->removeAndDestroyChild(sceneNode_l);
+	}
+	else
+	{
+		parentNode_l->removeChild(sceneNode_l);
+	}
 	// remove from map of scenes
 	_engine->getMapSceneNode().erase(_engine->getMapSceneNode().find(msg_p.getId()));
 }

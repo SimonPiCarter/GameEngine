@@ -10,6 +10,7 @@
 // entity
 #include "entity/AnimateGraphicEntityMessage.h"
 #include "entity/DestroyGraphicEntityMessage.h"
+#include "entity/LinkGraphicEntityMessage.h"
 #include "entity/MoveGraphicEntityMessage.h"
 #include "entity/NewGraphicEntityMessage.h"
 #include "entity/RotateGraphicEntityMessage.h"
@@ -47,6 +48,7 @@ public:
 	// Entity
 	void visitAnimateGraphicEntity(AnimateGraphicEntityMessage const &msg_p);
 	void visitDestroyGraphicEntity(DestroyGraphicEntityMessage const &msg_p);
+	void visitLinkGraphicEntity(LinkGraphicEntityMessage const &msg_p);
 	void visitMoveGraphicEntity(MoveGraphicEntityMessage const &msg_p);
 	void visitNewGraphicEntity(NewGraphicEntityMessage const &msg_p);
 	void visitRotateGraphicEntity(RotateGraphicEntityMessage const &msg_p);

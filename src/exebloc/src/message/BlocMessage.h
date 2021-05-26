@@ -3,6 +3,8 @@
 #include <array>
 #include <set>
 
+#include "engine/BlocType.h"
+
 class BlocMessageHandler;
 class GraphicEntity;
 class Bloc;
@@ -41,7 +43,7 @@ private:
 class SpawnBlocMessage : public BlocMessage
 {
 public:
-	SpawnBlocMessage(BlocModel const &model_p, std::array<unsigned long, 3> const &position_p);
+	SpawnBlocMessage(BlocModel const &model_p, std::array<unsigned long, 3> const &position_p, BlocType const &type_p=BlocType::CURRENT_BLOC);
 
 	/// @brief _model getter
 	BlocModel const &getModel() const;
@@ -49,12 +51,16 @@ public:
 	/// @brief _position getter
 	std::array<unsigned long, 3> const &getPosition() const;
 
+	/// @brief _type getter
+	BlocType getType() const;
+
 	/// @brief visitor method
 	virtual void visit(BlocMessageHandler &handler_p);
 
 private:
 	BlocModel const & _model;
 	std::array<unsigned long, 3> const _position;
+	BlocType const _type;
 };
 
 class FreezeBlocMessage : public BlocMessage

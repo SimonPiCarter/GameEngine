@@ -1,8 +1,6 @@
 #include "BlocMessageHandler.h"
 
 #include "bloc/Bloc.h"
-#include "message/entity/DestroyGraphicEntityMessage.h"
-#include "message/entity/MoveGraphicEntityMessage.h"
 #include "engine/BlocEngine.h"
 #include "engine/GraphicEngine.h"
 
@@ -30,13 +28,13 @@ void BlocMessageHandler::visitSpawnBloc(SpawnBlocMessage const &msg_p)
 {
 	// Create bloc
 	Bloc * bloc_l = new Bloc(msg_p.getModel(), msg_p.getPosition(), msg_p.getPosition()[2]);
-	_engine->setCurrentBloc(bloc_l);
+	_engine->setBloc(msg_p.getType(), bloc_l);
 
 	GraphicEngine &graphic_l(_engine->getGraphic());
 
 	std::array<std::array<std::array<bool, 3>, 3>, 3> const & form_l = bloc_l->getForm().getForm();
 
-	graphic_l.registerMessage(new NewSceneMessage("currentBloc", "main",
+	graphic_l.registerMessage(new NewSceneMessage(getScene(msg_p.getType()), "main",
 		{double(msg_p.getPosition()[0]), double(msg_p.getPosition()[1]), double(msg_p.getPosition()[2])}));
 	for(size_t i = 0 ; i < 3 ; ++ i)
 	{
@@ -50,7 +48,7 @@ void BlocMessageHandler::visitSpawnBloc(SpawnBlocMessage const &msg_p)
 				}
 				GraphicEntity * entity_l = new GraphicEntity();
 				graphic_l.registerMessage(new NewGraphicEntityMessage(entity_l, bloc_l->getModel().getMaterial()
-					, {double(i),double(j),double(k)}, {0.5,0.5,0.5}, "currentBloc"));
+					, {double(i),double(j),double(k)}, {0.5,0.5,0.5}, getScene(msg_p.getType())));
 				bloc_l->getEntities()[i][j][k] = entity_l;
 			}
 		}
@@ -59,6 +57,7 @@ void BlocMessageHandler::visitSpawnBloc(SpawnBlocMessage const &msg_p)
 
 void BlocMessageHandler::visitFreezeBloc(FreezeBlocMessage const &msg_p)
 {
+	GraphicEngine &graphic_l(_engine->getGraphic());
 	Bloc * bloc_l = msg_p.getBloc();
 	for(size_t i = 0 ; i < 3 ; ++ i)
 	{
