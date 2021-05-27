@@ -24,7 +24,10 @@ public:
 	RichLabel(std::vector<InfoLabel> const &content_p, double x, double y, double width, double height, float size_p, GraphicEngine &graphic_p);
 	~RichLabel();
 
+	void updateText(std::vector<InfoLabel> const &content_p);
+
 protected:
 	Colibri::ColibriManager * _manager;
 	Colibri::Window * _window;
+	Colibri::Label *_label;
 };

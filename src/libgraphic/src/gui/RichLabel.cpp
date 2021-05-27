@@ -27,33 +27,14 @@ RichLabel::RichLabel(std::vector<InfoLabel> const &content_p, double x, double y
 		ss_l<<info_l.text;
 	}
 
-	Colibri::Label *label_l = _manager->createWidget<Colibri::Label>(_window);
-	label_l->m_minSize = Ogre::Vector2( width, 0 );
-	label_l->setDefaultFontSize(size_p);
-	label_l->setText(ss_l.str());
-	label_l->sizeToFit(width);
-	layout_l->addCell(label_l);
+	_label = _manager->createWidget<Colibri::Label>(_window);
+	_label->m_minSize = Ogre::Vector2( width, 0 );
+	_label->sizeToFit(width);
+	_label->setDefaultFontSize(size_p);
+	layout_l->addCell(_label);
 
-	// add rich text
-	Colibri::RichTextVec richText_p;
-	size_t offset_l = 0;
-	for(InfoLabel const &info_l : content_p)
-	{
-		Colibri::RichText tmp_l = label_l->getDefaultRichText();
-		tmp_l.offset = offset_l;
-		tmp_l.length = info_l.text.size();
-		richText_p.push_back(tmp_l);
-		offset_l += info_l.text.size();
-	}
-	label_l->setRichText(richText_p, true);
+	updateText(content_p);
 
-	// Handle color
-	size_t idx_l = 0;
-	for(InfoLabel const &info_l : content_p)
-	{
-		label_l->setTextColour(Ogre::ColourValue(info_l.r/255.f, info_l.g/255.f, info_l.b/255.f), idx_l);
-		++idx_l;
-	}
 
 	layout_l->setAdjustableWindow(_window);
 	layout_l->m_hardMaxSize = Ogre::Vector2(width, height+(40*size_p/10));
@@ -68,4 +49,36 @@ RichLabel::RichLabel(std::vector<InfoLabel> const &content_p, double x, double y
 RichLabel::~RichLabel()
 {
 	_manager->destroyWidget(_window);
+}
+
+void RichLabel::updateText(std::vector<InfoLabel> const &content_p)
+{
+	std::stringstream ss_l;
+	for(InfoLabel const &info_l : content_p)
+	{
+		ss_l<<info_l.text;
+	}
+
+	_label->setText(ss_l.str());
+
+	// add rich text
+	Colibri::RichTextVec richText_p;
+	size_t offset_l = 0;
+	for(InfoLabel const &info_l : content_p)
+	{
+		Colibri::RichText tmp_l = _label->getDefaultRichText();
+		tmp_l.offset = offset_l;
+		tmp_l.length = info_l.text.size();
+		richText_p.push_back(tmp_l);
+		offset_l += info_l.text.size();
+	}
+	_label->setRichText(richText_p, true);
+
+	// Handle color
+	size_t idx_l = 0;
+	for(InfoLabel const &info_l : content_p)
+	{
+		_label->setTextColour(Ogre::ColourValue(info_l.r/255.f, info_l.g/255.f, info_l.b/255.f), idx_l);
+		++idx_l;
+	}
 }
