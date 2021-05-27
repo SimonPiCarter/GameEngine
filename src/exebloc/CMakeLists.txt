@@ -19,7 +19,7 @@ target_sources(bloc
 	src/demo.cpp
 )
 
-target_link_libraries(bloc PUBLIC engine)
+target_link_libraries(bloc PUBLIC engine Threads::Threads)
 
 target_include_directories (bloc
 PUBLIC

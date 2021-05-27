@@ -26,6 +26,9 @@ public:
 	virtual void init() override;
 	virtual void run() override;
 
+	void runGraphic();
+	void runLogic();
+
 	virtual void visitSDLEvent(SDLEventGameMessage const &msg_p) override;
 
 	GraphicEngine & getGraphic() { return _graphic; }
@@ -50,6 +53,7 @@ private:
 
 	double _score = 0.;
 
+	std::vector<BlocModel *> _model;
 	RichLabel * _labelScore = nullptr;
 	void updateLabelScore();
 };

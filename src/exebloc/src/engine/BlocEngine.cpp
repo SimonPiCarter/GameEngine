@@ -54,13 +54,10 @@ void BlocEngine::run()
 	contentScore_l.push_back({std::to_string(long(_score))+"\n", 255, 255, 255});
 	_labelScore = new RichLabel(contentScore_l, 20, 50, 400, 50, 10, _graphic);
 
-	Ogre::Window *renderWindow_l = _graphic.getRenderWindow();
-
 	GraphicEntity light_l;
 
 	std::list<std::list<pattern_t>> data_l = readData(_graphic.getResourcePath()+"/bloc/models.txt");
 
-	std::vector<BlocModel *> models_l;
 	std::vector<std::string> resources_l = {"CubeGreen", "CubeYellow", "CubeRed"};
 
 	for(std::list<pattern_t> const & modelData_l : data_l)
@@ -72,10 +69,10 @@ void BlocEngine::run()
 		}
 		for(std::string const &res_l : resources_l)
 		{
-			models_l.push_back(new BlocModel(forms_l, res_l));
+			_model.push_back(new BlocModel(forms_l, res_l));
 		}
 	}
-	this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(*models_l[0], {5,5,0}));
+	this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(*_model[0], {5,5,0}));
 
 	_graphic.registerMessage(new NewSceneMessage("main", "root", {-5.,2.,-20.}));
 	_graphic.registerMessage(new NewLightMessage(&light_l, "main", {1., 1., 1.}, {-1, -1, -1}, LightType::Directional));
@@ -96,12 +93,58 @@ void BlocEngine::run()
 	}
 
 	// NEXT BLOC
-	_nextModel = models_l[rand()%models_l.size()];
+	_nextModel = _model[rand()%_model.size()];
 	this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(*_nextModel, {15,10,0}, BlocType::NEXT_BLOC));
 
 	_graphic.registerMessage(new RotateSceneMessage("main", {90, 0, 0}));
 
 
+
+	std::thread logicThread_l(&BlocEngine::runLogic, this);
+	runGraphic();
+	logicThread_l.join();
+
+	for(GraphicEntity* ent_l : borders_l)
+	{
+		delete ent_l;
+	}
+	for(BlocModel *model_l : _model)
+	{
+		delete model_l;
+	}
+	delete label_l;
+	delete _labelScore;
+	_labelScore = nullptr;
+	_graphic.tearDown();
+}
+
+void BlocEngine::runGraphic()
+{
+	std::chrono::time_point<std::chrono::system_clock> start_l = std::chrono::system_clock::now();
+	double timeSinceLast_l = 1.0 / 60.0;
+
+	while( !_graphic.getQuit() )
+	{
+		if( !_graphic.getRenderWindow()->isVisible() )
+		{
+			//Don't burn CPU cycles unnecessary when we're minimized.
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		}
+
+		_graphic.getSceneManager()->updateAllAnimations();
+
+		// handle frame
+		_graphic.handleFrame(timeSinceLast_l);
+
+		std::chrono::time_point<std::chrono::system_clock> end_l = std::chrono::system_clock::now();
+		timeSinceLast_l = (end_l - start_l) / std::chrono::milliseconds(1);
+		timeSinceLast_l = std::min( 1.0, timeSinceLast_l/1000. ); //Prevent from going haywire.
+		start_l = end_l;
+	}
+}
+
+void BlocEngine::runLogic()
+{
 	std::chrono::time_point<std::chrono::system_clock> start_l = std::chrono::system_clock::now();
 
 	double timeSinceLast_l = 1.0 / 60.0;
@@ -112,12 +155,7 @@ void BlocEngine::run()
 		MessageHandler<BlocMessage>::handleAllMessages();
 		MessageHandler<GameMessage>::handleAllMessages();
 
-		_graphic.getSceneManager()->updateAllAnimations();
-
-		// handle frame
-		_graphic.handleFrame(timeSinceLast_l);
-
-		if( !renderWindow_l->isVisible() )
+		if( !_graphic.getRenderWindow()->isVisible() )
 		{
 			//Don't burn CPU cycles unnecessary when we're minimized.
 			std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -149,7 +187,7 @@ void BlocEngine::run()
 				// Spawn next one
 				this->BlocMessageHandler::registerMessage(new SpawnBlocMessage(*this->_nextModel, {5,5,0}));
 				// update next bloc
-				this->_nextModel = models_l[rand()%models_l.size()];
+				this->_nextModel = _model[rand()%_model.size()];
 				_graphic.registerMessage(new DestroySceneMessage(getScene(BlocType::NEXT_BLOC)));
 				delete getNextBloc();
 				setBloc(BlocType::NEXT_BLOC, nullptr);
@@ -172,21 +210,14 @@ void BlocEngine::run()
 		timeSinceLast_l = (end_l - start_l) / std::chrono::milliseconds(1);
 		timeSinceLast_l = std::min( 1.0, timeSinceLast_l/1000. ); //Prevent from going haywire.
 		start_l = end_l;
+		//Don't burn CPU cycles too fast
+		if(timeSinceLast_l < 50)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(50-long(timeSinceLast_l)));
+		}
 	}
-
-	for(GraphicEntity* ent_l : borders_l)
-	{
-		delete ent_l;
-	}
-	for(BlocModel *model_l : models_l)
-	{
-		delete model_l;
-	}
-	delete label_l;
-	delete _labelScore;
-	_labelScore = nullptr;
-	_graphic.tearDown();
 }
+
 
 void BlocEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 {
