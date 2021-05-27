@@ -44,10 +44,15 @@ void BlocEngine::run()
 		_graphic.tearDown();
 	}
 
-	std::vector<InfoLabel> content_l;
-	content_l.push_back({"F5", 255, 255, 0});
-	content_l.push_back({" : Menu\n", 255, 255, 255});
-	RichLabel * label_l = new RichLabel(content_l, 20, 20, 400, 50, 10, _graphic);
+	std::vector<InfoLabel> contentMenu_l;
+	contentMenu_l.push_back({"F5", 255, 255, 0});
+	contentMenu_l.push_back({" : Menu\n", 255, 255, 255});
+	RichLabel * label_l = new RichLabel(contentMenu_l, 20, 20, 400, 50, 10, _graphic);
+
+	std::vector<InfoLabel> contentScore_l;
+	contentScore_l.push_back({"Score : ", 255, 255, 0});
+	contentScore_l.push_back({std::to_string(long(_score))+"\n", 255, 255, 255});
+	_labelScore = new RichLabel(contentScore_l, 20, 50, 400, 50, 10, _graphic);
 
 	Ogre::Window *renderWindow_l = _graphic.getRenderWindow();
 
@@ -177,6 +182,9 @@ void BlocEngine::run()
 	{
 		delete model_l;
 	}
+	delete label_l;
+	delete _labelScore;
+	_labelScore = nullptr;
 	_graphic.tearDown();
 }
 
@@ -231,5 +239,16 @@ void BlocEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 		break;
 	default:
 		break;
+	}
+}
+
+void BlocEngine::updateLabelScore()
+{
+	if(_labelScore)
+	{
+		std::vector<InfoLabel> contentScore_l;
+		contentScore_l.push_back({"Score : ", 255, 255, 0});
+		contentScore_l.push_back({std::to_string(long(_score))+"\n", 255, 255, 255});
+		_labelScore->updateText(contentScore_l);
 	}
 }

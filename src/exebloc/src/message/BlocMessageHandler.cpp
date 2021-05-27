@@ -22,6 +22,9 @@ void BlocMessageHandler::visitPopBloc(PopBlocMessage const &msg_p)
 	{
 		_engine->getGraphic().registerMessage(new DestroyGraphicEntityMessage(entity_l));
 	}
+
+	// update score
+	_engine->addScore(msg_p.getSet().size()+entitiesToDrop_l.size()/10.);
 }
 
 void BlocMessageHandler::visitSpawnBloc(SpawnBlocMessage const &msg_p)

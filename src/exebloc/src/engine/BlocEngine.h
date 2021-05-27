@@ -14,6 +14,7 @@
 #include "bloc/BlocMap.h"
 
 class Bloc;
+class RichLabel;
 
 std::string getScene(BlocType type_p);
 
@@ -35,6 +36,10 @@ public:
 	Bloc * getCurrentBloc() { return _mapBlocs[BlocType::CURRENT_BLOC]; }
 	Bloc * getNextBloc() { return _mapBlocs[BlocType::NEXT_BLOC]; }
 
+	void addScore(double score_p) { _score += score_p; updateLabelScore(); }
+	void resetScore() { _score = 0.; updateLabelScore(); }
+	double getScore() const { return _score; }
+
 private:
 	std::unordered_map<BlocType, Bloc *> _mapBlocs;
 	BlocModel * _nextModel = nullptr;
@@ -42,4 +47,9 @@ private:
 	BlocMap _map;
 
 	bool _speed = false;
+
+	double _score = 0.;
+
+	RichLabel * _labelScore = nullptr;
+	void updateLabelScore();
 };
