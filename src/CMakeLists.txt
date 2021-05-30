@@ -6,3 +6,4 @@ add_subdirectory(libengine)
 
 add_subdirectory(exe)
 add_subdirectory(exebloc)
+add_subdirectory(cells)

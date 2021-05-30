@@ -1,0 +1,22 @@
+
+
+
+find_package(GTest REQUIRED)
+
+# -------------
+# Target
+# -------------
+add_executable(unit_tests_cells)
+
+target_sources(unit_tests_cells
+	PRIVATE
+	src/simpletest.cpp
+)
+
+target_link_libraries(unit_tests_cells PUBLIC libcells GTest::gtest_main)
+
+target_include_directories (unit_tests_cells
+PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+	$<INSTALL_INTERFACE:include>
+)
