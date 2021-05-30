@@ -10,7 +10,7 @@
 
 #set( CMAKE_TOOLCHAIN_FILE CMake/iOS.cmake )
 
-cmake_minimum_required( VERSION 3.14 )
+cmake_minimum_required( VERSION 3.19 )
 project(GameEngine)
 
 # ----------------------------
@@ -28,9 +28,22 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin/")
 # thanks Ogre 3d
 add_compile_options("-Wno-ignored-attributes")
 
-# ----------------------------
-# External dependencies
-# ----------------------------
+# ============================================================================
+# External requirements
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Optional conan setup
+# ----------------------------------------------------------------------------
+if (EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+	include (${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+	conan_basic_setup (TARGETS)
+elseif (EXISTS ${CMAKE_BINARY_DIR}/conan_paths.cmake)
+	include (${CMAKE_BINARY_DIR}/conan_paths.cmake)
+endif ()
+
+# additional cmake modules
+list (INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # Ogre
 add_definitions( -DOGRE_NO_DEBUG )

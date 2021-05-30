@@ -1,11 +1,11 @@
 
-cmake_minimum_required( VERSION 3.14 )
+
 
 # ----------------------------
 # External dependencies
 # ----------------------------
 
-find_package(GTest REQUIRED CONFIG)
+find_package(GTest REQUIRED)
 
 add_executable(unit_tests)
 
