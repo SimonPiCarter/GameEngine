@@ -3,6 +3,8 @@
 #include "WaveEngine.h"
 
 LogicEngine::LogicEngine()
+	: _quit(false)
+	, _currentMap(nullptr)
 {}
 
 void LogicEngine::run()

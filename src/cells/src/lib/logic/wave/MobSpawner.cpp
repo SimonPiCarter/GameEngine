@@ -19,14 +19,14 @@ MobSpawner::MobSpawner(WaveEngine &waveEngine_p, WaveLayout const &layout_p, Map
 bool MobSpawner::spawn(double elapsedTime_p)
 {
 	// if current layout is done skip to next
-	bool done_l = nextLayoutIfNecessary();
+	bool done_l = !nextLayoutIfNecessary();
 	if(done_l) { return true; }
 
 	// keep track of remaining time while we spawn
 	double remainingTime_l = elapsedTime_p;
 
 	// While time is sufficient to spawn something
-	while(remainingTime_l > _timeToNext)
+	while(remainingTime_l >= _timeToNext)
 	{
 		// spawn
 		_waveEngine.spawnMob(_currentLayout->model, _map.getSpawnPoint());
@@ -38,7 +38,7 @@ bool MobSpawner::spawn(double elapsedTime_p)
 		remainingTime_l -= _timeToNext;
 
 		// change layout if necessary
-		done_l = nextLayoutIfNecessary();
+		done_l = !nextLayoutIfNecessary();
 		if(done_l) { return true; }
 
 		// update time to next from layout

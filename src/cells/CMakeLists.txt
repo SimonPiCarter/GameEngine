@@ -13,7 +13,7 @@ add_library(libcells)
 target_sources(libcells
 	PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/layout/MapLayout.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/entity/LogicEntity.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/entity/MobEntity.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/wave/BoundingBox.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/wave/MobSpawner.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/LogicEngine.cpp

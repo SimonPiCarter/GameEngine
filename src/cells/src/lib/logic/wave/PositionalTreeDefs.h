@@ -72,7 +72,7 @@ void PositionalTree<T>::updatePositionFromNode(T & content_p, std::array<double,
 	// shrink box to this box
 	BoundingBox box_l = intersection(_box, new_l);
 	// for each node
-	std::set<PositionalNode<T> *> setAdded_l;
+	std::unordered_set<PositionalNode<T> *> setAdded_l;
 	auto it_l = content_p.getPositionNodes().begin();
 	for( ; it_l != content_p.getPositionNodes().end() ; )
 	{

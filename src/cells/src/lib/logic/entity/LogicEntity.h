@@ -5,6 +5,7 @@
 
 #include "logic/wave/PositionalTree.h"
 
+template<typename T>
 class LogicEntity
 {
 public:
@@ -13,12 +14,12 @@ public:
 	std::array<double, 2> const &getPosition() const;
 	void setPosition(std::array<double, 2> const &position_p);
 	std::array<double, 2> const &getSize() const;
-	std::list<StorageInfo<LogicEntity> > const &getPositionNodes() const;
-	std::list<StorageInfo<LogicEntity> > &getPositionNodes();
+	std::list<StorageInfo<T> > const &getPositionNodes() const;
+	std::list<StorageInfo<T> > &getPositionNodes();
 
 protected:
 	std::array<double, 2> _position;
 	std::array<double, 2> _size;
 
-	std::list<StorageInfo<LogicEntity> > _storageInfo;
+	std::list<StorageInfo<T> > _storageInfo;
 };
