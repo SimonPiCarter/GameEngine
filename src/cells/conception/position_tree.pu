@@ -1,0 +1,10 @@
+@startuml position_tree
+
+class Entity
+
+class PositionNode
+
+PositionNode -o "*" Entity : positionNodes
+PositionNode o- Entity : content
+
+@enduml

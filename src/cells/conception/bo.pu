@@ -1,0 +1,132 @@
+@startuml bo
+
+class MobEntity
+
+MobEntity : double hitpoint
+MobEntity : double speed
+MobEntity : double damage_multiplier
+MobEntity : ArmorType armor_type
+MobEntity : std::array<double, 2> position
+MobEntity : std::list<std::array<double, 2> > checkpoints
+
+abstract Buff
+Buff : + apply()
+Buff : + revert()
+
+abstract MobBuff
+MobEntity "1" -u-o MobBuff : target
+
+class Tower
+Tower : double base_attack_speed
+Tower : double base_damage
+Tower : double mult_attack_speed
+Tower : double mult_damage
+Tower : double range
+Tower : double bonus_range
+Tower : DamageType attack_type
+Tower : unsinged long allowed_slots
+
+abstract TowerBuff
+Tower "1" -u-o TowerBuff : target
+
+MobBuff -u-|> Buff
+TowerBuff -u-|> Buff
+
+class EffectStatus
+EffectStatus : bool isOver
+EffectStatus : double overtime
+
+abstract Effect
+Effect : + EffectStatus apply(elapsedTime) // true if still running
+
+class BuffEffect
+BuffEffect : + bool update(elapsedTime) // true if still running
+
+BuffEffect -u-|> Effect
+Buff "1" -u-* BuffEffect : buff
+BuffEffect : double duration
+
+class DamageEffect
+
+DamageEffect -u-|> Effect
+DamageEffect : double damage
+DamageEffect -d-* DamageType : damageType
+
+class ProjectileEffect
+
+ProjectileEffect -u-|> Effect
+ProjectileEffect : double speed
+ProjectileEffect : Entity target
+ProjectileEffect "1" *-d- Effect : effectOnTouch
+
+class DelayEffect
+
+DelayEffect -u-|> Effect
+DelayEffect : double delay
+DelayEffect "1" *-d- Effect : effect
+
+class CompositeEffect
+
+CompositeEffect -u-|> Effect
+CompositeEffect "*" *-d- Effect : effects
+
+
+class AttackModifier
+abstract Slot
+class PermanentBuff
+class EffectMaker
+
+enum AttackType
+AttackType : Arc
+AttackType : Splash
+AttackType : Direct
+AttackType : Line
+
+enum DamageType
+DamageType : Corrosive
+DamageType : Pearcent
+DamageType : Standard
+
+enum DamageStyle
+DamageStyle : Poison
+DamageStyle : Delay
+DamageStyle : Standard
+
+AttackModifier *-d- AttackType : attackType
+AttackModifier *-d- DamageType : damageType
+AttackModifier : double damage
+AttackModifier : double speed
+
+Tower *-d- "1" DamageStyle : damage_effect
+Tower *-d- "1" AttackModifier : attack_modifier
+Tower *-d- "1..n" Slot : slots
+PermanentBuff -u-|> Slot
+EffectMaker -u-|> Slot
+
+PermanentBuff -u-* Buff : buff
+
+class MapLayout
+
+MapLayout : std::vector<Tile> map
+MapLayout : std::array<long, 2> spawnPoint
+MapLayout : std::array<long, 2> targetPoint
+MapLayout : std::list<std::array<long, 2> > checkPoints
+
+class WaveLayout
+
+MobModelLayout -u-* WaveLayout : mobLayout
+
+class MobModelLayout
+
+MobModelLayout : long quantity
+MobModelLayout : double delay
+MobModelLayout *- "1" MobModel : model
+
+class MobModel
+
+MobModel : double hitpoint
+MobModel : double speed
+MobModel : ArmorType armor_type
+MobModel : std::string resource
+
+@enduml

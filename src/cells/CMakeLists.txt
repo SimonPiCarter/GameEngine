@@ -12,7 +12,12 @@ add_library(libcells)
 
 target_sources(libcells
 	PRIVATE
-	src/lib/tmp.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/layout/MapLayout.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/entity/LogicEntity.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/wave/BoundingBox.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/wave/MobSpawner.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/LogicEngine.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/WaveEngine.cpp
 )
 
 target_link_libraries(libcells PUBLIC engine Threads::Threads)

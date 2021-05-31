@@ -10,7 +10,7 @@ add_executable(unit_tests_cells)
 
 target_sources(unit_tests_cells
 	PRIVATE
-	src/simpletest.cpp
+	src/wave/positionalTree.test.cpp
 )
 
 target_link_libraries(unit_tests_cells PUBLIC libcells GTest::gtest_main)
