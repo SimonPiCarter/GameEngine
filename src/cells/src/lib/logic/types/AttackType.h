@@ -1,4 +1,4 @@
-#pragma class
+#pragma once
 
 enum class AttackType
 {
