@@ -89,7 +89,7 @@ TEST(posititionalTree, addContent)
 	EXPECT_EQ(&entity_l, node_l->getContent().at(0));
 
 	// should be added in 1, 2
-	TestLogicEntity entity2_l({34., 68.}, {5., 5.});
+	TestLogicEntity entity2_l({36.5, 70.5}, {5., 5.});
 	tree_l.addContent(&entity2_l);
 
 	node_l = tree_l.getMap().at(1).at(2);
@@ -171,7 +171,7 @@ TEST(posititionalTree, moveEntity_simple_stay_overlap)
 	ASSERT_EQ(1u, node_l->getContent().size());
 	EXPECT_EQ(&entity_l, node_l->getContent().at(0));
 
-	tree_l.updatePositionFromNode(entity_l, {30., 25.});
+	tree_l.updatePositionFromNode(entity_l, {32.5, 25.});
 
 	// still in 0, 0
 	node_l = tree_l.getMap().at(0).at(0);
@@ -196,7 +196,7 @@ TEST(posititionalTree, moveEntity_complex_stay_overlap)
 	ASSERT_EQ(1u, node_l->getContent().size());
 	EXPECT_EQ(&entity_l, node_l->getContent().at(0));
 
-	tree_l.updatePositionFromNode(entity_l, {30., 30.});
+	tree_l.updatePositionFromNode(entity_l, {32.5, 32.5});
 
 	// still in 0, 0
 	node_l = tree_l.getMap().at(0).at(0);

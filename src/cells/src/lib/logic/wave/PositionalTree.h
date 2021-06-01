@@ -24,8 +24,8 @@ struct StorageInfo
 
 /// @brief PositionalTree allowing access to T content objects
 /// T must define
-// - std::array<double, 2> getPosition() const
-// - std::array<double, 2> getSize() const
+// - std::array<double, 2> const &getPosition() const
+// - std::array<double, 2> const &getSize() const
 // - std::list<StorageInfo<T> > & getStorageInfo()
 template<typename T>
 class PositionalTree

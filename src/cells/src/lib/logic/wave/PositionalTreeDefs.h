@@ -3,6 +3,20 @@
 #include "PositionalTree.h"
 
 template<typename T>
+BoundingBox getBoundingBox(T const &content_p)
+{
+	return getBoundingBox<T>(content_p, content_p.getPosition());
+}
+template<typename T>
+BoundingBox getBoundingBox(T const &content_p, std::array<double, 2> const &pos_p)
+{
+	return {
+		{pos_p[0] - content_p.getSize()[0]/2., pos_p[1] - content_p.getSize()[1]/2.},		// position
+		{content_p.getSize()}																// size
+	};
+}
+
+template<typename T>
 PositionalTree<T>::PositionalTree(BoundingBox const &box_p, unsigned long size_p)
 	: _box(box_p)
 	, _size(size_p)
@@ -42,7 +56,7 @@ PositionalTree<T>::PositionalTree(BoundingBox const &box_p, unsigned long size_p
 template<typename T>
 void PositionalTree<T>::addContent(T * content_p)
 {
-	for(PositionalNode<T> * node_l : getNodeIntersecting({content_p->getPosition(), content_p->getSize()}))
+	for(PositionalNode<T> * node_l : getNodeIntersecting(getBoundingBox<T>(*content_p)))
 	{
 		content_p->getPositionNodes().push_back(StorageInfo<T>({node_l, node_l->addContent(content_p)}));
 	}
@@ -66,9 +80,9 @@ void PositionalTree<T>::updatePositionFromNode(T & content_p, std::array<double,
 	bool moveTop_l = content_p.getPosition()[1] > newPos_p[1];
 	bool moveBottom_l = content_p.getPosition()[1] < newPos_p[1];
 	// old box of content_p
-	BoundingBox old_l = { content_p.getPosition(), content_p.getSize() };
+	BoundingBox old_l = getBoundingBox<T>(content_p);
 	// new box of content_p
-	BoundingBox new_l = { newPos_p, content_p.getSize() };
+	BoundingBox new_l = getBoundingBox<T>(content_p, newPos_p);
 	// shrink box to this box
 	BoundingBox box_l = intersection(_box, new_l);
 	// for each node
