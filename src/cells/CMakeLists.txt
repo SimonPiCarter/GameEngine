@@ -16,6 +16,7 @@ target_sources(libcells
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/entity/MobEntity.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic//utils/ArrayUtils.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/wave/BoundingBox.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/wave/MobMover.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/wave/MobSpawner.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/LogicEngine.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/WaveEngine.cpp
