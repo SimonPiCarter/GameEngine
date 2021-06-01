@@ -6,11 +6,14 @@
 #include "LogicEngine.h"
 #include "layout/MobModelLayout.h"
 #include "wave/MobSpawner.h"
+#include "wave/MobMover.h"
 
 WaveEngine::WaveEngine(LogicEngine &logic_p)
 	: _logic(logic_p)
 	, _tree({{0.,0.}, {double(_logic._currentMap->getSize()[0]), double(_logic._currentMap->getSize()[1])}}, 20)
+	, _timestamp(0.)
 	, _spawner(nullptr)
+	, _mover(nullptr)
 {}
 
 WaveEngine::~WaveEngine()
@@ -27,9 +30,14 @@ void WaveEngine::waveLoop(WaveLayout const &layout_p)
 	std::chrono::time_point<std::chrono::system_clock> start_l = std::chrono::system_clock::now();
 	double timeSinceLast_l = 1.0 / 60.0;
 
+	_timestamp = 0.;
+
 	delete _spawner;
 	_spawner = new MobSpawner(*this, layout_p, *_logic._currentMap);
 	_spawnOver = false;
+
+	delete _mover;
+	_mover = new MobMover(*this);
 
 	while(!_logic._quit && !isWaveOver())
 	{
@@ -44,6 +52,8 @@ void WaveEngine::waveLoop(WaveLayout const &layout_p)
 
 void WaveEngine::handleFrame(double elapsedTime_p)
 {
+	_timestamp += elapsedTime_p;
+
 	assert(_spawner);
 	// Spawn mob
 	if(!_spawnOver)
@@ -52,8 +62,8 @@ void WaveEngine::handleFrame(double elapsedTime_p)
 	}
 
 	// Compute mob movement
-
 	// Apply movement and update octrees
+	_mover->moveEntities(_mobs, elapsedTime_p);
 
 	// Deduce life
 
@@ -63,16 +73,23 @@ void WaveEngine::handleFrame(double elapsedTime_p)
 
 }
 
-
-void WaveEngine::spawnMob(MobModel const &model_p, std::array<double, 2> const & spawnPosition_p)
+void WaveEngine::spawnMob(MobModel const &model_p, std::array<double, 2> const & spawnPosition_p, double spawntime_p)
 {
-	std::array<double, 2> pos_l = {
-		spawnPosition_p[0] - model_p.size[0]/2.,
-		spawnPosition_p[1] - model_p.size[1]/2.
-	};
 	assert(_logic._currentMap);
-	_mobs.push_back(new MobEntity(pos_l, &model_p, *_logic._currentMap));
+	_mobs.push_back(new MobEntity(spawnPosition_p, &model_p, *_logic._currentMap, spawntime_p));
 	_tree.addContent(_mobs.back());
+
+	// Todo send message
+}
+
+void WaveEngine::moveMob(MobEntity * entity_p, std::array<double,2> pos_p, std::array<double,2> dir_p)
+{
+	_tree.updatePositionFromNode(*entity_p, pos_p);
+	// upatePositionFromNode require the position to still be at its old state
+	// therefore we update position after
+	entity_p->setPosition(pos_p);
+
+	// Todo send message
 }
 
 bool WaveEngine::isWaveOver()

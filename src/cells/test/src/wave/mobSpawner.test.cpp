@@ -5,6 +5,7 @@
 #include "logic/layout/MapLayout.h"
 #include "logic/layout/WaveLayout.h"
 
+namespace{
 std::list<Tile> buildTiles(long size_p)
 {
 	std::list<Tile> list_l;
@@ -12,6 +13,7 @@ std::list<Tile> buildTiles(long size_p)
 		for(long j = 0 ; j < size_p ; ++ j)
 			list_l.push_back({i, j, false, ""});
 	return list_l;
+}
 }
 
 TEST(mobSpawner, simple)

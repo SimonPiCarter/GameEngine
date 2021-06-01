@@ -9,6 +9,7 @@ class LogicEngine;
 struct WaveLayout;
 struct MobModel;
 class MobSpawner;
+class MobMover;
 
 /// @brief is responsible for a wave
 class WaveEngine
@@ -21,10 +22,13 @@ public:
 
 	void handleFrame(double elapsedTime_p);
 
-	void spawnMob(MobModel const &model_p, std::array<double, 2> const & spawnPosition_p);
+	void spawnMob(MobModel const &model_p, std::array<double, 2> const & spawnPosition_p, double spawntime_p);
+	void moveMob(MobEntity * entity_p, std::array<double,2> pos_p, std::array<double,2> dir_p);
 
 	PositionalTree<MobEntity> const &getTree() const { return _tree; }
 	PositionalTree<MobEntity> &getTree() { return _tree; }
+
+	double getTimeStamp() const { return _timestamp; }
 protected:
 	LogicEngine &_logic;
 
@@ -35,6 +39,9 @@ protected:
 
 	std::list<MobEntity *> _mobs;
 
+	double _timestamp;
+
 	MobSpawner * _spawner;
+	MobMover * _mover;
 	bool _spawnOver;
 };

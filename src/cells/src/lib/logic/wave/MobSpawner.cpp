@@ -28,8 +28,10 @@ bool MobSpawner::spawn(double elapsedTime_p)
 	// While time is sufficient to spawn something
 	while(remainingTime_l >= _timeToNext)
 	{
+		// compute spawn time
+		double spawnTime_l = _waveEngine.getTimeStamp() - remainingTime_l + _timeToNext;
 		// spawn
-		_waveEngine.spawnMob(_currentLayout->model, _map.getSpawnPoint());
+		_waveEngine.spawnMob(_currentLayout->model, _map.getSpawnPoint(), spawnTime_l);
 
 		// increment index
 		++_indexNext;

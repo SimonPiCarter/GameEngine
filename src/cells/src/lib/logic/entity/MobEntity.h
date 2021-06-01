@@ -9,7 +9,7 @@ class MobModel;
 class MobEntity : public LogicEntity<MobEntity>
 {
 public:
-	MobEntity(std::array<double, 2> const &position_p, MobModel const * model_p, MapLayout const &map_p);
+	MobEntity(std::array<double, 2> const &position_p, MobModel const * model_p, MapLayout const &map_p, double spawntime_p);
 
 	MobModel const * getModel() const {return _model;}
 	double const &getHitpoint() const {return _hitpoint;}
@@ -18,6 +18,7 @@ public:
 	ArmorType const &getArmorType() const {return _armorType;}
 	std::list<std::array<double, 2> > const &getCheckpoints() const {return _checkpoints;}
 	std::list<std::array<double, 2> > &getCheckpoints() {return _checkpoints;}
+	double const &getSpawntime() {return _spawntime;}
 
 	void setHitpoint(double hitpoint_p) {_hitpoint = hitpoint_p;}
 	void setSpeed(double speed_p) {_speed = speed_p;}
@@ -30,4 +31,5 @@ protected:
 	double _damageMutliplier;
 	ArmorType _armorType;
 	std::list<std::array<double, 2> > _checkpoints;
+	double const _spawntime;
 };

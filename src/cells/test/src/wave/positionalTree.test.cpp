@@ -172,11 +172,25 @@ TEST(posititionalTree, moveEntity_simple_stay_overlap)
 	EXPECT_EQ(&entity_l, node_l->getContent().at(0));
 
 	tree_l.updatePositionFromNode(entity_l, {32.5, 25.});
+	entity_l.setPosition({32.5, 25.});
 
 	// still in 0, 0
 	node_l = tree_l.getMap().at(0).at(0);
 	ASSERT_EQ(1u, node_l->getContent().size());
 	EXPECT_EQ(&entity_l, node_l->getContent().at(0));
+
+	// new in 1, 0
+	node_l = tree_l.getMap().at(1).at(0);
+	ASSERT_EQ(1u, node_l->getContent().size());
+	EXPECT_EQ(&entity_l, node_l->getContent().at(0));
+
+	tree_l.updatePositionFromNode(entity_l, {42.5, 25.});
+	entity_l.setPosition({42.5, 25.});
+
+	// not in 0, 0
+	node_l = tree_l.getMap().at(0).at(0);
+	ASSERT_EQ(1u, node_l->getContent().size());
+	EXPECT_EQ(nullptr, node_l->getContent().at(0));
 
 	// new in 1, 0
 	node_l = tree_l.getMap().at(1).at(0);
