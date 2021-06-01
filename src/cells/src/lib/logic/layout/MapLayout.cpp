@@ -22,7 +22,7 @@ MapLayout::MapLayout(std::list<Tile> const &tile_p
 		maxY_l = std::max(maxY_l, tile_l.y);
 	}
 
-	_size = {maxX_l, maxY_l};
+	_size = {maxX_l+1, maxY_l+1};
 
 	for(long i = 0 ; i < _size[0] ; ++ i)
 		for(long j = 0 ; j < _size[1] ; ++ j)
