@@ -18,11 +18,7 @@ WaveEngine::WaveEngine(LogicEngine &logic_p)
 
 WaveEngine::~WaveEngine()
 {
-	for(MobEntity * ent_l : _mobs)
-	{
-		delete ent_l;
-	}
-	delete _spawner;
+	clearUp();
 }
 
 void WaveEngine::waveLoop(WaveLayout const &layout_p)
@@ -32,11 +28,10 @@ void WaveEngine::waveLoop(WaveLayout const &layout_p)
 
 	_timestamp = 0.;
 
-	delete _spawner;
+	clearUp();
+
 	_spawner = new MobSpawner(*this, layout_p, *_logic._currentMap);
 	_spawnOver = false;
-
-	delete _mover;
 	_mover = new MobMover(*this);
 
 	while(!_logic._quit && !isWaveOver())
@@ -66,6 +61,12 @@ void WaveEngine::handleFrame(double elapsedTime_p)
 	_mover->moveEntities(_mobs, elapsedTime_p);
 
 	// Deduce life
+	for(MobEntity * entity_l : _tree.getAllWithinRadius(_logic._currentMap->getTargetPoint(), 1e-3))
+	{
+		// TODO send message : lost life
+
+		despawnMob(entity_l);
+	}
 
 	// Trigger attack
 
@@ -73,11 +74,30 @@ void WaveEngine::handleFrame(double elapsedTime_p)
 
 }
 
+void WaveEngine::clearUp()
+{
+	for(MobEntity * ent_l : _mobs)
+	{
+		delete ent_l;
+	}
+	_mobs.clear();
+	delete _spawner;
+	delete _mover;
+}
+
+
 void WaveEngine::spawnMob(MobModel const &model_p, std::array<double, 2> const & spawnPosition_p, double spawntime_p)
 {
 	assert(_logic._currentMap);
 	_mobs.push_back(new MobEntity(spawnPosition_p, &model_p, *_logic._currentMap, spawntime_p));
 	_tree.addContent(_mobs.back());
+
+	// Todo send message
+}
+
+void WaveEngine::despawnMob(MobEntity * entity_p)
+{
+	_tree.removeContent(entity_p);
 
 	// Todo send message
 }

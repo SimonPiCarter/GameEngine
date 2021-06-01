@@ -50,35 +50,25 @@ TEST(mobMover, simple_every_2)
 
 	// 0.5 sec elapsed -> 1 spawn, between 5,5 and 6,5
 	wave_l.handleFrame(0.5);
-	ASSERT_EQ(1u, wave_l.getTree().getMap().at(5).at(5)->getContent().size());
-	ASSERT_EQ(1u, wave_l.getTree().getMap().at(6).at(5)->getContent().size());
-	ASSERT_EQ(0u, wave_l.getTree().getMap().at(7).at(5)->getContent().size());
-	EXPECT_NE(nullptr, wave_l.getTree().getMap().at(5).at(5)->getContent().at(0));
-	EXPECT_NE(nullptr, wave_l.getTree().getMap().at(6).at(5)->getContent().at(0));
+	ASSERT_EQ(1u, wave_l.getTree().getMap().at(5).at(5)->getContentSize());
+	ASSERT_EQ(1u, wave_l.getTree().getMap().at(6).at(5)->getContentSize());
+	ASSERT_EQ(0u, wave_l.getTree().getMap().at(7).at(5)->getContentSize());
 
 	// 0.5 sec elapsed -> 1 spawn, none 5,5 and one 6,5
 	wave_l.handleFrame(0.5);
-	ASSERT_EQ(1u, wave_l.getTree().getMap().at(5).at(5)->getContent().size());
-	ASSERT_EQ(1u, wave_l.getTree().getMap().at(6).at(5)->getContent().size());
-	ASSERT_EQ(0u, wave_l.getTree().getMap().at(7).at(5)->getContent().size());
-	EXPECT_EQ(nullptr, wave_l.getTree().getMap().at(5).at(5)->getContent().at(0));
-	EXPECT_NE(nullptr, wave_l.getTree().getMap().at(6).at(5)->getContent().at(0));
+	ASSERT_EQ(0u, wave_l.getTree().getMap().at(5).at(5)->getContentSize());
+	ASSERT_EQ(1u, wave_l.getTree().getMap().at(6).at(5)->getContentSize());
+	ASSERT_EQ(0u, wave_l.getTree().getMap().at(7).at(5)->getContentSize());
 
 	// 0.5 sec elapsed -> 1 spawn, none 5,5 and between 6,5 and 7,5
 	wave_l.handleFrame(0.5);
-	ASSERT_EQ(1u, wave_l.getTree().getMap().at(5).at(5)->getContent().size());
-	ASSERT_EQ(1u, wave_l.getTree().getMap().at(6).at(5)->getContent().size());
-	ASSERT_EQ(1u, wave_l.getTree().getMap().at(7).at(5)->getContent().size());
-	EXPECT_EQ(nullptr, wave_l.getTree().getMap().at(5).at(5)->getContent().at(0));
-	EXPECT_NE(nullptr, wave_l.getTree().getMap().at(6).at(5)->getContent().at(0));
-	EXPECT_NE(nullptr, wave_l.getTree().getMap().at(7).at(5)->getContent().at(0));
+	ASSERT_EQ(0u, wave_l.getTree().getMap().at(5).at(5)->getContentSize());
+	ASSERT_EQ(1u, wave_l.getTree().getMap().at(6).at(5)->getContentSize());
+	ASSERT_EQ(1u, wave_l.getTree().getMap().at(7).at(5)->getContentSize());
 
 	// 0.5 sec elapsed -> 2 spawns, one 5,5 and none 6,5 and one 7,5
 	wave_l.handleFrame(0.5);
-	ASSERT_EQ(1u, wave_l.getTree().getMap().at(5).at(5)->getContent().size());
-	ASSERT_EQ(1u, wave_l.getTree().getMap().at(6).at(5)->getContent().size());
-	ASSERT_EQ(1u, wave_l.getTree().getMap().at(7).at(5)->getContent().size());
-	EXPECT_NE(nullptr, wave_l.getTree().getMap().at(5).at(5)->getContent().at(0));
-	EXPECT_EQ(nullptr, wave_l.getTree().getMap().at(6).at(5)->getContent().at(0));
-	EXPECT_NE(nullptr, wave_l.getTree().getMap().at(7).at(5)->getContent().at(0));
+	ASSERT_EQ(1u, wave_l.getTree().getMap().at(5).at(5)->getContentSize());
+	ASSERT_EQ(0u, wave_l.getTree().getMap().at(6).at(5)->getContentSize());
+	ASSERT_EQ(1u, wave_l.getTree().getMap().at(7).at(5)->getContentSize());
 }

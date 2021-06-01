@@ -121,6 +121,8 @@ public:
 	PositionalNode<T> * const &getUp() const { return _up; }
 	PositionalNode<T> * const &getDown() const { return _down; }
 
+	/// @brief get the real non null content size
+	size_t getContentSize() const { return _content.size() - _freeIndexes.size(); }
 
 protected:
 	/// @brief list of indexes equal to nullptr in the deque _content

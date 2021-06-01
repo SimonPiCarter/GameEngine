@@ -65,11 +65,12 @@ void PositionalTree<T>::addContent(T * content_p)
 template<typename T>
 void PositionalTree<T>::removeContent(T * content_p)
 {
-	std::list<StorageInfo<T> > list_l = content_p->getPositionNodes();
+	std::list<StorageInfo<T> > const &list_l = content_p->getPositionNodes();
 	for(StorageInfo<T> const & info_l : list_l)
 	{
 		info_l.node->removeContent(info_l);
 	}
+	content_p->getPositionNodes().clear();
 }
 
 template<typename T>
