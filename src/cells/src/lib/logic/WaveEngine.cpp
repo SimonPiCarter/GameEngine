@@ -3,11 +3,12 @@
 #include <chrono>
 #include <cassert>
 
-#include "LogicEngine.h"
-#include "layout/MobModelLayout.h"
-#include "wave/MobSpawner.h"
-#include "wave/MobMover.h"
-#include "wave/AttackBuilder.h"
+#include "logic/LogicEngine.h"
+#include "logic/layout/MobModelLayout.h"
+#include "logic/wave/MobSpawner.h"
+#include "logic/wave/MobMover.h"
+#include "logic/wave/AttackBuilder.h"
+#include "logic/effect/Effect.h"
 
 WaveEngine::WaveEngine(LogicEngine &logic_p)
 	: _logic(logic_p)
@@ -49,6 +50,25 @@ void WaveEngine::waveLoop(WaveLayout const &layout_p)
 	}
 }
 
+void handleEffect(Effect * effect_l, std::list<Effect *> & list_r, double elapsedTime_p, double timestamp_p)
+{
+	EffectStatus status_l = effect_l->apply(std::min(elapsedTime_p, timestamp_p - effect_l->getSpawntime()));
+
+	if(status_l.isOver)
+	{
+		delete effect_l;
+	}
+	else
+	{
+		list_r.push_back(effect_l);
+	}
+	// recursive call on poped effects using the remaining time
+	for(auto &pair_l : status_l.newEffects)
+	{
+		handleEffect(pair_l.first, list_r, pair_l.second, timestamp_p);
+	}
+}
+
 void WaveEngine::handleFrame(double elapsedTime_p)
 {
 	_timestamp += elapsedTime_p;
@@ -76,6 +96,13 @@ void WaveEngine::handleFrame(double elapsedTime_p)
 	_attack->buildAttacks(elapsedTime_p);
 
 	// Resolve effects
+	std::list<Effect *> newEffects_l;
+	for(Effect * effect_l : _effects)
+	{
+		handleEffect(effect_l, newEffects_l, elapsedTime_p, _timestamp);
+	}
+	// swap effects lists
+	std::swap(newEffects_l, _effects);
 
 }
 

@@ -20,6 +20,8 @@ public:
 	/// @brief apply the effect and return the status
 	virtual EffectStatus apply(double elapsedTime_p) = 0;
 
+	double getSpawntime() const { return _spawntime; }
+
 protected:
 	double const _spawntime;
 };
