@@ -132,15 +132,15 @@ std::list<MobEntity *> AttackBuilder::findTargets(AttackInfo &info_p)
 	}
 	else if(type_l == AttackType::Line)
 	{
-		// if(info_p.target)
-		// {
-		// 	std::unordered_set<MobEntity *> all_l = _waveEngine.getTree().getAllWithinLine(
-		// 			tower_l->getPosition(), info_p.target->getPosition());
-		// 	for(MobEntity * ent_l : all_l)
-		// 	{
-		// 		targets_l.push_back(ent_l);
-		// 	}
-		// }
+		if(info_p.target)
+		{
+			std::unordered_set<MobEntity *> all_l = _waveEngine.getTree().getAllWithinLine(
+					tower_l->getPosition(), info_p.target->getPosition(), tower_l->getRange());
+			for(MobEntity * ent_l : all_l)
+			{
+				targets_l.push_back(ent_l);
+			}
+		}
 	}
 	return targets_l;
 }

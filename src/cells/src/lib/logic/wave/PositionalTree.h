@@ -53,6 +53,12 @@ public:
 	/// @param ignored_p this node will be excluded from the search
 	std::unordered_set<T*> getAllWithinRadius(std::array<double, 2> const & position_p, double radius_p, PositionalNode<T> * ignored_p=nullptr);
 
+	/// @brief get all content within the given point and radius
+	/// @param position_p the position from where the line is thrown
+	/// @param target_p the position givin the line direction
+	/// @param range_p the length of the line
+	std::unordered_set<T*> getAllWithinLine(std::array<double, 2> const & position_p, std::array<double, 2> const & target_p, double range_p);
+
 	std::vector<std::vector<PositionalNode<T> * > > const &getMap() const { return _map; }
 	std::list<PositionalNode<T> > const &getNodes() const { return _nodes; }
 	BoundingBox const &getBox() const { return _box; }

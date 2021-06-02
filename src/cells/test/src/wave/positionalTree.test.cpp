@@ -372,3 +372,41 @@ TEST(posititionalTree, getAllWithinRadius_complex_10k)
 
 	EXPECT_EQ(1e4, inRadius_l.size());
 }
+
+TEST(posititionalTree, getAllWithinLine_simple)
+{
+	PositionalTree<TestLogicEntity> tree_l({{0,0}, {10, 10}}, 10);
+
+	tree_l.addContent(new TestLogicEntity({6.,4.}, {2.,2.}));
+
+	std::unordered_set<TestLogicEntity *> inLine_l;
+
+	inLine_l = tree_l.getAllWithinLine({1., 2.}, {2.,4.}, 100.);
+	EXPECT_EQ(0u, inLine_l.size());
+
+	inLine_l = tree_l.getAllWithinLine({1., 0.}, {2.,1.}, 5.);
+	EXPECT_EQ(0u, inLine_l.size());
+
+	inLine_l = tree_l.getAllWithinLine({1., 0.}, {2.,1.}, 6.);
+	EXPECT_EQ(1u, inLine_l.size());
+
+	inLine_l = tree_l.getAllWithinLine({9., 2.}, {-2.,1.}, 2.);
+	EXPECT_EQ(0u, inLine_l.size());
+
+	inLine_l = tree_l.getAllWithinLine({9., 2.}, {7.,3.}, 3.);
+	EXPECT_EQ(1u, inLine_l.size());
+
+	// check direction along x and y only
+
+	inLine_l = tree_l.getAllWithinLine({6., 0.}, {6.,1.}, 1.);
+	EXPECT_EQ(0u, inLine_l.size());
+
+	inLine_l = tree_l.getAllWithinLine({6., 0.}, {6.,1.}, 3.);
+	EXPECT_EQ(1u, inLine_l.size());
+
+	inLine_l = tree_l.getAllWithinLine({0., 4.}, {1.,4.}, 4.9);
+	EXPECT_EQ(0u, inLine_l.size());
+
+	inLine_l = tree_l.getAllWithinLine({0., 4.}, {1.,4.}, 5.);
+	EXPECT_EQ(1u, inLine_l.size());
+}

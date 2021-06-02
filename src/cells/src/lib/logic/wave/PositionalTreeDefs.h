@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PositionalTree.h"
+#include "logic/utils/ArrayUtils.h"
 
 #include <cassert>
 
@@ -223,6 +224,88 @@ std::unordered_set<T*> PositionalTree<T>::getAllWithinRadius(std::array<double, 
 
 	return all_l;
 }
+
+template<typename T>
+std::unordered_set<T*> PositionalTree<T>::getAllWithinLine(std::array<double, 2> const & position_p, std::array<double, 2> const & target_p, double range_p)
+{
+	std::array<double, 2> direction_l = {
+		target_p[0] - position_p[0],
+		target_p[1] - position_p[1]
+	};
+	direction_l = normalize(direction_l);
+	// index start line
+	long min_x = ( position_p[0] - _box.position[0] ) / (_box.size[0] / _size);
+	long min_y = ( position_p[1] - _box.position[1] ) / (_box.size[1] / _size);
+	// index end line
+	long max_x = ( position_p[0] - _box.position[0] + range_p * direction_l[0] ) / (_box.size[0] / _size);
+	long max_y = ( position_p[1] - _box.position[1] + range_p * direction_l[1] ) / (_box.size[1] / _size);
+	// adjust max index
+	max_x = std::min<long>(max_x, _size-1);
+	max_y = std::min<long>(max_y, _size-1);
+
+	std::unordered_set<T*> all_l;
+
+	// for every node potentially intersecting the line
+	for(long x = std::min(min_x, max_x) ; x <= std::max(min_x, max_x) ; ++ x)
+	{
+		for(long y = std::min(min_y, max_y) ; y <= std::max(min_y, max_y) ; ++ y)
+		{
+			// check every content of node
+			PositionalNode<T> *node_l = _map[x][y];
+
+			for(T * content_l : node_l->getContent())
+			{
+				BoundingBox box_l = getBoundingBox(*content_l);
+				// upper and lower bounds for x and y (swaped if direction < 0 (lower = closest))
+				double lx = box_l.position[0];
+				double ux = box_l.size[0] + box_l.position[0];
+				if(direction_l[0] < 0.) { std::swap(lx, ux); }
+				double ly = box_l.position[1];
+				double uy = box_l.size[1] + box_l.position[1];
+				if(direction_l[1] < 0.) { std::swap(ly, uy); }
+
+
+				// boolean to check nul direction coordinate
+				std::array<bool, 2> nul;
+				bool skip_l = false;
+				for(size_t i = 0 ; i < 2 ; ++ i )
+				{
+					nul[i] = direction_l[i] < 1e-5 && direction_l[i] > -1e-5;
+					// if not direction toward x/y
+					if(nul[i])
+					{
+						// skip if not in the correct range for x/y
+						if(box_l.position[i] > position_p[i]
+						|| box_l.position[i] + box_l.position[i] < position_p[i])
+						{
+							skip_l = true;
+							break;
+						}
+					}
+				}
+				// skip
+				if(skip_l) { continue; }
+
+				// compute range for intersection
+				double lowerx_l = nul[0] ? std::numeric_limits<double>::min() : (lx-position_p[0])/direction_l[0];
+				double upperx_l = nul[0] ? std::numeric_limits<double>::max() : (ux-position_p[0])/direction_l[0];
+				double lowery_l = nul[1] ? std::numeric_limits<double>::min() : (ly-position_p[1])/direction_l[1];
+				double uppery_l = nul[1] ? std::numeric_limits<double>::max() : (uy-position_p[1])/direction_l[1];
+				double lower_l = std::max(lowerx_l, lowery_l);
+				double upper_l = std::min(upperx_l, uppery_l);
+
+				// if range is within given range limit
+				if(upper_l >= lower_l && upper_l >= range_p)
+				{
+					all_l.insert(content_l);
+				}
+			}
+		}
+	}
+
+	return all_l;
+}
+
 
 template<typename T>
 std::list<PositionalNode<T> *> PositionalTree<T>::getNodeIntersecting(BoundingBox const &box_p)
