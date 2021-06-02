@@ -34,10 +34,11 @@ TowerBuff -u-|> Buff
 
 class EffectStatus
 EffectStatus : bool isOver
-EffectStatus : double overtime
+EffectStatus : list<Effect *, double> newEffects
 
 abstract Effect
-Effect : + EffectStatus apply(elapsedTime) // true if still running
+Effect : + EffectStatus apply(elapsedTime)
+Effect : double spawnTime
 
 class BuffEffect
 BuffEffect : + bool update(elapsedTime) // true if still running

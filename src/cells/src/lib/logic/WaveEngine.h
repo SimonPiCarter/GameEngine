@@ -8,6 +8,7 @@
 class LogicEngine;
 struct WaveLayout;
 struct MobModel;
+class AttackBuilder;
 class MobSpawner;
 class MobMover;
 
@@ -28,6 +29,7 @@ public:
 	void despawnMob(MobEntity * entity_p);
 	void moveMob(MobEntity * entity_p, std::array<double,2> pos_p, std::array<double,2> dir_p);
 
+	LogicEngine &getLogic() { return _logic; }
 	PositionalTree<MobEntity> const &getTree() const { return _tree; }
 	PositionalTree<MobEntity> &getTree() { return _tree; }
 
@@ -47,5 +49,6 @@ protected:
 
 	MobSpawner * _spawner;
 	MobMover * _mover;
+	AttackBuilder * _attack;
 	bool _spawnOver;
 };

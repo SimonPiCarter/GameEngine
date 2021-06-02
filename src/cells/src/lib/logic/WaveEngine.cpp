@@ -7,6 +7,7 @@
 #include "layout/MobModelLayout.h"
 #include "wave/MobSpawner.h"
 #include "wave/MobMover.h"
+#include "wave/AttackBuilder.h"
 
 WaveEngine::WaveEngine(LogicEngine &logic_p)
 	: _logic(logic_p)
@@ -14,6 +15,8 @@ WaveEngine::WaveEngine(LogicEngine &logic_p)
 	, _timestamp(0.)
 	, _spawner(nullptr)
 	, _mover(nullptr)
+	, _attack(nullptr)
+	, _spawnOver(false)
 {}
 
 WaveEngine::~WaveEngine()
@@ -33,6 +36,7 @@ void WaveEngine::waveLoop(WaveLayout const &layout_p)
 	_spawner = new MobSpawner(*this, layout_p, *_logic._currentMap);
 	_spawnOver = false;
 	_mover = new MobMover(*this);
+	_attack = new AttackBuilder(*this);
 
 	while(!_logic._quit && !isWaveOver())
 	{
@@ -69,6 +73,7 @@ void WaveEngine::handleFrame(double elapsedTime_p)
 	}
 
 	// Trigger attack
+	_attack->buildAttacks(elapsedTime_p);
 
 	// Resolve effects
 
@@ -83,6 +88,7 @@ void WaveEngine::clearUp()
 	_mobs.clear();
 	delete _spawner;
 	delete _mover;
+	delete _attack;
 }
 
 
