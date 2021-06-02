@@ -81,20 +81,66 @@ std::list<MobEntity *> AttackBuilder::findTargets(AttackInfo &info_p)
 {
 	Tower * tower_l = info_p.tower;
 	std::list<MobEntity *> targets_l;
-	if(tower_l->getAttackModifier().getAttackType() == AttackType::Direct)
-	{
-		// if no target, dead or not within range
-		if(nullptr == info_p.target || info_p.target->getHitpoint() <= 1e-5|| !isInRange(info_p.target, tower_l))
-		{
-			// aquire new target
-			MobEntity * target_l = _waveEngine.getTree().getClosestFromPosition(tower_l->getPosition(), tower_l->getRange());
-			info_p.target = target_l;
-		}
 
+	// if no target, dead or not within range
+	if(nullptr == info_p.target || info_p.target->getHitpoint() <= 1e-5|| !isInRange(info_p.target, tower_l))
+	{
+		// aquire new target
+		MobEntity * target_l = _waveEngine.getTree().getClosestFromPosition(tower_l->getPosition(), tower_l->getRange());
+		info_p.target = target_l;
+	}
+
+	AttackType type_l = tower_l->getAttackModifier().getAttackType();
+	if(type_l == AttackType::Direct)
+	{
 		if(info_p.target)
 		{
 			targets_l.push_back(info_p.target);
 		}
+	}
+	else if(type_l == AttackType::Splash)
+	{
+		if(info_p.target)
+		{
+			std::unordered_set<MobEntity *> all_l = _waveEngine.getTree().getAllWithinRadius(
+					info_p.target->getPosition(), tower_l->getAttackModifier().getParam());
+			for(MobEntity * ent_l : all_l)
+			{
+				targets_l.push_back(ent_l);
+			}
+		}
+	}
+	else if(type_l == AttackType::Arc)
+	{
+		if(info_p.target)
+		{
+			std::array<double, 2> pos_l = info_p.target->getPosition();
+			for(size_t i = 0 ; double(i) < tower_l->getAttackModifier().getParam() ; ++ i)
+			{
+				MobEntity * target_l = _waveEngine.getTree().getClosestFromPosition(pos_l, tower_l->getRange());
+				if(target_l)
+				{
+					targets_l.push_back(target_l);
+					pos_l = target_l->getPosition();
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
+	}
+	else if(type_l == AttackType::Line)
+	{
+		// if(info_p.target)
+		// {
+		// 	std::unordered_set<MobEntity *> all_l = _waveEngine.getTree().getAllWithinLine(
+		// 			tower_l->getPosition(), info_p.target->getPosition());
+		// 	for(MobEntity * ent_l : all_l)
+		// 	{
+		// 		targets_l.push_back(ent_l);
+		// 	}
+		// }
 	}
 	return targets_l;
 }
