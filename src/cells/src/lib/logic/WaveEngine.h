@@ -5,12 +5,13 @@
 #include "wave/PositionalTreeDefs.h"
 #include "entity/MobEntity.h"
 
-class LogicEngine;
-struct WaveLayout;
-struct MobModel;
 class AttackBuilder;
-class MobSpawner;
+class Effect;
+class LogicEngine;
 class MobMover;
+class MobSpawner;
+struct MobModel;
+struct WaveLayout;
 
 /// @brief is responsible for a wave
 class WaveEngine
@@ -35,6 +36,9 @@ public:
 
 	double getTimeStamp() const { return _timestamp; }
 
+	void addEffect(Effect * effect_p) { _effects.push_back(effect_p); }
+	std::list<Effect *> const & getEffects() { return _effects; }
+
 protected:
 	LogicEngine &_logic;
 
@@ -44,6 +48,7 @@ protected:
 	PositionalTree<MobEntity> _tree;
 
 	std::list<MobEntity *> _mobs;
+	std::list<Effect *> _effects;
 
 	double _timestamp;
 
