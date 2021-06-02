@@ -1,3 +1,5 @@
+#pragma once
+
 #include "LogicEntity.h"
 
 template<typename T>

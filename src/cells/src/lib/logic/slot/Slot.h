@@ -2,6 +2,8 @@
 
 class Effect;
 class WaveEngine;
+class MobEntity;
+class Tower;
 
 class Slot
 {
@@ -26,5 +28,5 @@ public:
 	/// @brief return true iif Slot is of type Buff
 	virtual bool isBuffMaker() const final;
 
-	virtual Effect * newEffect(WaveEngine &waveEngien_p) = 0;
+	virtual Effect * newEffect(MobEntity const * target_p, Tower const & tower_p, WaveEngine &waveEngine_p, double timestamp_p) const = 0;
 };
