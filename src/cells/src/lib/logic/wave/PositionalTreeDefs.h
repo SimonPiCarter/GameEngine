@@ -2,6 +2,8 @@
 
 #include "PositionalTree.h"
 
+#include <cassert>
+
 template<typename T>
 BoundingBox getBoundingBox(T const &content_p)
 {
