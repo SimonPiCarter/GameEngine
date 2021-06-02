@@ -17,13 +17,9 @@ abstract MobBuff
 MobEntity "1" -u-o MobBuff : target
 
 class Tower
-Tower : double base_attack_speed
-Tower : double base_damage
 Tower : double mult_attack_speed
 Tower : double mult_damage
-Tower : double range
 Tower : double bonus_range
-Tower : DamageType attack_type
 Tower : unsinged long allowed_slots
 
 abstract TowerBuff
