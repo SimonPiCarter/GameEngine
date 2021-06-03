@@ -409,4 +409,7 @@ TEST(posititionalTree, getAllWithinLine_simple)
 
 	inLine_l = tree_l.getAllWithinLine({0., 4.}, {1.,4.}, 5.);
 	EXPECT_EQ(1u, inLine_l.size());
+
+	inLine_l = tree_l.getAllWithinLine({0., 4.}, {1.,4.}, 10.);
+	EXPECT_EQ(1u, inLine_l.size());
 }
