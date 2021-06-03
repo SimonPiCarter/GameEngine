@@ -32,8 +32,9 @@ void LogicEngine::init()
 		GraphicEntity light_l;
 		_cellsEngine->getGraphic().registerMessage(new NewLightMessage(&light_l, "root", {1., 1., 1.}, {-1, -1, -1}, LightType::Directional));
 
-		_cellsEngine->getGraphic().registerMessage(new MoveCameraMessage({10., 3.5, 10.}));
-		_cellsEngine->getGraphic().registerMessage(new LookAtCameraMessage({4., 3.5, 0.}));
+		double size_l = std::max<double>(_currentMap->getSize()[0], _currentMap->getSize()[1]);
+		_cellsEngine->getGraphic().registerMessage(new MoveCameraMessage({size_l*1.2, size_l/2. - 0.5, size_l}));
+		_cellsEngine->getGraphic().registerMessage(new LookAtCameraMessage({size_l/2., size_l/2. - 0.5, 0.}));
 		_cellsEngine->getGraphic().registerMessage(new RotateCameraMessage({0., 0., 90.}));
 
 		//_waveEngine->init(??);
