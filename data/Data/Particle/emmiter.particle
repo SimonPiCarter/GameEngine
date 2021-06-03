@@ -47,7 +47,7 @@ particle_system Examples/Fireworks
           direction               0 1 0
           position                1 0 1.1
           velocity                0
-          duration                0.5
+          duration                0.2
           repeat_delay            0
           width                   0.5
           height                  0.5
