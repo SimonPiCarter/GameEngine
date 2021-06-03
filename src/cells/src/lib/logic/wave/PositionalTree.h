@@ -46,7 +46,7 @@ public:
 	void updatePositionFromNode(T & content_p, std::array<double, 2> const &newPos_p);
 
 	/// @brief get the closest content from given position
-	T * getClosestFromPosition(std::array<double, 2> const &position_p, double maxRadius_p);
+	T * getClosestFromPosition(std::array<double, 2> const &position_p, double maxRadius_p, std::unordered_set<T *> const & ignored_p = {});
 
 	/// @brief get all content within the given point and radius
 	/// @param squared true if the radius is squared
@@ -70,7 +70,7 @@ protected:
 
 	/// @brief get the closest content from given position
 	template<typename container_t>
-	T * getClosestFromPositionDecoy(std::array<double, 2> const &position_p, container_t const &content_p);
+	T * getClosestFromPositionDecoy(std::array<double, 2> const &position_p, container_t const &content_p, std::unordered_set<T *> const & ignored_p);
 
 	/// @brief get the closest content from given position
 	template<typename container_t>
@@ -129,6 +129,8 @@ public:
 
 	/// @brief get the real non null content size
 	size_t getContentSize() const { return _content.size() - _freeIndexes.size(); }
+
+	T* getContent(unsigned long index_p);
 
 protected:
 	/// @brief list of indexes equal to nullptr in the deque _content

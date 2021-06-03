@@ -44,6 +44,9 @@ void AttackBuilder::buildAttacks(double elapsedTime_p)
 				{
 					break;
 				}
+			} else
+			{
+				info_l.reload -= consumed_l;
 			}
 
 			remainingTime_l -= consumed_l;
@@ -114,13 +117,15 @@ std::list<MobEntity *> AttackBuilder::findTargets(AttackInfo &info_p)
 	{
 		if(info_p.target)
 		{
+			std::unordered_set<MobEntity *> alreadyTag_l;
 			std::array<double, 2> pos_l = info_p.target->getPosition();
 			for(size_t i = 0 ; double(i) < tower_l->getAttackModifier().getParam() ; ++ i)
 			{
-				MobEntity * target_l = _waveEngine.getTree().getClosestFromPosition(pos_l, tower_l->getRange());
+				MobEntity * target_l = _waveEngine.getTree().getClosestFromPosition(pos_l, tower_l->getRange(), alreadyTag_l);
 				if(target_l)
 				{
 					targets_l.push_back(target_l);
+					alreadyTag_l.insert(target_l);
 					pos_l = target_l->getPosition();
 				}
 				else

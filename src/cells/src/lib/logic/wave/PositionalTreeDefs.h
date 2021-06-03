@@ -163,7 +163,7 @@ void PositionalTree<T>::updatePositionFromNode(T & content_p, std::array<double,
 }
 
 template<typename T>
-T* PositionalTree<T>::getClosestFromPosition(std::array<double, 2> const &position_p, double maxRadius_p)
+T* PositionalTree<T>::getClosestFromPosition(std::array<double, 2> const &position_p, double maxRadius_p, std::unordered_set<T *> const & ignored_p)
 {
 	// get node where position is
 	long x = ( position_p[0] - _box.position[0] ) / (_box.size[0] / _size);
@@ -173,7 +173,7 @@ T* PositionalTree<T>::getClosestFromPosition(std::array<double, 2> const &positi
 	y = std::max<long>(0, std::min<long>(y, long(_size)-1));
 	PositionalNode<T> * current_l = _map[x][y];
 	assert(current_l);
-	T * closest_l = getClosestFromPositionDecoy(position_p, current_l->_content);
+	T * closest_l = getClosestFromPositionDecoy(position_p, current_l->_content, ignored_p);
 	double sqDist_l = std::numeric_limits<double>::max();
 	if(closest_l)
 	{
@@ -183,12 +183,12 @@ T* PositionalTree<T>::getClosestFromPosition(std::array<double, 2> const &positi
 
 		std::unordered_set<T*> listClosest_l = getAllWithinRadius(position_p, sqrt(sqDist_l), current_l);
 		listClosest_l.insert(closest_l);
-		closest_l = getClosestFromPositionDecoy(position_p, listClosest_l);
+		closest_l = getClosestFromPositionDecoy(position_p, listClosest_l, ignored_p);
 	} else
 	{
 		// compute min distance from neighbours
 		std::unordered_set<T*> listClosest_l = getAllWithinRadius(position_p, maxRadius_p);
-		closest_l = getClosestFromPositionDecoy(position_p, listClosest_l);
+		closest_l = getClosestFromPositionDecoy(position_p, listClosest_l, ignored_p);
 	}
 
 	if(closest_l)
@@ -297,7 +297,7 @@ std::unordered_set<T*> PositionalTree<T>::getAllWithinLine(std::array<double, 2>
 				double upper_l = std::min(upperx_l, uppery_l);
 
 				// if range is within given range limit
-				if(upper_l >= lower_l && upper_l >= range_p)
+				if(upper_l >= lower_l && upper_l >= 0. && range_p >= lower_l)
 				{
 					all_l.insert(content_l);
 				}
@@ -332,7 +332,7 @@ std::list<PositionalNode<T> *> PositionalTree<T>::getNodeIntersecting(BoundingBo
 
 template<typename T>
 template<typename container_t>
-T* PositionalTree<T>::getClosestFromPositionDecoy(std::array<double, 2> const &position_p, container_t const &content_p)
+T* PositionalTree<T>::getClosestFromPositionDecoy(std::array<double, 2> const &position_p, container_t const &content_p, std::unordered_set<T *> const & ignored_p)
 {
 	double sqMinDist_l = 0.;
 	T * closest_l = nullptr;
@@ -340,6 +340,9 @@ T* PositionalTree<T>::getClosestFromPositionDecoy(std::array<double, 2> const &p
 	{
 		// can have null elt
 		if(!elt_l) { continue; }
+		// skip if ignored
+		if(ignored_p.find(elt_l) != ignored_p.end()) { continue; }
+
 		double sqDist_l = (elt_l->getPosition()[0] - position_p[0]) * (elt_l->getPosition()[0] - position_p[0])
 			+ (elt_l->getPosition()[1] - position_p[1]) * (elt_l->getPosition()[1] - position_p[1]);
 		if(!closest_l || sqDist_l < sqMinDist_l)
@@ -369,4 +372,22 @@ std::unordered_set<T*> PositionalTree<T>::getAllWithinRadiusDecoy(std::array<dou
 		}
 	}
 	return list_l;
+}
+
+template<typename T>
+T* PositionalNode<T>::getContent(unsigned long index_p)
+{
+	unsigned long cur_l = 0;
+	for(T * content_l : _content)
+	{
+		if(content_l)
+		{
+			if(cur_l == index_p)
+			{
+				return content_l;
+			}
+			++ cur_l;
+		}
+	}
+	return nullptr;
 }
