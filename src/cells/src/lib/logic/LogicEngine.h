@@ -27,6 +27,8 @@ public:
 	void despawnMob(MobEntity * entity_p);
 	void moveMob(MobEntity * entity_p, std::array<double,2> oldPos_p, std::array<double,2> pos_p);
 
+	void spawnDamageParticle(std::array<double,2> pos_p, double lifetime_p);
+
 	void spawnTower(Tower * tower_p);
 protected:
 	CellsEngine * const _cellsEngine;
@@ -38,6 +40,9 @@ protected:
 
 	/// @brief list of tower
 	std::list<Tower *> _towers;
+
+	std::list<std::pair<GraphicEntity *, double> > _particles;
+	std::list<GraphicEntity *> _removedParticles;
 
 	GraphicEntity *_light;
 

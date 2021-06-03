@@ -21,6 +21,15 @@ LogicEngine::~LogicEngine()
 		delete tower_l;
 	}
 	delete _light;
+
+	for(std::pair<GraphicEntity *, double> const &pair_l : _particles)
+	{
+		delete pair_l.first;
+	}
+	for(GraphicEntity * ent_l : _removedParticles)
+	{
+		delete ent_l;
+	}
 }
 
 
@@ -75,6 +84,36 @@ void LogicEngine::run(double elapsedTime_p)
 			_waveEngine = nullptr;
 		}
 	}
+
+	// particle handling
+	for(auto it_l = _particles.begin() ; it_l != _particles.end() ; )
+	{
+		// update lifetime of particle
+		it_l->second = it_l->second - elapsedTime_p;
+		if(it_l->second <= 0.)
+		{
+			_cellsEngine->getGraphic().registerMessage(new DestroyParticleMessage(it_l->first));
+			_removedParticles.push_back(it_l->first);
+			it_l = _particles.erase(it_l);
+		}
+		else
+		{
+			++ it_l;
+		}
+	}
+	// delete removed particles handled by the graphic engine already
+	for(auto it_l = _removedParticles.begin() ; it_l != _removedParticles.end() ; )
+	{
+		if((*it_l)->getParticle() == nullptr)
+		{
+			delete *it_l;
+			it_l = _removedParticles.erase(it_l);
+		}
+		else
+		{
+			++it_l;
+		}
+	}
 }
 
 void LogicEngine::spawnMob(MobEntity * entity_p, std::array<double, 2> const & spawnPosition_p)
@@ -123,5 +162,14 @@ void LogicEngine::spawnTower(Tower * tower_p)
 		_cellsEngine->getGraphic().registerMessage(new NewGraphicEntityMessage(entity_l, tower_p->getResource(),
 			{tower_p->getPosition()[0], tower_p->getPosition()[1], 0.}, {0.5, 0.5, 0.5}, "game"));
 		tower_p->setGraphic(entity_l);
+	}
+}
+
+void LogicEngine::spawnDamageParticle(std::array<double,2> pos_p, double lifetime_p)
+{
+	if(_cellsEngine)
+	{
+		_particles.push_back(std::pair<GraphicEntity*, double>(new GraphicEntity(), lifetime_p));
+		_cellsEngine->getGraphic().registerMessage(new NewParticleMessage(_particles.back().first, "Examples/Fireworks", {pos_p[0],pos_p[1],0.}, "game"));
 	}
 }
