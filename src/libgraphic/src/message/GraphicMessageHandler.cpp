@@ -177,7 +177,7 @@ void GraphicMessageHandler::visitDestroyLight(DestroyLightMessage const &msg_p)
 	assert(msg_p.getEntity());
 	assert(msg_p.getEntity()->getLight());
 	// destroy attached object from parent node (which only contains this entity)
-	Ogre::SceneNode * node_l = msg_p.getEntity()->getItem()->getParentSceneNode();
+	Ogre::SceneNode * node_l = msg_p.getEntity()->getLight()->getParentSceneNode();
 	destroyAttachedObject(node_l);
 	// destroy node related to this entity
 	Ogre::SceneNode * parentNode_l = node_l->getParentSceneNode();
@@ -245,7 +245,15 @@ void GraphicMessageHandler::visitDestroyParticle(DestroyParticleMessage const &m
 {
 	assert(msg_p.getEntity());
 	assert(msg_p.getEntity()->getParticle());
-	_engine->getSceneManager()->destroyParticleSystem(msg_p.getEntity()->getParticle());
+	// destroy attached object from parent node (which only contains this entity)
+	Ogre::SceneNode * node_l = msg_p.getEntity()->getParticle()->getParentSceneNode();
+	destroyAttachedObject(node_l);
+	// destroy node related to this entity
+	Ogre::SceneNode * parentNode_l = node_l->getParentSceneNode();
+	assert(parentNode_l);
+	// Destroy scene and all children
+	parentNode_l->removeAndDestroyChild(node_l);
+	msg_p.getEntity()->setParticle(nullptr);
 }
 
 void GraphicMessageHandler::visitNewParticle(NewParticleMessage const &msg_p)
@@ -259,9 +267,11 @@ void GraphicMessageHandler::visitNewParticle(NewParticleMessage const &msg_p)
 
 	Ogre::SceneNode * rootNode_l = _engine->getMapSceneNode()[msg_p.getScene()];
 	assert(rootNode_l);
+	Ogre::SceneNode *particleNode = rootNode_l->createChildSceneNode(Ogre::SCENE_DYNAMIC,
+		Ogre::Vector3(msg_p.getPosition()[0], msg_p.getPosition()[1], msg_p.getPosition()[2]));
 
 	// attach the particle system to a scene node
-	rootNode_l->attachObject(particleSystem_l);
+	particleNode->attachObject(particleSystem_l);
 }
 
 //////////////////////////////////
