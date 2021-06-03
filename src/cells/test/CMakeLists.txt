@@ -10,6 +10,7 @@ add_executable(unit_tests_cells)
 
 target_sources(unit_tests_cells
 	PRIVATE
+	src/wave/attack.test.cpp
 	src/wave/mobDespawn.test.cpp
 	src/wave/mobMover.test.cpp
 	src/wave/mobSpawner.test.cpp
