@@ -2,8 +2,9 @@
 
 #include <list>
 
+#include "logic/layout/WaveLayout.h"
+
 class WaveEngine;
-struct WaveLayout;
 struct MapLayout;
 struct MobModelLayout;
 
@@ -17,7 +18,7 @@ public:
 	bool spawn(double elapsedTime_p);
 private:
 	WaveEngine &_waveEngine;
-	WaveLayout const &_layout;
+	WaveLayout const _layout;
 	MapLayout const &_map;
 	/// @brief remaining time to spawn next mob
 	double _timeToNext;

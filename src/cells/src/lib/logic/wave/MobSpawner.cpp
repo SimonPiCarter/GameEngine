@@ -3,7 +3,6 @@
 #include "logic/WaveEngine.h"
 #include "logic/layout/MapLayout.h"
 #include "logic/layout/MobModelLayout.h"
-#include "logic/layout/WaveLayout.h"
 
 MobSpawner::MobSpawner(WaveEngine &waveEngine_p, WaveLayout const &layout_p, MapLayout const &map_p)
 	: _waveEngine(waveEngine_p)
