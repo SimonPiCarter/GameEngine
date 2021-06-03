@@ -1,6 +1,7 @@
 #include "Effect.h"
 
 #include "logic/entity/MobEntity.h"
+#include "logic/entity/Tower.h"
 
 Effect::Effect(double spawntime_p) : _spawntime(spawntime_p) {}
 
@@ -16,7 +17,50 @@ EffectStatus DamageEffect::apply(double elapsedTime_p)
 	EffectStatus status_l;
 	status_l.isOver = true;
 
-	_target->setHitpoint(_target->getHitpoint() - _damage);
+	// multiplier based on damage and armore types
+	double mult_l = 1.;
+	// Standard vs Heavy : 50%
+	// Standard vs Light : 150%
+	if(_tower.getAttackModifier().getDamageType() == DamageType::Standard)
+	{
+		if(_target->getArmorType() == ArmorType::Heavy)
+		{
+			mult_l = 0.5;
+		} else if(_target->getArmorType() == ArmorType::Light)
+		{
+			mult_l = 1.5;
+		}
+	}
+	// Pearcent vs Heavy : 150%
+	// Pearcent vs Light : 50%
+	if(_tower.getAttackModifier().getDamageType() == DamageType::Pearcent)
+	{
+		if(_target->getArmorType() == ArmorType::Heavy)
+		{
+			mult_l = 1.5;
+		} else if(_target->getArmorType() == ArmorType::Light)
+		{
+			mult_l = 0.5;
+		}
+	}
+	// Corrosive vs Resilient : 50%
+	// Corrosive vs Light : 150%
+	// Corrosive vs Heavy : 150%
+	if(_tower.getAttackModifier().getDamageType() == DamageType::Corrosive)
+	{
+		if(_target->getArmorType() == ArmorType::Resilient)
+		{
+			mult_l = 0.5;
+		} else if(_target->getArmorType() == ArmorType::Light)
+		{
+			mult_l = 1.5;
+		} else if(_target->getArmorType() == ArmorType::Heavy)
+		{
+			mult_l = 1.5;
+		}
+	}
+
+	_target->setHitpoint(_target->getHitpoint() - mult_l * _damage);
 
 	return status_l;
 }

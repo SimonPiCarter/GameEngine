@@ -2,6 +2,7 @@
 
 enum class ArmorType
 {
+	Standard,
 	Resilient,
 	Heavy,
 	Light
