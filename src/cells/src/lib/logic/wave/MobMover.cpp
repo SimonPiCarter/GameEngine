@@ -13,6 +13,11 @@ void MobMover::moveEntities(std::list<MobEntity *> mobs_p, double elapsedTime_p)
 	// iterate on every mob to move it
 	for(MobEntity * entity_l : mobs_p)
 	{
+		// if mob has no hitpoint we do not update it
+		if(entity_l->getHitpoint() <= 0.)
+		{
+			continue;
+		}
 		// get move information and pop checkpoints from entity
 		MobMoveInfo info_l = computeMoveInfo(entity_l, elapsedTime_p);
 
