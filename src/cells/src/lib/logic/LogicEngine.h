@@ -9,6 +9,7 @@ class LogicEngine
 {
 public:
 	LogicEngine();
+	~LogicEngine();
 
 	void quit() { _quit = true; }
 
