@@ -45,7 +45,7 @@ TEST(mobMover, simple_every_2)
 	// prevent wave  engine from looping automatically
 	logic_l.quit();
 
-	wave_l.waveLoop(waveLayout_l);
+	wave_l.init(waveLayout_l);
 
 	// 0.5 sec elapsed -> 1 spawn, between 5,5 and 6,5
 	wave_l.handleFrame(0.5);

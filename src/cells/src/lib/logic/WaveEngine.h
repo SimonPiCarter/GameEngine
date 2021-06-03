@@ -20,8 +20,7 @@ public:
 	WaveEngine(LogicEngine &logic_p);
 	~WaveEngine();
 
-	void waveLoop(WaveLayout const &layout_p);
-
+	void init(WaveLayout const &layout_p);
 	void handleFrame(double elapsedTime_p);
 
 	void clearUp();

@@ -34,7 +34,7 @@ TEST(mobSpawner, simple)
 	// prevent wave  engine from looping automatically
 	logic_l.quit();
 
-	wave_l.waveLoop(waveLayout_l);
+	wave_l.init(waveLayout_l);
 
 	// 2 sec elapsed -> 1 spawn
 	wave_l.handleFrame(2.);
@@ -84,7 +84,7 @@ TEST(mobSpawner, simple_chain)
 	// prevent wave  engine from looping automatically
 	logic_l.quit();
 
-	wave_l.waveLoop(waveLayout_l);
+	wave_l.init(waveLayout_l);
 
 	// 1 sec elapsed -> 1 spawn
 	wave_l.handleFrame(1.);

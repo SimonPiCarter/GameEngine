@@ -45,7 +45,7 @@ TEST(mobDespawn, simple_every_2)
 	// prevent wave  engine from looping automatically
 	logic_l.quit();
 
-	wave_l.waveLoop(waveLayout_l);
+	wave_l.init(waveLayout_l);
 
 	// 2. sec elapsed -> 2 spawns, one 5,5 and none 6,5 and one 7,5
 	wave_l.handleFrame(2.);

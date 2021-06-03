@@ -51,7 +51,7 @@ TEST(attack, simple_no_reload)
 	// prevent wave  engine from looping automatically
 	logic_l.quit();
 
-	wave_l.waveLoop(waveLayout_l);
+	wave_l.init(waveLayout_l);
 
 	// 0.9 sec elapsed -> 1 spawn, one 6.4,5.5 : no attack yet
 	wave_l.handleFrame(0.9);
@@ -103,7 +103,7 @@ TEST(attack, simple_one_reload)
 	// prevent wave  engine from looping automatically
 	logic_l.quit();
 
-	wave_l.waveLoop(waveLayout_l);
+	wave_l.init(waveLayout_l);
 
 	// 0.9 sec elapsed -> 1 spawn, one 6.4,5.5 : 1 attack yet
 	wave_l.handleFrame(0.9);
@@ -155,7 +155,7 @@ TEST(attack, simple_arc)
 	// prevent wave  engine from looping automatically
 	logic_l.quit();
 
-	wave_l.waveLoop(waveLayout_l);
+	wave_l.init(waveLayout_l);
 
 	// 0.9 sec elapsed -> 1 spawn, one 6.4,5.5 : no attack yet
 	wave_l.handleFrame(0.9);
@@ -214,7 +214,7 @@ TEST(attack, simple_splash)
 	// prevent wave  engine from looping automatically
 	logic_l.quit();
 
-	wave_l.waveLoop(waveLayout_l);
+	wave_l.init(waveLayout_l);
 
 	// 0.9 sec elapsed -> 3 spawn, one 6.4,5.5 one 6.3,5.5 one 6.2,5.5 : no attack yet
 	wave_l.handleFrame(0.9);
@@ -278,7 +278,7 @@ TEST(attack, simple_line)
 	// prevent wave  engine from looping automatically
 	logic_l.quit();
 
-	wave_l.waveLoop(waveLayout_l);
+	wave_l.init(waveLayout_l);
 
 	// 0.9 sec elapsed -> 1 spawn, one 6.4,5.5 : no attack yet
 	wave_l.handleFrame(0.9);
