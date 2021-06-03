@@ -42,8 +42,7 @@ TEST(attack, simple_no_reload)
 		}
 	);
 
-	LogicEngine logic_l;
-	logic_l.setCurrentMap(&mapLayout_l);
+	LogicEngine logic_l(&mapLayout_l);
 	WaveEngine wave_l(logic_l);
 
 	// add tower
@@ -94,8 +93,7 @@ TEST(attack, simple_one_reload)
 		}
 	);
 
-	LogicEngine logic_l;
-	logic_l.setCurrentMap(&mapLayout_l);
+	LogicEngine logic_l(&mapLayout_l);
 	WaveEngine wave_l(logic_l);
 
 	// add tower
@@ -147,8 +145,7 @@ TEST(attack, simple_arc)
 		}
 	);
 
-	LogicEngine logic_l;
-	logic_l.setCurrentMap(&mapLayout_l);
+	LogicEngine logic_l(&mapLayout_l);
 	WaveEngine wave_l(logic_l);
 
 	// add tower
@@ -207,8 +204,7 @@ TEST(attack, simple_splash)
 		}
 	);
 
-	LogicEngine logic_l;
-	logic_l.setCurrentMap(&mapLayout_l);
+	LogicEngine logic_l(&mapLayout_l);
 	WaveEngine wave_l(logic_l);
 
 	// add tower
@@ -272,8 +268,7 @@ TEST(attack, simple_line)
 		}
 	);
 
-	LogicEngine logic_l;
-	logic_l.setCurrentMap(&mapLayout_l);
+	LogicEngine logic_l(&mapLayout_l);
 	WaveEngine wave_l(logic_l);
 
 	// add tower

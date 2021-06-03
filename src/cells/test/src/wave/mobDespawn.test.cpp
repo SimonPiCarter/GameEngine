@@ -39,8 +39,7 @@ TEST(mobDespawn, simple_every_2)
 		}
 	);
 
-	LogicEngine logic_l;
-	logic_l.setCurrentMap(&mapLayout_l);
+	LogicEngine logic_l(&mapLayout_l);
 	WaveEngine wave_l(logic_l);
 
 	// prevent wave  engine from looping automatically

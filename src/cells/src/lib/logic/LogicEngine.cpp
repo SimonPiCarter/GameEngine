@@ -3,9 +3,9 @@
 #include "WaveEngine.h"
 #include "logic/entity/Tower.h"
 
-LogicEngine::LogicEngine()
+LogicEngine::LogicEngine(MapLayout const * map_p)
 	: _quit(false)
-	, _currentMap(nullptr)
+	, _currentMap(map_p)
 {}
 
 LogicEngine::~LogicEngine()

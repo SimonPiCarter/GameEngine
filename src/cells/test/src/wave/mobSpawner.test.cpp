@@ -28,8 +28,7 @@ TEST(mobSpawner, simple)
 		}
 	);
 
-	LogicEngine logic_l;
-	logic_l.setCurrentMap(&mapLayout_l);
+	LogicEngine logic_l(&mapLayout_l);
 	WaveEngine wave_l(logic_l);
 
 	// prevent wave  engine from looping automatically
@@ -79,8 +78,7 @@ TEST(mobSpawner, simple_chain)
 		}
 	);
 
-	LogicEngine logic_l;
-	logic_l.setCurrentMap(&mapLayout_l);
+	LogicEngine logic_l(&mapLayout_l);
 	WaveEngine wave_l(logic_l);
 
 	// prevent wave  engine from looping automatically

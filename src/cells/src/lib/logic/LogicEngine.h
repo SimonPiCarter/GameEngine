@@ -8,12 +8,10 @@ class Tower;
 class LogicEngine
 {
 public:
-	LogicEngine();
+	LogicEngine(MapLayout const * map_p);
 	~LogicEngine();
 
 	void quit() { _quit = true; }
-
-	void setCurrentMap(MapLayout const * map_p) { _currentMap = map_p; }
 
 	std::list<Tower *> const & getTowers() const { return _towers; }
 	std::list<Tower *> & getTowers() { return _towers; }
@@ -23,7 +21,7 @@ protected:
 	bool _quit;
 
 	/// @brief map
-	MapLayout const * _currentMap;
+	MapLayout const * const _currentMap;
 
 	/// @brief list of tower
 	std::list<Tower *> _towers;
