@@ -12,6 +12,8 @@ add_library(libcells)
 
 target_sources(libcells
 	PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/game/CellsEngine.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/display/MapDisplay.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/effect/Effect.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/entity/MobEntity.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/entity/Tower.cpp
