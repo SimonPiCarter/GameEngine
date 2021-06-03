@@ -38,10 +38,10 @@ public:
 	void addEffect(Effect * effect_p) { _effects.push_back(effect_p); }
 	std::list<Effect *> const & getEffects() { return _effects; }
 
+	bool isWaveOver();
 protected:
 	LogicEngine &_logic;
 
-	bool isWaveOver();
 
 	/// @brief handle massive entity count positions
 	PositionalTree<MobEntity> _tree;
