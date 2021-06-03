@@ -14,6 +14,8 @@ public:
 	void runGraphic();
 	void runLogic();
 
+	GraphicEngine & getGraphic() { return _graphic; }
+
 	virtual void visitSDLEvent(SDLEventGameMessage const &msg_p) override;
 
 };
