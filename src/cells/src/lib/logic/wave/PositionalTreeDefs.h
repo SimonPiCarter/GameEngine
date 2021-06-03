@@ -255,6 +255,8 @@ std::unordered_set<T*> PositionalTree<T>::getAllWithinLine(std::array<double, 2>
 
 			for(T * content_l : node_l->getContent())
 			{
+				// can have null elt
+				if(!content_l) { continue; }
 				BoundingBox box_l = getBoundingBox(*content_l);
 				// upper and lower bounds for x and y (swaped if direction < 0 (lower = closest))
 				double lx = box_l.position[0];
@@ -336,6 +338,8 @@ T* PositionalTree<T>::getClosestFromPositionDecoy(std::array<double, 2> const &p
 	T * closest_l = nullptr;
 	for(T * elt_l : content_p)
 	{
+		// can have null elt
+		if(!elt_l) { continue; }
 		double sqDist_l = (elt_l->getPosition()[0] - position_p[0]) * (elt_l->getPosition()[0] - position_p[0])
 			+ (elt_l->getPosition()[1] - position_p[1]) * (elt_l->getPosition()[1] - position_p[1]);
 		if(!closest_l || sqDist_l < sqMinDist_l)
@@ -355,6 +359,8 @@ std::unordered_set<T*> PositionalTree<T>::getAllWithinRadiusDecoy(std::array<dou
 	std::unordered_set<T *> list_l;
 	for(T * elt_l : content_p)
 	{
+		// can have null elt
+		if(!elt_l) { continue; }
 		double sqDist_l = (elt_l->getPosition()[0] - position_p[0]) * (elt_l->getPosition()[0] - position_p[0])
 			+ (elt_l->getPosition()[1] - position_p[1]) * (elt_l->getPosition()[1] - position_p[1]);
 		if(sqDist_l <= sqRadius_l)
