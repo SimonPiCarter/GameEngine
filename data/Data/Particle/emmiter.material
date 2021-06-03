@@ -1,0 +1,6 @@
+hlms Examples/Flare unlit
+{
+     scene_blend add
+     depth_write off
+     diffuse_map flare.png
+}

@@ -1,0 +1,73 @@
+// Example emitted emitters
+particle_system Examples/Fireworks
+{
+    material Examples/Flare
+    point_rendering            false
+    particle_width             5
+    particle_height            5
+    cull_each                  false
+    quota                      1
+    emit_emitter_quota         1
+    billboard_type             point
+
+    // Emitter that emits multiple Point emitters with name 'explosion'
+//    emitter Box
+//    {
+//        name                    mainEmitter
+//        emit_emitter            explosion
+//        angle                   30
+//        emission_rate           1000
+//        time_to_live            3
+//        direction               0 1 0
+//        velocity                1
+//        position                4.5 4.5 2
+//        width                   0.1
+//        height                  0.1
+//        depth                   0.1
+//    }
+
+    // This Point emitter is emitted by the Box emitter and emits billboard particles itself
+//    emitter Point
+//    {
+//        name                    explosion
+//        angle                   180
+//        emission_rate           1000
+//        time_to_live            2
+//        direction               0 1 0
+//        velocity                80
+//        duration                0.1
+//        repeat_delay_min        2
+//        repeat_delay_max        3
+//    }
+      emitter Box
+      {
+          name                    mainEmitter
+          emission_rate           100
+          time_to_live            0.01
+          direction               0 1 0
+          position                1 0 1.1
+          velocity                0
+          duration                0.5
+          repeat_delay            0
+          width                   0.5
+          height                  0.5
+          depth                   0.01
+      }
+    // Make em float downwards
+//    affector LinearForce
+//    {
+//        force_vector            0 -100 0
+//        force_application       add
+//    }
+
+    // Give em some nice colours
+//    affector ColourInterpolator
+//    {
+//        time0                   0
+//        colour0                 1 1 0
+//        time1                   0.5
+//        colour1                 1 0 0
+//        time2                   0.9
+//        colour2                 0 0 1
+//    }
+}
