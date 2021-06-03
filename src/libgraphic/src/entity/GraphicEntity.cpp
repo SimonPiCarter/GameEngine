@@ -28,6 +28,16 @@ void GraphicEntity::setLight(Ogre::Light * light_p)
 	_light = light_p;
 }
 
+Ogre::ParticleSystem * GraphicEntity::getParticle() const
+{
+	return _particle;
+}
+
+void GraphicEntity::setParticle(Ogre::ParticleSystem * particle_p)
+{
+	_particle = particle_p;
+}
+
 Ogre::SkeletonAnimation *GraphicEntity::getAnimationState(std::string const &animState_p)
 {
 	Ogre::SkeletonInstance* skeletonInstance_l = _item->getSkeletonInstance();

@@ -321,6 +321,7 @@ void GraphicEngine::setupResources()
 
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath, "FileSystem", "Popular");
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/export2", "FileSystem", "Popular");
+	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Particle", "FileSystem", "Popular");
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"Materials/ColibriGui/Skins/DarkGloss", "FileSystem", "Popular");
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Materials/ColibriGui/Skins/Debug", "FileSystem", "Popular");
 }

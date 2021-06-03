@@ -29,6 +29,8 @@ target_sources(graphic
 	src/message/light/MoveLightMessage.cpp
 	src/message/light/NewLightMessage.cpp
 	src/message/light/RotateLightMessage.cpp
+	src/message/particle/DestroyParticleMessage.cpp
+	src/message/particle/NewParticleMessage.cpp
 	src/message/scene/DestroySceneMessage.cpp
 	src/message/scene/MoveSceneMessage.cpp
 	src/message/scene/NewSceneMessage.cpp

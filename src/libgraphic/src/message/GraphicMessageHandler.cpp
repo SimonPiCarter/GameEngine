@@ -9,6 +9,7 @@
 #include "OgreNode.h"
 #include "OgreMaterialManager.h"
 #include "OgreSceneManager.h"
+#include "OgreParticleSystem.h"
 
 GraphicMessageHandler::GraphicMessageHandler(GraphicEngine *engine_p) : _engine(engine_p) {}
 GraphicMessageHandler::~GraphicMessageHandler() {}
@@ -231,6 +232,36 @@ void GraphicMessageHandler::visitRotateLight(RotateLightMessage const &msg_p)
 	msg_p.getEntity()->getLight()->getParentNode()->roll(Ogre::Degree(msg_p.getVector()[2]));
 	msg_p.getEntity()->getLight()->getParentNode()->pitch(Ogre::Degree(msg_p.getVector()[0]));
 	msg_p.getEntity()->getLight()->getParentNode()->yaw(Ogre::Degree(msg_p.getVector()[1]));
+}
+
+
+//////////////////////////////////
+//                              //
+//          Particle            //
+//                              //
+//////////////////////////////////
+
+void GraphicMessageHandler::visitDestroyParticle(DestroyParticleMessage const &msg_p)
+{
+	assert(msg_p.getEntity());
+	assert(msg_p.getEntity()->getParticle());
+	_engine->getSceneManager()->destroyParticleSystem(msg_p.getEntity()->getParticle());
+}
+
+void GraphicMessageHandler::visitNewParticle(NewParticleMessage const &msg_p)
+{
+	// Get scene manager
+	Ogre::SceneManager *sceneManager_l = _engine->getSceneManager();
+
+	// Create particle
+	Ogre::ParticleSystem* particleSystem_l = sceneManager_l->createParticleSystem(msg_p.getResourceId());
+	msg_p.getEntity()->setParticle(particleSystem_l);
+
+	Ogre::SceneNode * rootNode_l = _engine->getMapSceneNode()[msg_p.getScene()];
+	assert(rootNode_l);
+
+	// attach the particle system to a scene node
+	rootNode_l->attachObject(particleSystem_l);
 }
 
 //////////////////////////////////

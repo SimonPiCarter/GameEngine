@@ -19,6 +19,9 @@
 #include "light/MoveLightMessage.h"
 #include "light/NewLightMessage.h"
 #include "light/RotateLightMessage.h"
+// particle
+#include "particle/DestroyParticleMessage.h"
+#include "particle/NewParticleMessage.h"
 // scene
 #include "scene/DestroySceneMessage.h"
 #include "scene/MoveSceneMessage.h"
@@ -58,6 +61,10 @@ public:
 	void visitMoveLight(MoveLightMessage const &msg_p);
 	void visitNewLight(NewLightMessage const &msg_p);
 	void visitRotateLight(RotateLightMessage const &msg_p);
+
+	// Particle
+	void visitDestroyParticle(DestroyParticleMessage const &msg_p);
+	void visitNewParticle(NewParticleMessage const &msg_p);
 
 	// Scene
 	void visitDestroyScene(DestroySceneMessage const &msg_p);
