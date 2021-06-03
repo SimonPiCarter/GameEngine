@@ -3,8 +3,10 @@
 #include "layout/MapLayout.h"
 
 class CellsEngine;
-class WaveEngine;
+class GraphicEntity;
+class MobEntity;
 class Tower;
+class WaveEngine;
 
 class LogicEngine
 {
@@ -19,6 +21,13 @@ public:
 
 	void init();
 	void run(double elapsedTime_p);
+
+	void spawnMob(MobEntity * entity_p, std::array<double, 2> const & spawnPosition_p);
+	void killMob(MobEntity * entity_p);
+	void despawnMob(MobEntity * entity_p);
+	void moveMob(MobEntity * entity_p, std::array<double,2> oldPos_p, std::array<double,2> pos_p);
+
+	void spawnTower(Tower * tower_p);
 protected:
 	CellsEngine * const _cellsEngine;
 
@@ -29,6 +38,8 @@ protected:
 
 	/// @brief list of tower
 	std::list<Tower *> _towers;
+
+	GraphicEntity *_light;
 
 	WaveEngine * _waveEngine;
 

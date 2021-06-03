@@ -13,8 +13,8 @@ void MobMover::moveEntities(std::list<MobEntity *> mobs_p, double elapsedTime_p)
 	// iterate on every mob to move it
 	for(MobEntity * entity_l : mobs_p)
 	{
-		// if mob has no hitpoint we do not update it
-		if(entity_l->getHitpoint() <= 0.)
+		// if mob is disabled we do not update it
+		if(entity_l->isDisabled() || entity_l->getCheckpoints().empty())
 		{
 			continue;
 		}
@@ -45,8 +45,8 @@ MobMoveInfo MobMover::computeMoveInfo(MobEntity * entity_p, double elapsedTime_p
 	}
 
 	double remainingTime_l = adjustedElapsedTime_l;
-	// while there is remaining time
-	while(remainingTime_l > 1e-5)
+	// while there is remaining time and checkpoints
+	while(remainingTime_l > 1e-5 && !checkPoints_l.empty())
 	{
 		std::array<double, 2> nextPoint_l = checkPoints_l.front();
 		// compute direction to next point

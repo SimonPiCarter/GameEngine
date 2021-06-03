@@ -19,10 +19,12 @@ public:
 	std::list<std::array<double, 2> > const &getCheckpoints() const {return _checkpoints;}
 	std::list<std::array<double, 2> > &getCheckpoints() {return _checkpoints;}
 	double const &getSpawntime() {return _spawntime;}
+	bool isDisabled() { return _disabled; }
 
 	void setHitpoint(double hitpoint_p) {_hitpoint = hitpoint_p;}
 	void setSpeed(double speed_p) {_speed = speed_p;}
 	void setDamageMutliplier(double damageMutliplier_p) {_damageMutliplier = damageMutliplier_p;}
+	void setDisabled(bool disabled_p) { _disabled = disabled_p; }
 
 protected:
 	MobModel const * const _model;
@@ -32,4 +34,5 @@ protected:
 	ArmorType _armorType;
 	std::list<std::array<double, 2> > _checkpoints;
 	double const _spawntime;
+	double _disabled;
 };

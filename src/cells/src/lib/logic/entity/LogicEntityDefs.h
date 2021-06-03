@@ -1,12 +1,20 @@
 #pragma once
 
 #include "LogicEntity.h"
+#include "entity/GraphicEntity.h"
 
 template<typename T>
 LogicEntity<T>::LogicEntity(std::array<double, 2> const &position_p, std::array<double, 2> const &size_p)
 	: _position(position_p)
 	, _size(size_p)
+	, _graphic(nullptr)
 {}
+
+template<typename T>
+LogicEntity<T>::~LogicEntity()
+{
+	delete _graphic;
+}
 
 template<typename T>
 std::array<double, 2> const &LogicEntity<T>::getPosition() const

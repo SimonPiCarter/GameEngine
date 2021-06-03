@@ -12,4 +12,5 @@ MobEntity::MobEntity(std::array<double, 2> const &position_p, MobModel const * m
 	, _armorType(_model->armor_type)
 	, _checkpoints(map_p.getCheckPoints())
 	, _spawntime(spawntime_p)
+	, _disabled(false)
 {}

@@ -8,6 +8,7 @@ Tower::Tower(std::array<double, 2> const &position_p, std::array<double, 2> cons
 	, _damageEffect(DamageStyle::Standard)
 	, _maxSlots(1)
 	, _attackModifier(1., 1., 1., 1., AttackType::Direct, DamageType::Standard)
+	, _resource("")
 {}
 
 /// @brief get full attack speed (taking multiplier into account)

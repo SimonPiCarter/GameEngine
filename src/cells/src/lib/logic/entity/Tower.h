@@ -44,6 +44,9 @@ public:
 	/// @brief get full ranges (taking multiplier into account)
 	double getRange() const;
 
+	std::string const &getResource() const { return _resource; }
+	void setResource(std::string const &resource_p) { _resource = resource_p; }
+
 protected:
 	double _multAttackSpeed;
 	double _multDamage;
@@ -53,4 +56,7 @@ protected:
 	AttackModifier _attackModifier;
 
 	std::list<Slot *> _slots;
+
+	/// @brief graphic resource
+	std::string _resource;
 };

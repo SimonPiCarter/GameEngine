@@ -80,6 +80,16 @@ void WaveEngine::handleFrame(double elapsedTime_p)
 		despawnMob(entity_l);
 	}
 
+	// Disable entity with less or equal than 0
+	for(MobEntity * entity_l : _mobs)
+	{
+		// if no life and not yet disabled
+		if(entity_l->getHitpoint() <= 0. && !entity_l->isDisabled())
+		{
+			killMob(entity_l);
+		}
+	}
+
 	// Trigger attack
 	_attack->buildAttacks(elapsedTime_p);
 
@@ -113,24 +123,32 @@ void WaveEngine::spawnMob(MobModel const &model_p, std::array<double, 2> const &
 	_mobs.push_back(new MobEntity(spawnPosition_p, &model_p, *_logic._currentMap, spawntime_p));
 	_tree.addContent(_mobs.back());
 
-	// Todo send message
+	_logic.spawnMob(_mobs.back(), spawnPosition_p);
 }
 
 void WaveEngine::despawnMob(MobEntity * entity_p)
 {
 	_tree.removeContent(entity_p);
-
-	// Todo send message
+	_logic.despawnMob(entity_p);
+	entity_p->setDisabled(true);
 }
 
-void WaveEngine::moveMob(MobEntity * entity_p, std::array<double,2> pos_p, std::array<double,2> dir_p)
+void WaveEngine::killMob(MobEntity * entity_p)
 {
+	_tree.removeContent(entity_p);
+	_logic.killMob(entity_p);
+	entity_p->setDisabled(true);
+}
+
+void WaveEngine::moveMob(MobEntity * entity_p, std::array<double,2> pos_p, std::array<double,2>)
+{
+	std::array<double,2> oldPos_l = entity_p->getPosition();
 	_tree.updatePositionFromNode(*entity_p, pos_p);
 	// upatePositionFromNode require the position to still be at its old state
 	// therefore we update position after
 	entity_p->setPosition(pos_p);
 
-	// Todo send message
+	_logic.moveMob(entity_p, oldPos_l, pos_p);
 }
 
 bool WaveEngine::isWaveOver()
