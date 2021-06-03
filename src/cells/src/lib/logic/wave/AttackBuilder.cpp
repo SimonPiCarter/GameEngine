@@ -147,6 +147,13 @@ std::list<MobEntity *> AttackBuilder::findTargets(AttackInfo &info_p)
 			}
 		}
 	}
+
+	// spawn particles to the targets
+	for(MobEntity * ent_l : targets_l)
+	{
+		_waveEngine.getLogic().spawnDamageParticle(ent_l->getPosition(), 0.5);
+	}
+
 	return targets_l;
 }
 
