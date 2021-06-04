@@ -13,6 +13,7 @@ RichLabel::RichLabel(std::vector<InfoLabel> const &content_p, double x, double y
 {
 	_manager = graphic_p.getColibriManager();
 	_window = _manager->createWindow(nullptr);
+	_window->setZOrder(1);
 
 	// Adjust window to the full
 	_window->setTransform(Ogre::Vector2(x, y-20), Ogre::Vector2(width, height));
@@ -45,11 +46,21 @@ RichLabel::RichLabel(std::vector<InfoLabel> const &content_p, double x, double y
 
 	// no scroll here!
 	_window->setMaxScroll(Ogre::Vector2(0,0));
+
+	_window->setClickable(false);
+	_label->setClickable(false);
+	_label->updateDerivedTransformFromParent(true);
 }
 
 RichLabel::~RichLabel()
 {
 	_manager->destroyWidget(_window);
+}
+
+void RichLabel::setHidden(bool hidden_p)
+{
+	_window->setHidden(hidden_p);
+	_label->setKeyboardNavigable(!hidden_p);
 }
 
 void RichLabel::updateText(std::vector<InfoLabel> const &content_p)
@@ -82,4 +93,10 @@ void RichLabel::updateText(std::vector<InfoLabel> const &content_p)
 		_label->setTextColour(Ogre::ColourValue(info_l.r/255.f, info_l.g/255.f, info_l.b/255.f), idx_l);
 		++idx_l;
 	}
+}
+
+void RichLabel::setPosition(double x, double y)
+{
+	_window->setTopLeft(Ogre::Vector2(x, y-20));
+	_label->updateDerivedTransformFromParent(true);
 }

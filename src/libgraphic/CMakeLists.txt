@@ -12,6 +12,7 @@ target_sources(graphic
 	src/engine/utils/StaticPluginLoader.cpp
 	src/engine/utils/SdlInputHandler.cpp
 	src/entity/GraphicEntity.cpp
+	src/gui/ButtonData.cpp
 	src/gui/CentralMenu.cpp
 	src/gui/RichLabel.cpp
 	src/message/GraphicMessage.cpp

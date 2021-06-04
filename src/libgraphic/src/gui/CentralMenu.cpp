@@ -2,27 +2,9 @@
 
 #include "engine/GraphicEngine.h"
 
-#include "ColibriGui/ColibriLabel.h"
-#include "ColibriGui/ColibriButton.h"
 #include "ColibriGui/Layouts/ColibriLayoutLine.h"
 
 using namespace central_menu;
-
-WidgetListener::WidgetListener(Colibri::Button *button_p, Listener *listener_p)
-	: _button(button_p), _listener(listener_p)
-{
-	assert(_button);
-	assert(_listener);
-}
-WidgetListener::~WidgetListener() {}
-void WidgetListener::notifyWidgetAction( Colibri::Widget *widget, Colibri::Action::Action action )
-{
-	if(action == Colibri::Action::Action::PrimaryActionPerform
-	&& widget == _button)
-	{
-		_listener->run();
-	}
-}
 
 Menu::Menu(std::string const &title_p, std::vector<ButtonData> const &data_p, GraphicEngine & engine_p)
 {
@@ -58,6 +40,13 @@ Menu::Menu(std::string const &title_p, std::vector<ButtonData> const &data_p, Gr
 			_listeners.push_back(new ::WidgetListener(button_l, buttonData_l.listener));
 			button_l->addActionListener(_listeners.back());
 		}
+
+		// tooltip
+		if(buttonData_l.tooltip)
+		{
+			_listeners.push_back(new ::TooltipListener(_manager, button_l, buttonData_l.tooltip));
+			button_l->addActionListener(_listeners.back());
+		}
 	}
 
 	// Do some spacing (cf demo...)
@@ -84,7 +73,7 @@ Menu::Menu(std::string const &title_p, std::vector<ButtonData> const &data_p, Gr
 Menu::~Menu()
 {
 	// delete all listeners
-	for(WidgetListener* listener_l : _listeners)
+	for(Colibri::WidgetActionListener* listener_l : _listeners)
 	{
 		delete listener_l;
 	}
@@ -94,6 +83,7 @@ Menu::~Menu()
 void Menu::setHidden(bool hidden_p)
 {
 	_window->setHidden(hidden_p);
+	_window->setClickable(!hidden_p);
 	for(Colibri::Button * button_l : _buttons)
 	{
 		button_l->setClickable(!hidden_p);
