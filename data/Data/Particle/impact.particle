@@ -1,0 +1,84 @@
+// Example emitted emitters
+particle_system Particle/impact
+{
+    material Particle/impact
+    point_rendering            false
+    particle_width             0.2
+    particle_height            0.2
+    cull_each                  false
+    quota                      1
+    emit_emitter_quota         1
+    billboard_type             point
+
+      emitter Point
+      {
+          name                    mainEmitter
+          emission_rate           1000
+          time_to_live            0.1
+          direction               0 1 0
+          angle                   180
+          position                1 0 1.1
+          velocity                0
+          duration                0.05
+          repeat_delay            0
+      }
+
+    // Make splash fading
+    affector ColourFader2
+    {
+        alpha1          10
+        alpha2          -10
+        state_change    0.1
+    }
+
+    // scale
+    affector Scaler
+    {
+        rate            0.5
+    }
+}
+
+// Example emitted emitters
+particle_system Particle/impact_point
+{
+    material Particle/impact_point
+    point_rendering            false
+    particle_width             0.05
+    particle_height            0.05
+    cull_each                  false
+    quota                      10
+    emit_emitter_quota         1
+    billboard_type             point
+
+      emitter Point
+      {
+          name                    mainEmitter
+          emission_rate           1000
+          time_to_live            0.1
+          direction               0 1 0
+          angle                   180
+          position                1 0 1.1
+          velocity                0.2
+          duration                0.05
+          repeat_delay            0
+      }
+
+    // Make splash fading
+    affector ColourFader
+    {
+        alpha          -100.
+    }
+
+    // Make em float downwards
+    affector LinearForce
+    {
+        force_vector            0 0 -0.5
+        force_application       add
+    }
+
+    // scale
+    //affector Scaler
+    //{
+    //    rate            2
+    //}
+}
