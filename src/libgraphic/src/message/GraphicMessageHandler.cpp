@@ -213,7 +213,7 @@ void GraphicMessageHandler::visitNewLight(NewLightMessage const &msg_p)
 	}
 	if(msg_p.getType() == LightType::Point)
 	{
-		light_l->setType(Ogre::Light::LT_DIRECTIONAL);
+		light_l->setType(Ogre::Light::LT_POINT);
 	}
 	if(msg_p.getType() == LightType::Spotlight)
 	{
