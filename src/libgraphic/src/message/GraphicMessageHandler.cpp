@@ -4,6 +4,8 @@
 #include "entity/GraphicEntity.h"
 
 #include "Animation/OgreSkeletonInstance.h"
+#include "Compositor/OgreCompositorWorkspace.h"
+#include "Compositor/OgreCompositorShadowNode.h"
 #include "OgreCamera.h"
 #include "OgreItem.h"
 #include "OgreNode.h"
@@ -198,6 +200,10 @@ void GraphicMessageHandler::visitNewLight(NewLightMessage const &msg_p)
 {
 	Ogre::SceneManager *sceneManager_l = _engine->getSceneManager();
 
+	Ogre::CompositorWorkspace *workspace_l = _engine->getCompositorWorkspace();
+	Ogre::CompositorShadowNode *shadowNode_l = workspace_l->findShadowNode("StaticShadowMapsShadowNode");
+	assert(shadowNode_l);
+
 	Ogre::SceneNode * rootNode_l = _engine->getMapSceneNode()[msg_p.getParent()];
 	assert(rootNode_l);
 
@@ -205,8 +211,20 @@ void GraphicMessageHandler::visitNewLight(NewLightMessage const &msg_p)
 	Ogre::SceneNode *lightNode = rootNode_l->createChildSceneNode(Ogre::SCENE_DYNAMIC,
 		Ogre::Vector3(msg_p.getPosition()[0], msg_p.getPosition()[1], msg_p.getPosition()[2]));
 	lightNode->attachObject(light_l);
-	light_l->setPowerScale(Ogre::Math::PI); //Since we don't do HDR, counter the PBS' division by PI
+	light_l->setPowerScale(msg_p.getPower()); //Since we don't do HDR, counter the PBS' division by PI
 	light_l->setDirection(Ogre::Vector3(msg_p.getDirection()[0], msg_p.getDirection()[1], msg_p.getDirection()[2]).normalisedCopy());
+	light_l->setDiffuseColour(msg_p.getDiffuse()[0], msg_p.getDiffuse()[1], msg_p.getDiffuse()[2]);
+	light_l->setSpecularColour(msg_p.getSpecular()[0], msg_p.getSpecular()[1], msg_p.getSpecular()[2]);
+	if(msg_p.getAttenuation()[0] > 1e-5)
+	{
+		light_l->setAttenuationBasedOnRadius(msg_p.getAttenuation()[0], msg_p.getAttenuation()[1]);
+	}
+	if(msg_p.getShadows())
+	{
+		static size_t indexMap_l = 3;
+		shadowNode_l->setLightFixedToShadowMap(indexMap_l++, light_l);
+	}
+
 	if(msg_p.getType() == LightType::Directional)
 	{
 		light_l->setType(Ogre::Light::LT_DIRECTIONAL);
