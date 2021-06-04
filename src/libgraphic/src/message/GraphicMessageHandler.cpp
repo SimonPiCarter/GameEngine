@@ -253,7 +253,7 @@ void GraphicMessageHandler::visitDestroyParticle(DestroyParticleMessage const &m
 	assert(parentNode_l);
 	// Destroy scene and all children
 	parentNode_l->removeAndDestroyChild(node_l);
-	msg_p.getEntity()->setParticle(nullptr);
+	delete msg_p.getEntity();
 }
 
 void GraphicMessageHandler::visitNewParticle(NewParticleMessage const &msg_p)

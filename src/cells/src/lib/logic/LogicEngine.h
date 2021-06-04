@@ -42,7 +42,6 @@ protected:
 	std::list<Tower *> _towers;
 
 	std::list<std::pair<GraphicEntity *, double> > _particles;
-	std::list<GraphicEntity *> _removedParticles;
 
 	GraphicEntity *_light;
 

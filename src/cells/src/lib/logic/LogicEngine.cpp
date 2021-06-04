@@ -93,25 +93,11 @@ void LogicEngine::run(double elapsedTime_p)
 		if(it_l->second <= 0.)
 		{
 			_cellsEngine->getGraphic().registerMessage(new DestroyParticleMessage(it_l->first));
-			_removedParticles.push_back(it_l->first);
 			it_l = _particles.erase(it_l);
 		}
 		else
 		{
 			++ it_l;
-		}
-	}
-	// delete removed particles handled by the graphic engine already
-	for(auto it_l = _removedParticles.begin() ; it_l != _removedParticles.end() ; )
-	{
-		if((*it_l)->getParticle() == nullptr)
-		{
-			delete *it_l;
-			it_l = _removedParticles.erase(it_l);
-		}
-		else
-		{
-			++it_l;
 		}
 	}
 }
