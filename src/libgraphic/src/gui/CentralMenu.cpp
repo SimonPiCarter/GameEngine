@@ -36,12 +36,12 @@ Menu::Menu(std::string const &title_p, std::vector<ButtonData> const &data_p, Gr
 
 	Colibri::LayoutLine *layout_l = new Colibri::LayoutLine(_manager);
 
-	Colibri::Label *label_l = _manager->createWidget<Colibri::Label>(_window);
-	label_l->m_minSize = Ogre::Vector2( 350, 64 );
-	label_l->setText(title_p);
-	label_l->setTextHorizAlignment(Colibri::TextHorizAlignment::Center);
-	label_l->setTextVertAlignment(Colibri::TextVertAlignment::Center);
-	layout_l->addCell(label_l);
+	_label = _manager->createWidget<Colibri::Label>(_window);
+	_label->m_minSize = Ogre::Vector2( 350, 64 );
+	_label->setText(title_p);
+	_label->setTextHorizAlignment(Colibri::TextHorizAlignment::Center);
+	_label->setTextVertAlignment(Colibri::TextVertAlignment::Center);
+	layout_l->addCell(_label);
 
 	for(ButtonData const & buttonData_l : data_p)
 	{
@@ -50,6 +50,7 @@ Menu::Menu(std::string const &title_p, std::vector<ButtonData> const &data_p, Gr
 		button_l->getLabel()->setText(buttonData_l.text);
 		button_l->sizeToFit();
 		layout_l->addCell(button_l);
+		_buttons.push_back(button_l);
 
 		// event
 		if(buttonData_l.listener)
@@ -77,6 +78,7 @@ Menu::Menu(std::string const &title_p, std::vector<ButtonData> const &data_p, Gr
 
 	// no scroll here!
 	_window->setMaxScroll(Ogre::Vector2(0,0));
+	_window->update(0.f);
 }
 
 Menu::~Menu()
@@ -87,4 +89,16 @@ Menu::~Menu()
 		delete listener_l;
 	}
 	_manager->destroyWindow(_window);
+}
+
+void Menu::setHidden(bool hidden_p)
+{
+	_window->setHidden(hidden_p);
+	for(Colibri::Button * button_l : _buttons)
+	{
+		button_l->setClickable(!hidden_p);
+		button_l->setKeyboardNavigable(!hidden_p);
+	}
+	_label->setClickable(!hidden_p);
+	_label->setKeyboardNavigable(!hidden_p);
 }

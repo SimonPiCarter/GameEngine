@@ -5,6 +5,7 @@
 #include <list>
 #include <string>
 #include "ColibriGui/ColibriButton.h"
+#include "ColibriGui/ColibriLabel.h"
 #include "ColibriGui/ColibriManager.h"
 #include "ColibriGui/ColibriWindow.h"
 
@@ -41,9 +42,13 @@ public:
 	Menu(std::string const &title_p, std::vector<ButtonData> const &data_p, GraphicEngine & engine_p);
 	virtual ~Menu();
 
+	void setHidden(bool hidden_p);
+
 protected:
 	Colibri::ColibriManager * _manager;
 	Colibri::Window * _window;
+	std::list<Colibri::Button *> _buttons;
+	Colibri::Label * _label;
 
 	/// @brief list of listeners to delete them
 	std::list<WidgetListener*> _listeners;
