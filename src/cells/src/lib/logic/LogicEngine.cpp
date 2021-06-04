@@ -40,7 +40,7 @@ void LogicEngine::init()
 		MapDisplay * display_l = newMapDisplay("root", _currentMap, _cellsEngine->getGraphic());
 
 		_light = new GraphicEntity();
-		_cellsEngine->getGraphic().registerMessage(new NewLightMessage(_light, "root", {1., 1., 1.}, {-1, -1, -1}, LightType::Directional));
+		_cellsEngine->getGraphic().registerMessage(new NewLightMessage(_light, "root", {1., 1., 2.}, {-1, -1, -2}, LightType::Directional, true));
 
 		double size_l = std::max<double>(_currentMap->getSize()[0], _currentMap->getSize()[1]);
 		_cellsEngine->getGraphic().registerMessage(new MoveCameraMessage({size_l*1.2, size_l/2. - 0.5, size_l}));
@@ -56,7 +56,7 @@ WaveLayout getNextWave()
 	WaveLayout layout_l;
 	layout_l.mobLayout.push_back(
 		{
-			{3., 1., ArmorType::Standard, "Cube", {0.1,0.1}},		// Mob model
+			{3., 1., ArmorType::Standard, "Cube", {1.,1.}},		// Mob model
 			10,														// number of spawn
 			1.														// interval
 		}
@@ -122,7 +122,7 @@ void LogicEngine::spawnMob(MobEntity * entity_p, std::array<double, 2> const & s
 	{
 		GraphicEntity * entity_l = new GraphicEntity();
 		_cellsEngine->getGraphic().registerMessage(new NewGraphicEntityMessage(entity_l, entity_p->getModel()->resource,
-			{spawnPosition_p[0], spawnPosition_p[1], 0.}, {0.5, 0.5, 0.5}, "game"));
+			{spawnPosition_p[0]-entity_p->getSize()[0]/2., spawnPosition_p[1]-entity_p->getSize()[1]/2., 0.}, {0.5, 0.5, 0.5}, "game"));
 		entity_p->setGraphic(entity_l);
 	}
 }
@@ -160,7 +160,7 @@ void LogicEngine::spawnTower(Tower * tower_p)
 	{
 		GraphicEntity * entity_l = new GraphicEntity();
 		_cellsEngine->getGraphic().registerMessage(new NewGraphicEntityMessage(entity_l, tower_p->getResource(),
-			{tower_p->getPosition()[0], tower_p->getPosition()[1], 0.}, {0.5, 0.5, 0.5}, "game"));
+			{tower_p->getPosition()[0]-tower_p->getSize()[0]/2., tower_p->getPosition()[1]-tower_p->getSize()[1]/2., 0.}, {0.5, 0.5, 0.5}, "game"));
 		tower_p->setGraphic(entity_l);
 	}
 }
