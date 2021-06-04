@@ -8,7 +8,8 @@
 #include <iostream>
 #include <sstream>
 
-RichLabel::RichLabel(std::vector<InfoLabel> const &content_p, double x, double y, double width, double height, float size_p, GraphicEngine &graphic_p)
+RichLabel::RichLabel(std::vector<InfoLabel> const &content_p, double x, double y, double width
+	, double height, float size_p, bool back_p, GraphicEngine &graphic_p)
 {
 	_manager = graphic_p.getColibriManager();
 	_window = _manager->createWindow(nullptr);
@@ -16,7 +17,9 @@ RichLabel::RichLabel(std::vector<InfoLabel> const &content_p, double x, double y
 	// Adjust window to the full
 	_window->setTransform(Ogre::Vector2(x, y-20), Ogre::Vector2(width, height));
 	_window->m_breadthFirst = true;
-	_window->setVisualsEnabled(false);
+	_window->setVisualsEnabled(back_p);
+	float borders_l[4] = {0, 0, 0, 0};
+	_window->setBorderSize(borders_l);
 
 	Colibri::LayoutLine *layout_l = new Colibri::LayoutLine(_manager);
 	layout_l->setCellOffset(Ogre::Vector2(0,0));
@@ -41,9 +44,7 @@ RichLabel::RichLabel(std::vector<InfoLabel> const &content_p, double x, double y
 	layout_l->layout();
 
 	// no scroll here!
-	_window->sizeScrollToFit();
 	_window->setMaxScroll(Ogre::Vector2(0,0));
-	_window->setScrollableArea(Ogre::Vector2(0,0));
 }
 
 RichLabel::~RichLabel()

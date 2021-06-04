@@ -21,7 +21,7 @@ struct InfoLabel
 class RichLabel
 {
 public:
-	RichLabel(std::vector<InfoLabel> const &content_p, double x, double y, double width, double height, float size_p, GraphicEngine &graphic_p);
+	RichLabel(std::vector<InfoLabel> const &content_p, double x, double y, double width, double height, float size_p, bool back_p, GraphicEngine &graphic_p);
 	~RichLabel();
 
 	void updateText(std::vector<InfoLabel> const &content_p);
