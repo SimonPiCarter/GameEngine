@@ -17,7 +17,7 @@ particle_system Particle/impact
           time_to_live            0.1
           direction               0 1 0
           angle                   180
-          position                1 0 1.1
+          position                0 -0.5 0.6
           velocity                0
           duration                0.05
           repeat_delay            0
@@ -57,7 +57,7 @@ particle_system Particle/impact_point
           time_to_live            0.1
           direction               0 1 0
           angle                   180
-          position                1 0 1.1
+          position                0 -0.5 0.6
           velocity                0.2
           duration                0.05
           repeat_delay            0
