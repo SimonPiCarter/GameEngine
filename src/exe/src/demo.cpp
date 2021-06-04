@@ -94,11 +94,15 @@ public:
 			_graphic.tearDown();
 		}
 
+		std::vector<InfoLabel> content3_l;
+		content3_l.push_back({"Return to game", 255, 255, 255});
+		RichLabel * label3_l = new RichLabel(content3_l, 500, 70, 500, 50, 10, true, _graphic);
+
 		_menu = new central_menu::Menu("Main",
 		{
 			{"destroy_scene", &_destroy},
 			{"quit", &_quit},
-			{"return", &_return}
+			{"return", &_return, label3_l}
 		}, _graphic
 		);
 
@@ -111,6 +115,7 @@ public:
 		std::vector<InfoLabel> content2_l;
 		content2_l.push_back({" : Menu\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", 255, 255, 255});
 		RichLabel * label2_l = new RichLabel(content2_l, 20, 70, 400, 400, 10, true, _graphic);
+
 
 		Ogre::Window *renderWindow_l = _graphic.getRenderWindow();
 
@@ -163,6 +168,7 @@ public:
 		}
 		delete label_l;
 		delete label2_l;
+		delete label3_l;
 		delete _menu;
 
 		_graphic.tearDown();
