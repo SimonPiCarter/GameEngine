@@ -74,6 +74,9 @@ public:
 	std::unordered_map<std::string, Ogre::SceneNode *> & getMapSceneNode() { return _mapSceneNode; }
 	std::unordered_map<std::string, Ogre::SceneNode *> const & getMapSceneNode() const { return _mapSceneNode; }
 
+	std::array<GraphicEntity *, 5> & getShadowMaps() { return _shadowMaps; }
+	std::array<GraphicEntity *, 5> const & getShadowMaps() const { return _shadowMaps; }
+
 protected:
 	GameMessageHandler * const _gameMessageHandler;
 	ResourceHandler const * const _resourceHandler;
@@ -132,4 +135,9 @@ protected:
 	void textInput( const SDL_TextInputEvent &arg );
 	void keyPressed( const SDL_KeyboardEvent &arg );
 	void keyReleased( const SDL_KeyboardEvent &arg );
+
+	// shadow map light handling
+	// fixed shadow map size (for now)
+	// if content is null then that means that we
+	std::array<GraphicEntity *, 5> _shadowMaps;
 };

@@ -9,6 +9,8 @@
 #include "OgreWindowEventUtilities.h"
 #include "OgrePlatformInformation.h"
 #include "Compositor/OgreCompositorManager2.h"
+#include "Compositor/OgreCompositorWorkspace.h"
+#include "Compositor/OgreCompositorShadowNode.h"
 
 #include "OgreHlmsUnlit.h"
 #include "OgreHlmsPbs.h"
@@ -56,6 +58,10 @@ GraphicEngine::GraphicEngine(GameMessageHandler * gameMessageHandler_p, Resource
 	{
 		Ogre::FileSystemLayer filesystemLayer_l( OGRE_VERSION_NAME );
 		_writeAccessFolder = filesystemLayer_l.getWritablePath("");
+	}
+	for(size_t i = 0 ; i < _shadowMaps.max_size() ; ++ i )
+	{
+		_shadowMaps[i] = nullptr;
 	}
 }
 
@@ -321,8 +327,10 @@ void GraphicEngine::setupResources()
 
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath, "FileSystem", "Popular");
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/export2", "FileSystem", "Popular");
+	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/compositors", "FileSystem", "Popular");
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Particle", "FileSystem", "Popular");
-	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"Materials/ColibriGui/Skins/DarkGloss", "FileSystem", "Popular");
+	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Materials/Common/GLSL", "FileSystem", "Popular");
+	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Materials/ColibriGui/Skins/DarkGloss", "FileSystem", "Popular");
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Materials/ColibriGui/Skins/Debug", "FileSystem", "Popular");
 }
 
@@ -520,6 +528,16 @@ void GraphicEngine::handleFrame(double elapsedTime_p)
 void GraphicEngine::run(double elapsedTime_p)
 {
 	Ogre::WindowEventUtilities::messagePump();
+
+	Ogre::CompositorShadowNode *shadowNode_l = _workspace->findShadowNode("StaticShadowMapsShadowNode");
+
+	for(size_t i = 0 ; i < _engine->getShadowMaps().max_size() ; ++ i)
+	{
+		if(_engine->getShadowMaps()[i])
+		{
+			shadowNode_l->setStaticShadowMapDirty(i, true);
+		}
+	}
 
 	SDL_Event evt;
 	while( SDL_PollEvent( &evt ) )

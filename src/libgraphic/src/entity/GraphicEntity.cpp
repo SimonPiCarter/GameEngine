@@ -40,6 +40,7 @@ void GraphicEntity::setParticle(Ogre::ParticleSystem * particle_p)
 
 Ogre::SkeletonAnimation *GraphicEntity::getAnimationState(std::string const &animState_p)
 {
+	assert(_item);
 	Ogre::SkeletonInstance* skeletonInstance_l = _item->getSkeletonInstance();
 	assert(skeletonInstance_l);
 	return skeletonInstance_l->getAnimation(animState_p);;

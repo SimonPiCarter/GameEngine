@@ -50,23 +50,54 @@ abstract target cubemap_target_shadow
 
 compositor_node_shadow StaticShadowMapsShadowNode
 {
-	technique pssm
+	technique focused
 
-	texture atlas		3072 2048 PFG_D32_FLOAT
+	texture atlas0		2048 2048 PFG_D32_FLOAT
+	texture atlas1		2048 2048 PFG_D32_FLOAT
+	texture atlas2		2048 2048 PFG_D32_FLOAT
+	texture atlas3		2048 2048 PFG_D32_FLOAT
+	texture atlas4		2048 2048 PFG_D32_FLOAT
 	texture atlasStatic	4096 8192 PFG_D32_FLOAT keep_content
 	texture tmpCubemap	1024 1024 PFG_R32_FLOAT cubemap depth_format PFG_D32_FLOAT
 
-	num_splits		3
-	pssm_lambda		0.95
-	shadow_map 0 atlas uv 0.000000000000000 0.0 0.666666666666667 1.0 light 0 split 0
-	shadow_map 1 atlas uv 0.666666666666667 0.0 0.333333333333333 0.5 light 0 split 1
-	shadow_map 2 atlas uv 0.666666666666667 0.5 0.333333333333333 0.5 light 0 split 2
+	shadow_map 0 atlas0 uv 0.0 0.0 1.0 1.0 light 0
+	shadow_map 1 atlas1 uv 0.0 0.0 1.0 1.0 light 1
+	shadow_map 2 atlas2 uv 0.0 0.0 1.0 1.0 light 2
+	shadow_map 3 atlas3 uv 0.0 0.0 1.0 1.0 light 3
+	shadow_map 4 atlas4 uv 0.0 0.0 1.0 1.0 light 4
 
-	technique focused
-	shadow_map 3 atlasStatic uv 0.0 0.0 1.0 0.5 light 1
-	shadow_map 4 atlasStatic uv 0.0 0.5 1.0 0.5 light 2
+	shadow_map 5 atlasStatic uv 0.0 0.0 1.0 0.5 light 5
+	shadow_map 6 atlasStatic uv 0.0 0.5 1.0 0.5 light 6
 
-	target atlas
+	target atlas0
+	{
+		pass clear
+		{
+			clear_colour_reverse_depth_aware	1 1 1 1
+		}
+	}
+	target atlas1
+	{
+		pass clear
+		{
+			clear_colour_reverse_depth_aware	1 1 1 1
+		}
+	}
+	target atlas2
+	{
+		pass clear
+		{
+			clear_colour_reverse_depth_aware	1 1 1 1
+		}
+	}
+	target atlas3
+	{
+		pass clear
+		{
+			clear_colour_reverse_depth_aware	1 1 1 1
+		}
+	}
+	target atlas4
 	{
 		pass clear
 		{
@@ -76,7 +107,7 @@ compositor_node_shadow StaticShadowMapsShadowNode
 
 	shadow_map_target_type directional
 	{
-		shadow_map 0 1 2
+		shadow_map 0 1 2 3 4
 		{
 			pass render_scene
 			{
@@ -85,10 +116,10 @@ compositor_node_shadow StaticShadowMapsShadowNode
 	}
 
 	//Clear the static atlas first. Do this inside a shadow_map_target_type block so that it only
-	//gets executed if shadow_map 3 is flagged as dirty (instead of clearing every frame).
+	//gets executed if shadow_map 5 is flagged as dirty (instead of clearing every frame).
 	shadow_map_target_type directional spot point
 	{
-		shadow_map 3
+		shadow_map 5
 		{
 			pass clear
 			{
@@ -100,7 +131,7 @@ compositor_node_shadow StaticShadowMapsShadowNode
 
 	shadow_map_target_type point
 	{
-		shadow_map_repeat 3 4
+		shadow_map_repeat 5 6
 		{
 			target tmpCubemap +X : cubemap_target_shadow {}
 			target tmpCubemap -X : cubemap_target_shadow {}
@@ -122,7 +153,7 @@ compositor_node_shadow StaticShadowMapsShadowNode
 
 	shadow_map_target_type directional spot
 	{
-		shadow_map 3 4
+		shadow_map 5 6
 		{
 			pass render_scene
 			{

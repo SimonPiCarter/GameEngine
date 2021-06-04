@@ -186,6 +186,15 @@ void GraphicMessageHandler::visitDestroyLight(DestroyLightMessage const &msg_p)
 	assert(parentNode_l);
 	// Destroy scene and all children
 	parentNode_l->removeAndDestroyChild(node_l);
+
+	// look for available shadow map
+	for(size_t i = 0 ; i < _engine->getShadowMaps().max_size() ; ++ i)
+	{
+		if(_engine->getShadowMaps()[i] == msg_p.getEntity())
+		{
+			_engine->getShadowMaps()[i] = nullptr;
+		}
+	}
 }
 
 void GraphicMessageHandler::visitMoveLight(MoveLightMessage const &msg_p)
@@ -215,19 +224,28 @@ void GraphicMessageHandler::visitNewLight(NewLightMessage const &msg_p)
 	light_l->setDirection(Ogre::Vector3(msg_p.getDirection()[0], msg_p.getDirection()[1], msg_p.getDirection()[2]).normalisedCopy());
 	light_l->setDiffuseColour(msg_p.getDiffuse()[0], msg_p.getDiffuse()[1], msg_p.getDiffuse()[2]);
 	light_l->setSpecularColour(msg_p.getSpecular()[0], msg_p.getSpecular()[1], msg_p.getSpecular()[2]);
+	light_l->setAttenuation(5., 0., 1., 2.);
 	if(msg_p.getAttenuation()[0] > 1e-5)
 	{
 		light_l->setAttenuationBasedOnRadius(msg_p.getAttenuation()[0], msg_p.getAttenuation()[1]);
-	}
-	if(msg_p.getShadows())
-	{
-		static size_t indexMap_l = 3;
-		shadowNode_l->setLightFixedToShadowMap(indexMap_l++, light_l);
 	}
 
 	if(msg_p.getType() == LightType::Directional)
 	{
 		light_l->setType(Ogre::Light::LT_DIRECTIONAL);
+		if(msg_p.getShadows())
+		{
+			// look for available shadow map
+			for(size_t i = 0 ; i < _engine->getShadowMaps().max_size() ; ++ i)
+			{
+				if(!_engine->getShadowMaps()[i])
+				{
+					shadowNode_l->setLightFixedToShadowMap(i, light_l);
+					_engine->getShadowMaps()[i] = msg_p.getEntity();
+					break;
+				}
+			}
+		}
 	}
 	if(msg_p.getType() == LightType::Point)
 	{
