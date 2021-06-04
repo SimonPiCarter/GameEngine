@@ -26,10 +26,6 @@ LogicEngine::~LogicEngine()
 	{
 		delete pair_l.first;
 	}
-	for(GraphicEntity * ent_l : _removedParticles)
-	{
-		delete ent_l;
-	}
 }
 
 
