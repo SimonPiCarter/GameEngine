@@ -170,6 +170,8 @@ void LogicEngine::spawnDamageParticle(std::array<double,2> pos_p, double lifetim
 	if(_cellsEngine)
 	{
 		_particles.push_back(std::pair<GraphicEntity*, double>(new GraphicEntity(), lifetime_p));
-		_cellsEngine->getGraphic().registerMessage(new NewParticleMessage(_particles.back().first, "Examples/Fireworks", {pos_p[0],pos_p[1],0.}, "game"));
+		_cellsEngine->getGraphic().registerMessage(new NewParticleMessage(_particles.back().first, "Particle/impact", {pos_p[0],pos_p[1],0.}, "game"));
+		_particles.push_back(std::pair<GraphicEntity*, double>(new GraphicEntity(), lifetime_p));
+		_cellsEngine->getGraphic().registerMessage(new NewParticleMessage(_particles.back().first, "Particle/impact_point", {pos_p[0],pos_p[1],0.}, "game"));
 	}
 }
