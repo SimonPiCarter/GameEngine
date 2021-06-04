@@ -55,16 +55,15 @@ private:
 class ReturnListener : public Listener
 {
 public:
-	ReturnListener(central_menu::Menu *&menu_p) : _menu(menu_p) {}
+	// ref is mandatory because we set up pointer after listener is created
+	ReturnListener(central_menu::Menu *& menu_p) : _menu(menu_p) {}
 	virtual void run()
 	{
-		delete _menu;
-		// to avoid double deletion
-		_menu = nullptr;
+		_menu->setHidden(true);
 	}
 private:
 	// pointer to reset menu to nullptr and delete it (hence pointer to pointer)
-	central_menu::Menu *&_menu;
+	central_menu::Menu *& _menu;
 };
 
 class DemoEngine : public GameEngine
@@ -106,7 +105,12 @@ public:
 		std::vector<InfoLabel> content_l;
 		content_l.push_back({"F5", 255, 255, 0});
 		content_l.push_back({" : Menu\n", 255, 255, 255});
-		RichLabel * label_l = new RichLabel(content_l, 20, 20, 400, 50, 10, _graphic);
+		RichLabel * label_l = new RichLabel(content_l, 20, 20, 400, 50, 10, false, _graphic);
+
+
+		std::vector<InfoLabel> content2_l;
+		content2_l.push_back({" : Menu\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", 255, 255, 255});
+		RichLabel * label2_l = new RichLabel(content2_l, 20, 70, 400, 400, 10, true, _graphic);
 
 		Ogre::Window *renderWindow_l = _graphic.getRenderWindow();
 
@@ -157,7 +161,8 @@ public:
 			timeSinceLast = std::min( 1.0, timeSinceLast/1000. ); //Prevent from going haywire.
 			start_l = end_l;
 		}
-
+		delete label_l;
+		delete label2_l;
 		delete _menu;
 
 		_graphic.tearDown();
@@ -191,16 +196,7 @@ public:
 			}
 			if (evt.key.keysym.scancode == SDL_SCANCODE_F5)
 			{
-				if(!_menu)
-				{
-					_menu = new central_menu::Menu("Main",
-					{
-						{"destroy_scene", &_destroy},
-						{"quit", &_quit},
-						{"return", &_return}
-					}, _graphic
-					);
-				}
+				_menu->setHidden(false);
 			}
 			break;
 		case SDL_QUIT:
