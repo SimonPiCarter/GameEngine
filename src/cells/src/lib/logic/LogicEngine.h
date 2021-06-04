@@ -43,7 +43,7 @@ protected:
 
 	std::list<std::pair<GraphicEntity *, double> > _particles;
 
-	GraphicEntity *_light;
+	std::list<GraphicEntity *> _lights;
 
 	WaveEngine * _waveEngine;
 

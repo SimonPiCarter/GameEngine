@@ -10,7 +10,6 @@ LogicEngine::LogicEngine(MapLayout const * map_p, CellsEngine * cellsEngine_p)
 	: _cellsEngine(cellsEngine_p)
 	, _quit(false)
 	, _currentMap(map_p)
-	, _light(nullptr)
 	, _waveEngine(nullptr)
 {}
 
@@ -20,7 +19,10 @@ LogicEngine::~LogicEngine()
 	{
 		delete tower_l;
 	}
-	delete _light;
+	for(GraphicEntity * light_l : _lights)
+	{
+		delete light_l;
+	}
 
 	for(std::pair<GraphicEntity *, double> const &pair_l : _particles)
 	{
@@ -35,8 +37,11 @@ void LogicEngine::init()
 	{
 		MapDisplay * display_l = newMapDisplay("root", _currentMap, _cellsEngine->getGraphic());
 
-		_light = new GraphicEntity();
-		_cellsEngine->getGraphic().registerMessage(new NewLightMessage(_light, "root", {1., 1., 2.}, {-1, -1, -2}, LightType::Directional, true));
+		_lights.push_back(new GraphicEntity());
+		_cellsEngine->getGraphic().registerMessage(new NewLightMessage(_lights.back(), "root", {2.5, 6.5, 0.1}, {-1, -1, -2}, LightType::Point, 5., false
+			, {1., 0.8, 0.8}, {1., 0.8, 0.8}, {0., 0.}));
+		_lights.push_back(new GraphicEntity());
+		_cellsEngine->getGraphic().registerMessage(new NewLightMessage(_lights.back(), "root", {2.5, 5.5, 1.5}, {-1, -1, -2}, LightType::Directional, 0.5, true));
 
 		double size_l = std::max<double>(_currentMap->getSize()[0], _currentMap->getSize()[1]);
 		_cellsEngine->getGraphic().registerMessage(new MoveCameraMessage({size_l*1.2, size_l/2. - 0.5, size_l}));
