@@ -1,7 +1,7 @@
 #pragma once
 
 #include "engine/GameEngine.h"
-
+#include "logic/layout/WaveLayout.h"
 
 class CellsEngine : public GameEngine
 {
@@ -17,5 +17,7 @@ public:
 	GraphicEngine & getGraphic() { return _graphic; }
 
 	virtual void visitSDLEvent(SDLEventGameMessage const &msg_p) override;
+
+	WaveLayout getNextWave();
 
 };

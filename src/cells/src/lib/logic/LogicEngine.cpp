@@ -4,7 +4,6 @@
 #include "logic/WaveEngine.h"
 #include "logic/display/MapDisplay.h"
 #include "logic/entity/Tower.h"
-#include "logic/layout/WaveLayout.h"
 
 LogicEngine::LogicEngine(MapLayout const * map_p, CellsEngine * cellsEngine_p)
 	: _cellsEngine(cellsEngine_p)
@@ -52,23 +51,10 @@ void LogicEngine::init()
 	}
 }
 
-WaveLayout getNextWave()
-{
-	WaveLayout layout_l;
-	layout_l.mobLayout.push_back(
-		{
-			{3., 1., ArmorType::Standard, "Cube", {1.,1.}},		// Mob model
-			10,														// number of spawn
-			1.														// interval
-		}
-	);
-	return layout_l;
-}
-
 void LogicEngine::run(double elapsedTime_p)
 {
 	bool startWave_l = true;
-	WaveLayout wave_l = getNextWave();
+	WaveLayout wave_l = _cellsEngine->getNextWave();
 
 	if(!_waveEngine && startWave_l)
 	{

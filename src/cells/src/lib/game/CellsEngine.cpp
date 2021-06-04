@@ -4,6 +4,10 @@
 #include "OgreSceneManager.h"
 #include <thread>
 
+#include "logic/LogicEngine.h"
+#include "logic/layout/MapLayout.h"
+#include "logic/entity/Tower.h"
+
 CellsEngine::CellsEngine(std::string const &path_p)
 	: GameEngine(path_p)
 {}
@@ -11,6 +15,11 @@ CellsEngine::CellsEngine(std::string const &path_p)
 
 void CellsEngine::init()
 {
+	_resourceHandler.addResource({"Cube", "new_cube.mesh", false, ""});
+	_resourceHandler.addResource({"CubeGreen", "new_cube.mesh", false, "Green"});
+	_resourceHandler.addResource({"CubeYellow", "new_cube.mesh", false, "Yellow"});
+	_resourceHandler.addResource({"CubeRed", "new_cube.mesh", false, "Red"});
+
 	_graphic.initWindow("cells");
 }
 
@@ -52,6 +61,25 @@ void CellsEngine::runLogic()
 
 	double timeSinceLast_l = 1.0 / 60.0;
 
+	std::list<Tile> tiles_l;
+	long size_l = 8;
+	for(long i = 0 ; i < size_l ; ++ i )
+	{
+		for(long j = 0 ; j < size_l ; ++ j )
+		{
+			tiles_l.push_back({i , j, true, (i%2 + j%2)%2 == 0?"CubeYellow" : "CubeRed"});
+		}
+	}
+	MapLayout layout_l(tiles_l, {0.5, 0.5}, {6.5, 6.5}, { {0.5, 6.5}, {6.5, 6.5} });
+
+	LogicEngine logic_l(&layout_l, this);
+	logic_l.init();
+
+	Tower * tower_l = new Tower({1.5, 5.5}, {1., 1.});
+	tower_l->setAttackModifier(AttackModifier(1.,1.,2.,3.,AttackType::Arc, DamageType::Standard));
+	tower_l->setResource("CubeGreen");
+	logic_l.spawnTower(tower_l);
+
 	while( !_graphic.getQuit() )
 	{
 		// handle game message
@@ -62,6 +90,8 @@ void CellsEngine::runLogic()
 			//Don't burn CPU cycles unnecessary when we're minimized.
 			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		}
+
+		logic_l.run(timeSinceLast_l);
 
 		const std::chrono::time_point<std::chrono::system_clock> end_l = std::chrono::system_clock::now();
 
@@ -94,4 +124,17 @@ void CellsEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 	default:
 		break;
 	}
+}
+
+WaveLayout CellsEngine::getNextWave()
+{
+	WaveLayout layout_l;
+	layout_l.mobLayout.push_back(
+		{
+			{3., 1., ArmorType::Standard, "Cube", {1.,1.}},			// Mob model
+			10,														// number of spawn
+			1.														// interval
+		}
+	);
+	return layout_l;
 }
