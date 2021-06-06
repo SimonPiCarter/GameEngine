@@ -225,8 +225,10 @@ void GraphicEngine::initWindow(const std::string &windowTitle_p)
 								getSceneManager() );
 	_colibriManager->loadSkins( (getResourcePath() +
 								"/Materials/ColibriGui/Skins/DarkGloss/Skins.colibri.json").c_str() );
-	_colibriManager->loadSkins( (getResourcePath() +
-								"/Materials/ColibriGui/Skins/Custom/Skins.colibri.json").c_str() );
+	for(std::string const &path_l : _resourceHandler->getListUISkins())
+	{
+		_colibriManager->loadSkins( (getResourcePath() + path_l).c_str() );
+	}
 
 #if OGRE_PROFILING
         Ogre::Profiler::getSingleton().setEnabled( true );
