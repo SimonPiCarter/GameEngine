@@ -40,6 +40,7 @@ Menu::Menu(std::string const &title_p, std::vector<ButtonData> const &data_p, Gr
 			_listeners.push_back(new ::WidgetListener(button_l, buttonData_l.listener));
 			button_l->addActionListener(_listeners.back());
 		}
+		button_l->setSkin("Custom_Button");
 
 		// tooltip
 		if(buttonData_l.tooltip)

@@ -225,6 +225,8 @@ void GraphicEngine::initWindow(const std::string &windowTitle_p)
 								getSceneManager() );
 	_colibriManager->loadSkins( (getResourcePath() +
 								"/Materials/ColibriGui/Skins/DarkGloss/Skins.colibri.json").c_str() );
+	_colibriManager->loadSkins( (getResourcePath() +
+								"/Materials/ColibriGui/Skins/Custom/Skins.colibri.json").c_str() );
 
 #if OGRE_PROFILING
         Ogre::Profiler::getSingleton().setEnabled( true );
@@ -330,6 +332,7 @@ void GraphicEngine::setupResources()
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/compositors", "FileSystem", "Popular");
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Particle", "FileSystem", "Popular");
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Materials/Common/GLSL", "FileSystem", "Popular");
+	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Materials/ColibriGui/Skins/Custom", "FileSystem", "Popular");
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Materials/ColibriGui/Skins/DarkGloss", "FileSystem", "Popular");
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Materials/ColibriGui/Skins/Debug", "FileSystem", "Popular");
 }

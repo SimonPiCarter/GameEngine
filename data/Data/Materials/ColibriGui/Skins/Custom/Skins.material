@@ -1,0 +1,4 @@
+hlms CustomButton unlit
+{
+	diffuse_map splash.png
+}
