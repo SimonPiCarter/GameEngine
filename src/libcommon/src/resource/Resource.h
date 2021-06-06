@@ -1,5 +1,6 @@
 #pragma once
 
+#include <list>
 #include <unordered_map>
 #include <string>
 
@@ -18,12 +19,16 @@ public:
 	ResourceHandler(std::string const &rootPath_p) : _rootPath(rootPath_p) {}
 
 	void addResource(Resource const &res_p);
-	Resource const & getResource(std::string const id_p) const;
+	Resource const & getResource(std::string const &id_p) const;
+
+	void addUISkin(std::string const &path_p);
+	std::list<std::string> const &getListUISkins() const;
 
 	std::string const &getRootPath() const { return _rootPath; }
 
 protected:
 	std::unordered_map<std::string, Resource> _mapResources;
+	std::list<std::string> _listUISkins;
 
 	std::string const _rootPath;
 };

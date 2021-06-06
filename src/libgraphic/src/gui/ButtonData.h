@@ -40,4 +40,5 @@ struct ButtonData
 	std::string text;
 	Listener * listener;
 	RichLabel * tooltip;
+	std::string skin;
 };
