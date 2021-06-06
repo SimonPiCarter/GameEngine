@@ -26,7 +26,11 @@ include(cmake/Dependencies/OGRE.cmake)
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin/")
 
 # thanks Ogre 3d
+if( WIN32 )
+add_compile_options("/IGNORE:no-ignored-attributes")
+else()
 add_compile_options("-Wno-ignored-attributes")
+endif()
 
 # ============================================================================
 # External requirements

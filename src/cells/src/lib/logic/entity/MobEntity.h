@@ -4,7 +4,7 @@
 #include "logic/types/ArmorType.h"
 
 class MapLayout;
-class MobModel;
+struct MobModel;
 
 class MobEntity : public LogicEntity<MobEntity>
 {

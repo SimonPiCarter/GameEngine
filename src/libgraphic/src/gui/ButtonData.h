@@ -37,7 +37,7 @@ private:
 /// @brief simple definition of a central_menu button
 struct ButtonData
 {
-	std::string text = "";
-	Listener * listener = nullptr;
-	RichLabel * tooltip = nullptr;
+	std::string text;
+	Listener * listener;
+	RichLabel * tooltip;
 };

@@ -5,7 +5,7 @@
 #include "logic/layout/WaveLayout.h"
 
 class WaveEngine;
-struct MapLayout;
+class MapLayout;
 struct MobModelLayout;
 
 class MobSpawner

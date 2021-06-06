@@ -98,13 +98,11 @@ public:
 		content3_l.push_back({"Return to game", 255, 255, 255});
 		RichLabel * label3_l = new RichLabel(content3_l, 500, 70, 500, 50, 10, true, _graphic);
 
-		_menu = new central_menu::Menu("Main",
-		{
-			{"destroy_scene", &_destroy},
-			{"quit", &_quit},
-			{"return", &_return, label3_l}
-		}, _graphic
-		);
+		std::vector<ButtonData> data_l;
+		data_l.push_back({"destroy_scene", &_destroy});
+		data_l.push_back({"quit", &_quit});
+		data_l.push_back({"return", &_return, label3_l});
+		_menu = new central_menu::Menu("Main", data_l, _graphic);
 
 		std::vector<InfoLabel> content_l;
 		content_l.push_back({"F5", 255, 255, 0});
@@ -224,6 +222,8 @@ private:
 	ReturnListener _return;
 
 };
+
+#undef main
 
 int main(int argc, char **argv)
 {
