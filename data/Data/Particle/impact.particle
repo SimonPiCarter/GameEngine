@@ -3,8 +3,8 @@ particle_system Particle/impact
 {
     material Particle/impact
     point_rendering            false
-    particle_width             0.2
-    particle_height            0.2
+    particle_width             0.1
+    particle_height            0.1
     cull_each                  false
     quota                      1
     emit_emitter_quota         1
@@ -34,7 +34,7 @@ particle_system Particle/impact
     // scale
     affector Scaler
     {
-        rate            0.5
+        rate            5
     }
 }
 
@@ -46,7 +46,7 @@ particle_system Particle/impact_point
     particle_width             0.05
     particle_height            0.05
     cull_each                  false
-    quota                      10
+    quota                      5
     emit_emitter_quota         1
     billboard_type             point
 
@@ -58,7 +58,7 @@ particle_system Particle/impact_point
           direction               0 1 0
           angle                   180
           position                0 -0.5 0.6
-          velocity                0.2
+          velocity                2
           duration                0.05
           repeat_delay            0
       }
@@ -72,7 +72,7 @@ particle_system Particle/impact_point
     // Make em float downwards
     affector LinearForce
     {
-        force_vector            0 0 -0.5
+        force_vector            0 0 -2
         force_application       add
     }
 

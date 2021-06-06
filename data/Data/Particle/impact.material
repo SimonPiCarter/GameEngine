@@ -1,13 +1,15 @@
 
 hlms Particle/impact unlit
 {
+     lighting off
      scene_blend add
      depth_write off
-     diffuse_map splash.png
+     diffuse_map splash2.png
 }
 
 hlms Particle/impact_point unlit
 {
+     lighting off
      scene_blend add
      depth_write off
      diffuse_map splash_point.png
