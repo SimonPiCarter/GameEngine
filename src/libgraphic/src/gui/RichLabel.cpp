@@ -16,7 +16,7 @@ RichLabel::RichLabel(std::vector<InfoLabel> const &content_p, double x, double y
 	_window->setZOrder(1);
 
 	// Adjust window to the full
-	_window->setTransform(Ogre::Vector2(x, y-20), Ogre::Vector2(width, height));
+	_window->setTransform(Ogre::Vector2(x, y), Ogre::Vector2(width, height));
 	_window->m_breadthFirst = true;
 	_window->setVisualsEnabled(back_p);
 	float borders_l[4] = {0, 0, 0, 0};

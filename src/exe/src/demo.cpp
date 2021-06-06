@@ -107,12 +107,12 @@ public:
 		std::vector<InfoLabel> content_l;
 		content_l.push_back({"F5", 255, 255, 0});
 		content_l.push_back({" : Menu\n", 255, 255, 255});
-		RichLabel * label_l = new RichLabel(content_l, 20, 20, 400, 50, 10, false, _graphic);
+		RichLabel * label_l = new RichLabel(content_l, 20, 0, 400, 50, 10, false, _graphic);
 
 
 		std::vector<InfoLabel> content2_l;
 		content2_l.push_back({" : Menu\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", 255, 255, 255});
-		RichLabel * label2_l = new RichLabel(content2_l, 20, 70, 400, 400, 10, true, _graphic);
+		RichLabel * label2_l = new RichLabel(content2_l, 20, 20, 400, 400, 10, true, _graphic);
 
 
 		Ogre::Window *renderWindow_l = _graphic.getRenderWindow();
