@@ -2,6 +2,7 @@
 
 #include "PositionalTree.h"
 #include "logic/utils/ArrayUtils.h"
+#include "logic/utils/Hitbox.h"
 
 #include <cassert>
 
@@ -258,46 +259,13 @@ std::unordered_set<T*> PositionalTree<T>::getAllWithinLine(std::array<double, 2>
 				// can have null elt
 				if(!content_l) { continue; }
 				BoundingBox box_l = getBoundingBox(*content_l);
-				// upper and lower bounds for x and y (swaped if direction < 0 (lower = closest))
-				double lx = box_l.position[0];
-				double ux = box_l.size[0] + box_l.position[0];
-				if(direction_l[0] < 0.) { std::swap(lx, ux); }
-				double ly = box_l.position[1];
-				double uy = box_l.size[1] + box_l.position[1];
-				if(direction_l[1] < 0.) { std::swap(ly, uy); }
 
-
-				// boolean to check nul direction coordinate
-				std::array<bool, 2> nul;
-				bool skip_l = false;
-				for(size_t i = 0 ; i < 2 ; ++ i )
-				{
-					nul[i] = direction_l[i] < 1e-5 && direction_l[i] > -1e-5;
-					// if not direction toward x/y
-					if(nul[i])
-					{
-						// skip if not in the correct range for x/y
-						if(box_l.position[i] > position_p[i]
-						|| box_l.position[i] + box_l.position[i] < position_p[i])
-						{
-							skip_l = true;
-							break;
-						}
-					}
-				}
-				// skip
-				if(skip_l) { continue; }
-
-				// compute range for intersection
-				double lowerx_l = nul[0] ? std::numeric_limits<double>::min() : (lx-position_p[0])/direction_l[0];
-				double upperx_l = nul[0] ? std::numeric_limits<double>::max() : (ux-position_p[0])/direction_l[0];
-				double lowery_l = nul[1] ? std::numeric_limits<double>::min() : (ly-position_p[1])/direction_l[1];
-				double uppery_l = nul[1] ? std::numeric_limits<double>::max() : (uy-position_p[1])/direction_l[1];
-				double lower_l = std::max(lowerx_l, lowery_l);
-				double upper_l = std::min(upperx_l, uppery_l);
-
+				PositionalHitbox hitbox_l;
+				hitbox_l.pos = {box_l.position[0], box_l.position[1], 0.};
+				hitbox_l.hitbox.size = {box_l.size[0], box_l.size[1], 0.};
+				double contact_l = collide({position_p[0], position_p[1], 0.}, {direction_l[0], direction_l[1], 0.}, hitbox_l);
 				// if range is within given range limit
-				if(upper_l >= lower_l && upper_l >= 0. && range_p >= lower_l)
+				if(contact_l >= 0. && range_p >= contact_l)
 				{
 					all_l.insert(content_l);
 				}
