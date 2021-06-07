@@ -142,14 +142,21 @@ public:
 
 	T* getContent(unsigned long index_p);
 
+	double getMinZ() const { return _minZ; }
+	double getMaxZ() const { return _maxZ; }
+
 protected:
 
 	void updateZ(T const * content_p)
 	{
-		double minZContent_l = _tree.getZ() + content_p->getMainHitbox().offset[2];
-		double maxZContent_l = _tree.getZ() + content_p->getMainHitbox().offset[2] + content_p->getMainHitbox().size[2];
-		_minZ = std::min(_minZ, std::min(minZContent_l, maxZContent_l));
-		_maxZ = std::max(_maxZ, std::max(minZContent_l, maxZContent_l));
+		double minZMainContent_l = _tree.getZ() + content_p->getMainHitbox().offset[2];
+		double minZSecondaryContent_l = _tree.getZ() + content_p->getSecondaryHitbox().offset[2];
+		double maxZMainContent_l = _tree.getZ() + content_p->getMainHitbox().offset[2] + content_p->getMainHitbox().size[2];
+		double maxZSecondaryContent_l = _tree.getZ() + content_p->getSecondaryHitbox().offset[2] + content_p->getSecondaryHitbox().size[2];
+		double minZContent_l = std::min(minZMainContent_l, std::min(minZSecondaryContent_l, std::min(maxZMainContent_l, maxZSecondaryContent_l)));
+		double maxZContent_l = std::max(minZMainContent_l, std::max(minZSecondaryContent_l, std::max(maxZMainContent_l, maxZSecondaryContent_l)));
+		_minZ = std::min(_minZ, minZContent_l);
+		_maxZ = std::max(_maxZ, maxZContent_l);
 	}
 
 	/// @brief list of indexes equal to nullptr in the deque _content

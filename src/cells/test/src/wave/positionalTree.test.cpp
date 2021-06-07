@@ -110,6 +110,45 @@ TEST(posititionalTree, addContent)
 	EXPECT_EQ(&entity3_l, node_l->getContent().at(0));
 }
 
+TEST(posititionalTree, addContent_z)
+{
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);
+
+	// should be added in 0, 0
+	TestLogicEntity entity_l({25., 25.}, {5., 5.});
+	entity_l.setMainHitbox(Hitbox({0.,0.,0.}, {0.,0.,0.1}));
+	tree_l.addContent(&entity_l);
+
+	PositionalNode<TestLogicEntity> * node_l = tree_l.getMap().at(0).at(0);
+
+	EXPECT_NEAR(0., node_l->getMinZ(), 1e-5);
+	EXPECT_NEAR(0.1, node_l->getMaxZ(), 1e-5);
+
+	// should be added in 1, 2
+	TestLogicEntity entity2_l({36.5, 70.5}, {5., 5.});
+	entity2_l.setMainHitbox(Hitbox({0.,0.,0.}, {0.,0.,0.1}));
+	entity2_l.setSecondaryHitbox(Hitbox({0.,0.,0.}, {0.,0.,1.1}));
+	tree_l.addContent(&entity2_l);
+
+	node_l = tree_l.getMap().at(1).at(2);
+	EXPECT_NEAR(0., node_l->getMinZ(), 1e-5);
+	EXPECT_NEAR(1.1, node_l->getMaxZ(), 1e-5);
+
+	// should be added in 0, 1 and 1, 1
+	TestLogicEntity entity3_l({32., 56.}, {5., 5.});
+	entity3_l.setMainHitbox(Hitbox({0.,0.,0.}, {0.,0.,0.1}));
+	entity3_l.setSecondaryHitbox(Hitbox({0.,0.,-2.}, {0.,0.,1.1}));
+	tree_l.addContent(&entity3_l);
+
+	node_l = tree_l.getMap().at(0).at(1);
+	EXPECT_NEAR(-2., node_l->getMinZ(), 1e-5);
+	EXPECT_NEAR(0.1, node_l->getMaxZ(), 1e-5);
+
+	node_l = tree_l.getMap().at(1).at(1);
+	EXPECT_NEAR(-2., node_l->getMinZ(), 1e-5);
+	EXPECT_NEAR(0.1, node_l->getMaxZ(), 1e-5);
+}
+
 TEST(posititionalTree, removeContent)
 {
 	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);

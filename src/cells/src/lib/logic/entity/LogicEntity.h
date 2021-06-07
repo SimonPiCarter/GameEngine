@@ -25,9 +25,9 @@ public:
 	void setGraphic(GraphicEntity * graphic_p) { _graphic = graphic_p; }
 
 	Hitbox const &getMainHitbox() const { return _mainHitbox; }
-	void setMainHitbox(Hitbox const &mainHitbox_p) const { _mainHitbox = mainHitbox_p; }
+	void setMainHitbox(Hitbox const &mainHitbox_p) { _mainHitbox = mainHitbox_p; }
 	Hitbox const &getSecondaryHitbox() const { return _secondaryHitbox; }
-	void setSecondaryHitbox(Hitbox const &secondaryHitbox_p) const { _secondaryHitbox = secondaryHitbox_p; }
+	void setSecondaryHitbox(Hitbox const &secondaryHitbox_p) { _secondaryHitbox = secondaryHitbox_p; }
 
 protected:
 	std::array<double, 2> _position;
