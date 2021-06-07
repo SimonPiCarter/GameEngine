@@ -344,6 +344,56 @@ std::unordered_set<T*> PositionalTree<T>::getAllWithinRadiusDecoy(std::array<dou
 }
 
 template<typename T>
+PositionalHitbox posHitbox(T const * content_p, double z_p, bool main_p)
+{
+	return PositionalHitbox({
+		(main_p? content_p->getMainHitbox() : content_p->getSecondaryHitbox()),
+		{content_p->getPosition()[0], content_p->getPosition()[1], z_p}
+	});
+}
+
+template<typename T>
+T * PositionalTree<T>::getIntersectionToRay(std::array<double, 3> const &pos_p, std::array<double, 3> const & dir_p)
+{
+	double dist_l = std::numeric_limits<double>::max();
+	T * closest_l = nullptr;
+	bool main_l = false;
+	// check intersection to every node
+	for(PositionalNode<T> & node_l : _nodes)
+	{
+		// if we collide with the node check its content
+		if(collide(pos_p, dir_p, node_l.getHitbox()) >= 0.)
+		{
+			T * nodeClosest_l = nullptr;
+			for(T * content_l : node_l.getContent())
+			{
+				// skip if nullptr (can happen)
+				if(!content_l) { continue; }
+				// check collision with main hitbox
+				double curDist_l = collide(pos_p, dir_p, posHitbox(content_l, getZ(), true));
+				if(curDist_l >= 0. && curDist_l < dist_l)
+				{
+					dist_l = curDist_l;
+					closest_l = content_l;
+					main_l = true;
+				}
+				// check collision with secondary
+				if(!main_l)
+				{
+					double curDist_l = collide(pos_p, dir_p, posHitbox(content_l, getZ(), false));
+					if(curDist_l >= 0. && curDist_l < dist_l)
+					{
+						dist_l = curDist_l;
+						closest_l = content_l;
+					}
+				}
+			}
+		}
+	}
+	return closest_l;
+}
+
+template<typename T>
 T* PositionalNode<T>::getContent(unsigned long index_p)
 {
 	unsigned long cur_l = 0;

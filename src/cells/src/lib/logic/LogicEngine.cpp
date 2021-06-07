@@ -125,6 +125,17 @@ void LogicEngine::moveMob(MobEntity * entity_p, std::array<double,2> oldPos_p, s
 	}
 }
 
+void LogicEngine::spawnDamageParticle(std::array<double,2> pos_p, double lifetime_p)
+{
+	if(_cellsEngine)
+	{
+		_particles.push_back(std::pair<GraphicEntity*, double>(new GraphicEntity(), lifetime_p));
+		_cellsEngine->getGraphic().registerMessage(new NewParticleMessage(_particles.back().first, "Particle/impact", {pos_p[0],pos_p[1],0.}, "game"));
+		_particles.push_back(std::pair<GraphicEntity*, double>(new GraphicEntity(), lifetime_p));
+		_cellsEngine->getGraphic().registerMessage(new NewParticleMessage(_particles.back().first, "Particle/impact_point", {pos_p[0],pos_p[1],0.}, "game"));
+	}
+}
+
 void LogicEngine::spawnTower(Tower * tower_p)
 {
 	_towers.push_back(tower_p);
@@ -138,13 +149,11 @@ void LogicEngine::spawnTower(Tower * tower_p)
 	}
 }
 
-void LogicEngine::spawnDamageParticle(std::array<double,2> pos_p, double lifetime_p)
+MobEntity * LogicEngine::getMobSelection(std::array<double, 3> pos_p, std::array<double, 3> dir_p)
 {
-	if(_cellsEngine)
+	if(!_waveEngine)
 	{
-		_particles.push_back(std::pair<GraphicEntity*, double>(new GraphicEntity(), lifetime_p));
-		_cellsEngine->getGraphic().registerMessage(new NewParticleMessage(_particles.back().first, "Particle/impact", {pos_p[0],pos_p[1],0.}, "game"));
-		_particles.push_back(std::pair<GraphicEntity*, double>(new GraphicEntity(), lifetime_p));
-		_cellsEngine->getGraphic().registerMessage(new NewParticleMessage(_particles.back().first, "Particle/impact_point", {pos_p[0],pos_p[1],0.}, "game"));
+		return nullptr;
 	}
+	return _waveEngine->getTree().getIntersectionToRay(pos_p, dir_p);
 }

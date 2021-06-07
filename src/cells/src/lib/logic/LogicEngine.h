@@ -30,6 +30,8 @@ public:
 	void spawnDamageParticle(std::array<double,2> pos_p, double lifetime_p);
 
 	void spawnTower(Tower * tower_p);
+
+	MobEntity * getMobSelection(std::array<double, 3> pos_p, std::array<double, 3> dir_p);
 protected:
 	CellsEngine * const _cellsEngine;
 

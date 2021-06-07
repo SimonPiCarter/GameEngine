@@ -9,6 +9,7 @@
 #include <limits>
 
 #include "BoundingBox.h"
+#include "logic/utils/Hitbox.h"
 
 template<typename T>
 class PositionalNode;
@@ -61,6 +62,12 @@ public:
 	/// @param target_p the position givin the line direction
 	/// @param range_p the length of the line
 	std::unordered_set<T*> getAllWithinLine(std::array<double, 2> const & position_p, std::array<double, 2> const & target_p, double range_p);
+
+	/// @brief get closest content that intersct with given ray
+	/// @param position_p position of origin of the ray
+	/// @param direction_p of the ray
+	/// @return null if not found
+	T * getIntersectionToRay(std::array<double, 3> const &pos_p, std::array<double, 3> const & dir_p);
 
 	std::vector<std::vector<PositionalNode<T> * > > const &getMap() const { return _map; }
 	std::list<PositionalNode<T> > const &getNodes() const { return _nodes; }
@@ -144,6 +151,12 @@ public:
 
 	double getMinZ() const { return _minZ; }
 	double getMaxZ() const { return _maxZ; }
+
+	PositionalHitbox getHitbox() const {
+		std::array<double, 3> pos_l = {_box.position[0], _box.position[1], _tree.getZ()};
+		Hitbox hitbox_l({0.,0., _minZ}, {_box.size[0], _box.size[1], _maxZ-_minZ});
+		return PositionalHitbox({hitbox_l, pos_l});
+	}
 
 protected:
 

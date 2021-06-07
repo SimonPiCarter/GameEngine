@@ -1,5 +1,6 @@
 #include "CellsEngine.h"
 
+#include "OgreCamera.h"
 #include "OgreWindow.h"
 #include "OgreSceneManager.h"
 #include <thread>
@@ -10,6 +11,7 @@
 
 CellsEngine::CellsEngine(std::string const &path_p)
 	: GameEngine(path_p)
+	, _logic(nullptr)
 {}
 
 
@@ -72,13 +74,13 @@ void CellsEngine::runLogic()
 	}
 	MapLayout layout_l(tiles_l, {0.5, 0.5}, {6.5, 6.5}, { {0.5, 6.5}, {6.5, 6.5} });
 
-	LogicEngine logic_l(&layout_l, this);
-	logic_l.init();
+	_logic = new LogicEngine(&layout_l, this);
+	_logic->init();
 
 	Tower * tower_l = new Tower({1.5, 5.5}, {1., 1.});
 	tower_l->setAttackModifier(AttackModifier(1.,1.,2.,3.,AttackType::Arc, DamageType::Standard));
 	tower_l->setResource("CubeGreen");
-	logic_l.spawnTower(tower_l);
+	_logic->spawnTower(tower_l);
 
 	while( !_graphic.getQuit() )
 	{
@@ -91,7 +93,7 @@ void CellsEngine::runLogic()
 			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		}
 
-		logic_l.run(timeSinceLast_l);
+		_logic->run(timeSinceLast_l);
 
 		const std::chrono::time_point<std::chrono::system_clock> end_l = std::chrono::system_clock::now();
 
@@ -104,6 +106,9 @@ void CellsEngine::runLogic()
 			std::this_thread::sleep_for(std::chrono::milliseconds(50-long(timeSinceLast_l)));
 		}
 	}
+
+	delete _logic;
+	_logic = nullptr;
 }
 void CellsEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 {
@@ -131,7 +136,7 @@ WaveLayout CellsEngine::getNextWave()
 	WaveLayout layout_l;
 	layout_l.mobLayout.push_back(
 		{
-			{3., 1., ArmorType::Standard, "Cube", {1.,1.}},			// Mob model
+			{3., 1., ArmorType::Standard, "Cube", {1.,1.}, 1.},		// Mob model
 			10,														// number of spawn
 			1.														// interval
 		}

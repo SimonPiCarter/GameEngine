@@ -121,6 +121,7 @@ void WaveEngine::spawnMob(MobModel const &model_p, std::array<double, 2> const &
 {
 	assert(_logic._currentMap);
 	_mobs.push_back(new MobEntity(spawnPosition_p, &model_p, *_logic._currentMap, spawntime_p));
+	_mobs.back()->setMainHitbox({{-model_p.size[0]/2.,-model_p.size[0]/2., 0.}, {model_p.size[0], model_p.size[1], model_p.height}});
 	_tree.addContent(_mobs.back());
 
 	_logic.spawnMob(_mobs.back(), spawnPosition_p);

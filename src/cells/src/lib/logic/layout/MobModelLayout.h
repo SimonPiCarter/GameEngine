@@ -12,6 +12,7 @@ struct MobModel
 	ArmorType const armor_type;
 	std::string resource;
 	std::array<double, 2> const size;
+	double height;
 };
 
 struct MobModelLayout

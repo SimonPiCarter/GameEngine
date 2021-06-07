@@ -3,6 +3,8 @@
 #include "engine/GameEngine.h"
 #include "logic/layout/WaveLayout.h"
 
+class LogicEngine;
+
 class CellsEngine : public GameEngine
 {
 public:
@@ -19,5 +21,6 @@ public:
 	virtual void visitSDLEvent(SDLEventGameMessage const &msg_p) override;
 
 	WaveLayout getNextWave();
-
+protected:
+	LogicEngine *_logic;
 };
