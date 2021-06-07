@@ -15,10 +15,10 @@ CellsEngine::CellsEngine(std::string const &path_p)
 
 void CellsEngine::init()
 {
-	_resourceHandler.addResource({"Cube", "new_cube.mesh", false, ""});
-	_resourceHandler.addResource({"CubeGreen", "new_cube.mesh", false, "Green"});
-	_resourceHandler.addResource({"CubeYellow", "new_cube.mesh", false, "Yellow"});
-	_resourceHandler.addResource({"CubeRed", "new_cube.mesh", false, "Red"});
+	_resourceHandler.addResource({"Cube", "new_cube.mesh", false, "", 0.5});
+	_resourceHandler.addResource({"CubeGreen", "new_cube.mesh", false, "Green", 0.5});
+	_resourceHandler.addResource({"CubeYellow", "new_cube.mesh", false, "Yellow", 0.5});
+	_resourceHandler.addResource({"CubeRed", "new_cube.mesh", false, "Red", 0.5});
 
 	_graphic.initWindow("cells");
 }

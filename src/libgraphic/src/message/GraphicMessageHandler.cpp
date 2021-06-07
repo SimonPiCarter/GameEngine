@@ -151,7 +151,7 @@ void GraphicMessageHandler::visitNewGraphicEntity(NewGraphicEntityMessage const 
 	Ogre::SceneNode *sceneNode = rootNode_l->
 		createChildSceneNode( Ogre::SCENE_DYNAMIC, Ogre::Vector3(msg_p.getPosition()[0], msg_p.getPosition()[1], msg_p.getPosition()[2]) );
 	sceneNode->attachObject(item_l);
-	sceneNode->scale(msg_p.getScale()[0], msg_p.getScale()[1], msg_p.getScale()[2]);
+	sceneNode->scale(res_l._scale, res_l._scale, res_l._scale);
 
 	msg_p.getEntity()->setItem(item_l);
 }

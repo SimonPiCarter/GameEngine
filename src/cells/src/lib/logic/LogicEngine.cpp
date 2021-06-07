@@ -95,7 +95,7 @@ void LogicEngine::spawnMob(MobEntity * entity_p, std::array<double, 2> const & s
 	{
 		GraphicEntity * entity_l = new GraphicEntity();
 		_cellsEngine->getGraphic().registerMessage(new NewGraphicEntityMessage(entity_l, entity_p->getModel()->resource,
-			{spawnPosition_p[0]-entity_p->getSize()[0]/2., spawnPosition_p[1]-entity_p->getSize()[1]/2., 0.}, {0.5, 0.5, 0.5}, "game"));
+			{spawnPosition_p[0]-entity_p->getSize()[0]/2., spawnPosition_p[1]-entity_p->getSize()[1]/2., 0.}, "game"));
 		entity_p->setGraphic(entity_l);
 	}
 }
@@ -133,7 +133,7 @@ void LogicEngine::spawnTower(Tower * tower_p)
 	{
 		GraphicEntity * entity_l = new GraphicEntity();
 		_cellsEngine->getGraphic().registerMessage(new NewGraphicEntityMessage(entity_l, tower_p->getResource(),
-			{tower_p->getPosition()[0]-tower_p->getSize()[0]/2., tower_p->getPosition()[1]-tower_p->getSize()[1]/2., 0.}, {0.5, 0.5, 0.5}, "game"));
+			{tower_p->getPosition()[0]-tower_p->getSize()[0]/2., tower_p->getPosition()[1]-tower_p->getSize()[1]/2., 0.}, "game"));
 		tower_p->setGraphic(entity_l);
 	}
 }

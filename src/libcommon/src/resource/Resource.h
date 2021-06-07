@@ -11,6 +11,9 @@ struct Resource
 	bool _v1Mesh;
 	/// @brief in case we want to overwrite the material of the mesh, leave empty to use the mesh original one
 	std::string _material;
+
+	/// @brief scaling factor
+	double _scale;
 };
 
 class ResourceHandler
