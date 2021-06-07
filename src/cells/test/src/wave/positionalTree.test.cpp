@@ -12,7 +12,7 @@ public :
 
 TEST(posititionalTree, construction_simple_100)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 100);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 100, 0.);
 
 	ASSERT_EQ(100u, tree_l.getMap().size());
 	for(size_t i = 0 ; i < tree_l.getMap().size(); ++ i)
@@ -31,7 +31,7 @@ TEST(posititionalTree, construction_simple_100)
 
 TEST(posititionalTree, construction_simple_25)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 25);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 25, 0.);
 
 	ASSERT_EQ(25u, tree_l.getMap().size());
 	for(size_t i = 0 ; i < tree_l.getMap().size(); ++ i)
@@ -50,7 +50,7 @@ TEST(posititionalTree, construction_simple_25)
 
 TEST(posititionalTree, construction_simple_3_links)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);
 
 	// top left
 	PositionalNode<TestLogicEntity> * node_l = tree_l.getMap().at(0).at(0);
@@ -77,7 +77,7 @@ TEST(posititionalTree, construction_simple_3_links)
 
 TEST(posititionalTree, addContent)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);
 
 	// should be added in 0, 0
 	TestLogicEntity entity_l({25., 25.}, {5., 5.});
@@ -112,7 +112,7 @@ TEST(posititionalTree, addContent)
 
 TEST(posititionalTree, removeContent)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);
 
 	// should be added in 0, 0
 	TestLogicEntity entity_l({25., 25.}, {5., 5.});
@@ -142,7 +142,7 @@ TEST(posititionalTree, removeContent)
 
 TEST(posititionalTree, moveEntity_simple_stay)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);
 
 	// added in 0, 0
 	TestLogicEntity entity_l({25., 25.}, {5., 5.});
@@ -161,7 +161,7 @@ TEST(posititionalTree, moveEntity_simple_stay)
 
 TEST(posititionalTree, moveEntity_simple_stay_overlap)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);
 
 	// added in 0, 0
 	TestLogicEntity entity_l({25., 25.}, {5., 5.});
@@ -200,7 +200,7 @@ TEST(posititionalTree, moveEntity_simple_stay_overlap)
 
 TEST(posititionalTree, moveEntity_complex_stay_overlap)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);
 
 	// added in 0, 0
 	TestLogicEntity entity_l({25., 25.}, {5., 5.});
@@ -235,7 +235,7 @@ TEST(posititionalTree, moveEntity_complex_stay_overlap)
 
 TEST(posititionalTree, moveEntity_complex_skip_one)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);
 
 	// added in 0, 0
 	TestLogicEntity entity_l({25., 25.}, {5., 5.});
@@ -265,7 +265,7 @@ TEST(posititionalTree, moveEntity_complex_skip_one)
 
 TEST(posititionalTree, getClosest_simple)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);
 
 	// added in 0, 0
 	TestLogicEntity entity_l({25., 25.}, {5., 5.});
@@ -284,7 +284,7 @@ TEST(posititionalTree, getClosest_simple)
 
 TEST(posititionalTree, getClosest_complex_notInNode)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);
 
 	// added in 0, 0
 	TestLogicEntity entity_l({25., 25.}, {5., 5.});
@@ -303,7 +303,7 @@ TEST(posititionalTree, getClosest_complex_notInNode)
 
 TEST(posititionalTree, getClosest_complex_10k)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);
 
 	std::list<TestLogicEntity *> list_l;
 	// added in 0, 0
@@ -320,7 +320,7 @@ TEST(posititionalTree, getClosest_complex_10k)
 
 TEST(posititionalTree, getAllWithinRadius_simple)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);
 
 	// added in 0, 0
 	TestLogicEntity entity_l({25., 25.}, {5., 5.});
@@ -339,7 +339,7 @@ TEST(posititionalTree, getAllWithinRadius_simple)
 
 TEST(posititionalTree, getAllWithinRadius_simple_not_all)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);
 
 	// added in 0, 0
 	TestLogicEntity entity_l({25., 25.}, {5., 5.});
@@ -358,7 +358,7 @@ TEST(posititionalTree, getAllWithinRadius_simple_not_all)
 
 TEST(posititionalTree, getAllWithinRadius_complex_10k)
 {
-	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3);
+	PositionalTree<TestLogicEntity> tree_l({ {0,0}, {100, 100}}, 3, 0.);
 
 	std::list<TestLogicEntity *> list_l;
 	// added in 0, 0
@@ -375,7 +375,7 @@ TEST(posititionalTree, getAllWithinRadius_complex_10k)
 
 TEST(posititionalTree, getAllWithinLine_simple)
 {
-	PositionalTree<TestLogicEntity> tree_l({{0,0}, {10, 10}}, 10);
+	PositionalTree<TestLogicEntity> tree_l({{0,0}, {10, 10}}, 10, 0.);
 
 	tree_l.addContent(new TestLogicEntity({6.,4.}, {2.,2.}));
 

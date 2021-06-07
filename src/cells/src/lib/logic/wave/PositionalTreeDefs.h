@@ -21,10 +21,11 @@ BoundingBox getBoundingBox(T const &content_p, std::array<double, 2> const &pos_
 }
 
 template<typename T>
-PositionalTree<T>::PositionalTree(BoundingBox const &box_p, unsigned long size_p)
+PositionalTree<T>::PositionalTree(BoundingBox const &box_p, unsigned long size_p, double z_p)
 	: _box(box_p)
 	, _size(size_p)
 	, _map(size_p, std::vector<PositionalNode<T>* >(size_p, nullptr))
+	, _z(z_p)
 {
 	// compute size of one node
 	std::array<double, 2> subSize_l = { box_p.size[0] / size_p , box_p.size[1] / size_p };

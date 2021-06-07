@@ -23,10 +23,12 @@ struct StorageInfo
 };
 
 /// @brief PositionalTree allowing access to T content objects
-/// T must define
+/// T must define (or extend LogicEntity)
 // - std::array<double, 2> const &getPosition() const
 // - std::array<double, 2> const &getSize() const
 // - std::list<StorageInfo<T> > & getStorageInfo()
+// - Hitbox const &getMainHitbox() const
+// - Hitbox const &getSecondaryHitbox() const
 template<typename T>
 class PositionalTree
 {
@@ -34,7 +36,8 @@ public:
 	/// @brief
 	/// @param box_p box of the tree
 	/// @param size_t nb of node in each dimension
-	PositionalTree(BoundingBox const &box_p, unsigned long size_p);
+	/// @param z_p z coordinate of the plan
+	PositionalTree(BoundingBox const &box_p, unsigned long size_p, double z_p);
 
 	/// @brief add a new content to the tree
 	void addContent(T * content_p);
@@ -63,6 +66,7 @@ public:
 	std::list<PositionalNode<T> > const &getNodes() const { return _nodes; }
 	BoundingBox const &getBox() const { return _box; }
 	unsigned long const &getSize() const { return _size; }
+	double getZ() const { return _z; }
 protected:
 	/// @brief return the deepest node intersecting the given box
 	std::list<PositionalNode<T> *> getNodeIntersecting(BoundingBox const &box_p);
@@ -81,6 +85,8 @@ protected:
 
 	BoundingBox const _box;
 	unsigned long const _size;
+	/// @brief z coordinate of the plan in which the tree is positioned
+	double const _z;
 };
 
 template<typename T>
@@ -94,11 +100,15 @@ public:
 		, _right(nullptr)
 		, _up(nullptr)
 		, _down(nullptr)
+		, _minZ(tree_p.getZ())
+		, _maxZ(tree_p.getZ())
 	{}
 
 	/// @brief return storage index
 	unsigned long addContent(T * content_p)
 	{
+		// update z axis bounds
+		updateZ(content_p);
 		if(_freeIndexes.empty())
 		{
 			_content.push_back(content_p);
@@ -133,6 +143,15 @@ public:
 	T* getContent(unsigned long index_p);
 
 protected:
+
+	void updateZ(T const * content_p)
+	{
+		double minZContent_l = _tree.getZ() + content_p->getMainHitbox().offset[2];
+		double maxZContent_l = _tree.getZ() + content_p->getMainHitbox().offset[2] + content_p->getMainHitbox().size[2];
+		_minZ = std::min(_minZ, std::min(minZContent_l, maxZContent_l));
+		_maxZ = std::max(_maxZ, std::max(minZContent_l, maxZContent_l));
+	}
+
 	/// @brief list of indexes equal to nullptr in the deque _content
 	std::list<unsigned long> _freeIndexes;
 	/// @brief element in the node (some may be nullptr)
@@ -147,6 +166,10 @@ protected:
 	PositionalNode<T> * _right;
 	PositionalNode<T> * _up;
 	PositionalNode<T> * _down;
+
+	/// @brief z axis bounding box (updated from content)
+	double _minZ;
+	double _maxZ;
 
 	// position tree is the owner of this class
 	friend class PositionalTree<T>;
