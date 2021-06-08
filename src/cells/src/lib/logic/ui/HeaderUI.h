@@ -1,7 +1,7 @@
 #pragma once
 
 class LogicEngine;
-class RichLabel;
+class RichLabelVessel;
 
 class HeaderUI
 {
@@ -9,11 +9,11 @@ public:
 	HeaderUI(LogicEngine &engine_p);
 	~HeaderUI();
 
-	void update(double elapsedTime_p);
+	void update();
 protected:
 	LogicEngine &_engine;
 
-	RichLabel * _labelLife;
-	RichLabel * _labelTime;
-	RichLabel * _labelResource;
+	RichLabelVessel * _labelLife;
+	RichLabelVessel * _labelTime;
+	RichLabelVessel * _labelResource;
 };

@@ -6,6 +6,7 @@ class CellsEngine;
 class GraphicEntity;
 class HeaderUI;
 class MobEntity;
+class MobSelectionUI;
 class Tower;
 class WaveEngine;
 
@@ -41,16 +42,23 @@ public:
 
 	MobEntity * getMobSelection(std::array<double, 3> pos_p, std::array<double, 3> dir_p);
 
+	void setMobSelection(MobEntity *ent_p) { _mobSelection = ent_p; }
+	MobEntity * getMobSelection() { return _mobSelection; }
+
 protected:
 	CellsEngine * const _cellsEngine;
 
 	HeaderUI * _header;
+	MobSelectionUI * _mobSelectionUI;
 
 	bool _quit;
 
 	double _life;
 	double _scrap;
 	double _time;
+
+	/// @brief currently selected mob
+	MobEntity * _mobSelection;
 
 	/// @brief map
 	MapLayout const * const _currentMap;

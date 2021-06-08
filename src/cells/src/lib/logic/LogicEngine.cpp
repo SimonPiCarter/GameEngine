@@ -5,10 +5,12 @@
 #include "logic/display/MapDisplay.h"
 #include "logic/entity/Tower.h"
 #include "logic/ui/HeaderUI.h"
+#include "logic/ui/MobSelectionUI.h"
 
 LogicEngine::LogicEngine(MapLayout const * map_p, CellsEngine * cellsEngine_p)
 	: _cellsEngine(cellsEngine_p)
 	, _header(nullptr)
+	, _mobSelectionUI(nullptr)
 	, _quit(false)
 	, _life(100.)
 	, _scrap(20.)
@@ -33,6 +35,7 @@ LogicEngine::~LogicEngine()
 		delete pair_l.first;
 	}
 	delete _header;
+	delete _mobSelectionUI;
 }
 
 
@@ -56,6 +59,7 @@ void LogicEngine::init()
 		_cellsEngine->getGraphic().registerMessage(new NewSceneMessage("game", "root", {0.,0.,0.}));
 
 		_header = new HeaderUI(*this);
+		_mobSelectionUI = new MobSelectionUI(*this);
 	}
 }
 
@@ -100,7 +104,11 @@ void LogicEngine::run(double elapsedTime_p)
 
 	if(_header)
 	{
-		_header->update(elapsedTime_p);
+		_header->update();
+	}
+	if(_mobSelectionUI)
+	{
+		_mobSelectionUI->update();
 	}
 }
 
@@ -124,6 +132,12 @@ void LogicEngine::despawnMob(MobEntity * entity_p)
 
 	// decrease life
 	_life -= entity_p->getModel()->life_dmg;
+
+	// reset selection
+	if(_mobSelection == entity_p)
+	{
+		_mobSelection = nullptr;
+	}
 }
 
 void LogicEngine::killMob(MobEntity * entity_p)
@@ -135,6 +149,12 @@ void LogicEngine::killMob(MobEntity * entity_p)
 
 	// increase scrap
 	_scrap += entity_p->getModel()->scrap_reward;
+
+	// reset selection
+	if(_mobSelection == entity_p)
+	{
+		_mobSelection = nullptr;
+	}
 }
 
 void LogicEngine::moveMob(MobEntity * entity_p, std::array<double,2> oldPos_p, std::array<double,2> pos_p)

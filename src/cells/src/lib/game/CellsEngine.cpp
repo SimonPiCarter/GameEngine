@@ -110,11 +110,24 @@ void CellsEngine::runLogic()
 	delete _logic;
 	_logic = nullptr;
 }
+
 void CellsEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 {
 	SDL_Event const &evt(msg_p.getEvent());
 	switch( evt.type )
 	{
+	case SDL_MOUSEBUTTONDOWN:
+		if(_logic)
+		{
+			double x = double(evt.button.x) / double(_graphic.getRenderWindow()->getWidth());
+			double y = double(evt.button.y) / double(_graphic.getRenderWindow()->getHeight());
+			// clic
+			Ogre::Ray ray_l = _graphic.getCamera()->getCameraToViewportRay(x, y);
+			std::array<double, 3> pos_l = {ray_l.getOrigin().x, ray_l.getOrigin().y, ray_l.getOrigin().z};
+			std::array<double, 3> dir_l = {ray_l.getDirection().x, ray_l.getDirection().y, ray_l.getDirection().z};
+			_logic->setMobSelection(_logic->getMobSelection(pos_l, dir_l));
+		}
+		break;
 	case SDL_KEYDOWN:
 		break;
 	case SDL_KEYUP:

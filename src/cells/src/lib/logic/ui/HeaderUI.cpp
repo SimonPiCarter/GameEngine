@@ -56,30 +56,32 @@ std::vector<InfoLabel> getScrapContent(LogicEngine &engine_p)
 
 HeaderUI::HeaderUI(LogicEngine &engine_p)
 	: _engine(engine_p)
-	, _labelLife(nullptr)
-	, _labelTime(nullptr)
-	, _labelResource(nullptr)
+	, _labelLife(new RichLabelVessel())
+	, _labelTime(new RichLabelVessel())
+	, _labelResource(new RichLabelVessel())
 {
 	GraphicEngine & graphic_l = _engine.getCellsEngine()->getGraphic();
 
-	_labelLife = new RichLabel(getLifeContent(_engine), 0, 0, 600, 40, 10, true, graphic_l);
-	_labelTime = new RichLabel(getTimeContent(_engine), 0, 40, 500, 40, 10, true, graphic_l);
-	_labelResource = new RichLabel(getScrapContent(_engine), 0, 80, 400, 40, 10, true, graphic_l);
+	graphic_l.registerMessage(new NewRichLabelMessage(*_labelLife, getLifeContent(_engine), 0, 0, 600, 40, 10, true));
+	graphic_l.registerMessage(new NewRichLabelMessage(*_labelTime, getTimeContent(_engine), 0, 40, 500, 40, 10, true));
+	graphic_l.registerMessage(new NewRichLabelMessage(*_labelResource, getScrapContent(_engine), 0, 80, 400, 40, 10, true));
 }
 
 HeaderUI::~HeaderUI()
-{}
+{
+	delete _labelLife;
+	delete _labelTime;
+	delete _labelResource;
+}
 
-void HeaderUI::update(double elapsedTime_p)
+void HeaderUI::update()
 {
 	GraphicEngine & graphic_l = _engine.getCellsEngine()->getGraphic();
 
 	/// update time
-	_labelTime->updateText(getTimeContent(_engine));
-
+	graphic_l.registerMessage(new UpdateTextRichLabelMessage(*_labelLife, getLifeContent(_engine)));
 	// update life
-	_labelLife->updateText(getLifeContent(_engine));
-
+	graphic_l.registerMessage(new UpdateTextRichLabelMessage(*_labelTime, getTimeContent(_engine)));
 	// update scrap
-	_labelResource->updateText(getScrapContent(_engine));
+	graphic_l.registerMessage(new UpdateTextRichLabelMessage(*_labelResource, getScrapContent(_engine)));
 }
