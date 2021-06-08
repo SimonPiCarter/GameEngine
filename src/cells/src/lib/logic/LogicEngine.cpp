@@ -12,6 +12,7 @@ LogicEngine::LogicEngine(MapLayout const * map_p, CellsEngine * cellsEngine_p)
 	, _quit(false)
 	, _life(100.)
 	, _scrap(20.)
+	, _time(0.)
 	, _currentMap(map_p)
 	, _waveEngine(nullptr)
 {}
@@ -68,10 +69,12 @@ void LogicEngine::run(double elapsedTime_p)
 		_waveEngine = new WaveEngine(*this);
 		_waveEngine->init(wave_l);
 		startWave_l = false;
+		_time = 0.;
 	}
 	if(_waveEngine)
 	{
 		_waveEngine->handleFrame(elapsedTime_p);
+		_time += elapsedTime_p;
 		if(_waveEngine->isWaveOver())
 		{
 			delete _waveEngine;

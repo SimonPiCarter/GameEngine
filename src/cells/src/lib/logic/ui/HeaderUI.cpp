@@ -20,9 +20,9 @@ std::vector<InfoLabel> getLifeContent(LogicEngine &engine_p)
 	return content_l;
 }
 
-std::vector<InfoLabel> getTimeContent(double time_p)
+std::vector<InfoLabel> getTimeContent(LogicEngine &engine_p)
 {
-	size_t roundedSecond_l = size_t(time_p);
+	size_t roundedSecond_l = size_t(engine_p.getTime());
 	size_t secondWithoutMinutes_l = roundedSecond_l%60;
 	size_t minutes_l = (roundedSecond_l - secondWithoutMinutes_l) / 60;
 	std::stringstream ss_l;
@@ -59,12 +59,11 @@ HeaderUI::HeaderUI(LogicEngine &engine_p)
 	, _labelLife(nullptr)
 	, _labelTime(nullptr)
 	, _labelResource(nullptr)
-	, _elapsedSecond(0.)
 {
 	GraphicEngine & graphic_l = _engine.getCellsEngine()->getGraphic();
 
 	_labelLife = new RichLabel(getLifeContent(_engine), 0, 0, 600, 40, 10, true, graphic_l);
-	_labelTime = new RichLabel(getTimeContent(_elapsedSecond), 0, 40, 500, 40, 10, true, graphic_l);
+	_labelTime = new RichLabel(getTimeContent(_engine), 0, 40, 500, 40, 10, true, graphic_l);
 	_labelResource = new RichLabel(getScrapContent(_engine), 0, 80, 400, 40, 10, true, graphic_l);
 }
 
@@ -76,8 +75,7 @@ void HeaderUI::update(double elapsedTime_p)
 	GraphicEngine & graphic_l = _engine.getCellsEngine()->getGraphic();
 
 	/// update time
-	_elapsedSecond += elapsedTime_p;
-	_labelTime->updateText(getTimeContent(_elapsedSecond));
+	_labelTime->updateText(getTimeContent(_engine));
 
 	// update life
 	_labelLife->updateText(getLifeContent(_engine));

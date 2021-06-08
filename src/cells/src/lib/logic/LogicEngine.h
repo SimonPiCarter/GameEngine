@@ -22,6 +22,7 @@ public:
 
 	double getLife() const { return _life; }
 	double getScrap() const { return _scrap; }
+	double getTime() const { return _time; }
 
 	std::list<Tower *> const & getTowers() const { return _towers; }
 	std::list<Tower *> & getTowers() { return _towers; }
@@ -49,6 +50,7 @@ protected:
 
 	double _life;
 	double _scrap;
+	double _time;
 
 	/// @brief map
 	MapLayout const * const _currentMap;

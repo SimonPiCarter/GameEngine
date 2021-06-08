@@ -16,6 +16,4 @@ protected:
 	RichLabel * _labelLife;
 	RichLabel * _labelTime;
 	RichLabel * _labelResource;
-
-	double _elapsedSecond;
 };
