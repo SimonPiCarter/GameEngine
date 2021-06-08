@@ -169,6 +169,44 @@ void GraphicMessageHandler::visitRotateGraphicEntity(RotateGraphicEntityMessage 
 
 //////////////////////////////////
 //                              //
+//           Gui                //
+//                              //
+//////////////////////////////////
+
+void GraphicMessageHandler::visitNewCentralMenu(NewCentralMenuMessage const &msg_p)
+{
+	msg_p.getMenu().menu = new central_menu::Menu(msg_p.getTitle(), msg_p.getData(), *_engine);
+}
+
+void GraphicMessageHandler::visitHideCentralMenu(HideCentralMenuMessage const &msg_p)
+{
+	msg_p.getMenu().menu->setHidden(msg_p.isHidden());
+}
+
+void GraphicMessageHandler::visitNewRichLabel(NewRichLabelMessage const &msg_p)
+{
+	// set pointer
+	msg_p.getLabel().label = new RichLabel(msg_p.getContent(), msg_p.getX(), msg_p.getY(), msg_p.getWidth(), msg_p.getHeight()
+		, msg_p.getSize(), msg_p.getBack(), *_engine);
+}
+
+void GraphicMessageHandler::visitHideRichLabel(HideRichLabelMessage const &msg_p)
+{
+	msg_p.getLabel().label->setHidden(msg_p.isHidden());
+}
+
+void GraphicMessageHandler::visitUpdateTextRichLabel(UpdateTextRichLabelMessage const &msg_p)
+{
+	msg_p.getLabel().label->updateText(msg_p.getContent());
+}
+
+void GraphicMessageHandler::visitSetPositionRichLabel(SetPositionRichLabelMessage const &msg_p)
+{
+	msg_p.getLabel().label->setPosition(msg_p.getX(), msg_p.getY());
+}
+
+//////////////////////////////////
+//                              //
 //           Light              //
 //                              //
 //////////////////////////////////

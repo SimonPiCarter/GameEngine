@@ -14,6 +14,9 @@
 #include "entity/MoveGraphicEntityMessage.h"
 #include "entity/NewGraphicEntityMessage.h"
 #include "entity/RotateGraphicEntityMessage.h"
+// gui
+#include "gui/CentralMenuMessage.h"
+#include "gui/RichLabelMessage.h"
 // light
 #include "light/DestroyLightMessage.h"
 #include "light/MoveLightMessage.h"
@@ -55,6 +58,14 @@ public:
 	void visitMoveGraphicEntity(MoveGraphicEntityMessage const &msg_p);
 	void visitNewGraphicEntity(NewGraphicEntityMessage const &msg_p);
 	void visitRotateGraphicEntity(RotateGraphicEntityMessage const &msg_p);
+
+	// Gui
+	void visitNewCentralMenu(NewCentralMenuMessage const &msg_p);
+	void visitHideCentralMenu(HideCentralMenuMessage const &msg_p);
+	void visitNewRichLabel(NewRichLabelMessage const &msg_p);
+	void visitHideRichLabel(HideRichLabelMessage const &msg_p);
+	void visitUpdateTextRichLabel(UpdateTextRichLabelMessage const &msg_p);
+	void visitSetPositionRichLabel(SetPositionRichLabelMessage const &msg_p);
 
 	// Light
 	void visitDestroyLight(DestroyLightMessage const &msg_p);

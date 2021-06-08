@@ -26,6 +26,8 @@ target_sources(graphic
 	src/message/entity/NewGraphicEntityMessage.cpp
 	src/message/entity/MoveGraphicEntityMessage.cpp
 	src/message/entity/RotateGraphicEntityMessage.cpp
+	src/message/gui/CentralMenuMessage.cpp
+	src/message/gui/RichLabelMessage.cpp
 	src/message/light/DestroyLightMessage.cpp
 	src/message/light/MoveLightMessage.cpp
 	src/message/light/NewLightMessage.cpp
