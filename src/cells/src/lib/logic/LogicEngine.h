@@ -4,6 +4,7 @@
 
 class CellsEngine;
 class GraphicEntity;
+class HeaderUI;
 class MobEntity;
 class Tower;
 class WaveEngine;
@@ -14,7 +15,13 @@ public:
 	LogicEngine(MapLayout const * map_p, CellsEngine * cellsEngine_p=nullptr);
 	~LogicEngine();
 
+	CellsEngine * getCellsEngine() { return _cellsEngine; }
+	CellsEngine const * getCellsEngine() const { return _cellsEngine; }
+
 	void quit() { _quit = true; }
+
+	double getLife() const { return _life; }
+	double getScrap() const { return _scrap; }
 
 	std::list<Tower *> const & getTowers() const { return _towers; }
 	std::list<Tower *> & getTowers() { return _towers; }
@@ -32,10 +39,16 @@ public:
 	void spawnTower(Tower * tower_p);
 
 	MobEntity * getMobSelection(std::array<double, 3> pos_p, std::array<double, 3> dir_p);
+
 protected:
 	CellsEngine * const _cellsEngine;
 
+	HeaderUI * _header;
+
 	bool _quit;
+
+	double _life;
+	double _scrap;
 
 	/// @brief map
 	MapLayout const * const _currentMap;

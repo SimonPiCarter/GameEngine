@@ -4,10 +4,14 @@
 #include "logic/WaveEngine.h"
 #include "logic/display/MapDisplay.h"
 #include "logic/entity/Tower.h"
+#include "logic/ui/HeaderUI.h"
 
 LogicEngine::LogicEngine(MapLayout const * map_p, CellsEngine * cellsEngine_p)
 	: _cellsEngine(cellsEngine_p)
+	, _header(nullptr)
 	, _quit(false)
+	, _life(100.)
+	, _scrap(20.)
 	, _currentMap(map_p)
 	, _waveEngine(nullptr)
 {}
@@ -27,6 +31,7 @@ LogicEngine::~LogicEngine()
 	{
 		delete pair_l.first;
 	}
+	delete _header;
 }
 
 
@@ -48,6 +53,8 @@ void LogicEngine::init()
 		_cellsEngine->getGraphic().registerMessage(new RotateCameraMessage({0., 0., 90.}));
 
 		_cellsEngine->getGraphic().registerMessage(new NewSceneMessage("game", "root", {0.,0.,0.}));
+
+		_header = new HeaderUI(*this);
 	}
 }
 
@@ -87,6 +94,11 @@ void LogicEngine::run(double elapsedTime_p)
 			++ it_l;
 		}
 	}
+
+	if(_header)
+	{
+		_header->update(elapsedTime_p);
+	}
 }
 
 void LogicEngine::spawnMob(MobEntity * entity_p, std::array<double, 2> const & spawnPosition_p)
@@ -106,6 +118,9 @@ void LogicEngine::despawnMob(MobEntity * entity_p)
 	{
 		_cellsEngine->getGraphic().registerMessage(new DestroyGraphicEntityMessage(entity_p->getGraphic()));
 	}
+
+	// decrease life
+	_life -= entity_p->getModel()->life_dmg;
 }
 
 void LogicEngine::killMob(MobEntity * entity_p)
@@ -114,6 +129,9 @@ void LogicEngine::killMob(MobEntity * entity_p)
 	{
 		_cellsEngine->getGraphic().registerMessage(new DestroyGraphicEntityMessage(entity_p->getGraphic()));
 	}
+
+	// increase scrap
+	_scrap += entity_p->getModel()->scrap_reward;
 }
 
 void LogicEngine::moveMob(MobEntity * entity_p, std::array<double,2> oldPos_p, std::array<double,2> pos_p)

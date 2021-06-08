@@ -136,9 +136,9 @@ WaveLayout CellsEngine::getNextWave()
 	WaveLayout layout_l;
 	layout_l.mobLayout.push_back(
 		{
-			{3., 1., ArmorType::Standard, "Cube", {1.,1.}, 1.},		// Mob model
-			10,														// number of spawn
-			1.														// interval
+			{3., 1., ArmorType::Standard, "Cube", {1.,1.}, 1., 5., 2.},		// Mob model
+			10,																// number of spawn
+			1.																// interval
 		}
 	);
 	return layout_l;
