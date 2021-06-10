@@ -247,6 +247,8 @@ void GraphicEngine::tearDown()
 {
 	//saveHlmsDiskCache();
 
+	handleAllMessages();
+
 	if( _sceneManager )
 		_sceneManager->removeRenderQueueListener( _overlaySystem );
 

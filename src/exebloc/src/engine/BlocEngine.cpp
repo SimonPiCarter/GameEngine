@@ -112,6 +112,8 @@ void BlocEngine::run()
 	{
 		delete model_l;
 	}
+	_graphic.registerMessage(new DestroyWindowMessage(label_l->getWindow()));
+	_graphic.registerMessage(new DestroyWindowMessage(_labelScore->getWindow()));
 	delete label_l;
 	delete _labelScore;
 	_labelScore = nullptr;

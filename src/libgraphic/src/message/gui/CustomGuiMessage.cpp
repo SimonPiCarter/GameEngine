@@ -14,3 +14,13 @@ void CustomGuiMessage::visit(GraphicMessageHandler &handler_p)
 {
 	handler_p.visitCustomGui(*this);
 }
+
+DestroyWindowMessage::DestroyWindowMessage(Colibri::Window * window_p)
+	: GraphicMessage("")
+	, _window(window_p)
+{}
+
+void DestroyWindowMessage::visit(GraphicMessageHandler &handler_p)
+{
+	handler_p.visitDestroyWindow(*this);
+}

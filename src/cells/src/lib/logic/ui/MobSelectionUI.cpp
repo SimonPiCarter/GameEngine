@@ -50,6 +50,8 @@ MobSelectionUI::MobSelectionUI(LogicEngine &engine_p)
 
 MobSelectionUI::~MobSelectionUI()
 {
+	GraphicEngine & graphic_l = _engine.getCellsEngine()->getGraphic();
+	graphic_l.registerMessage(new DestroyWindowMessage(_label->label->getWindow()));
 	delete _label;
 }
 

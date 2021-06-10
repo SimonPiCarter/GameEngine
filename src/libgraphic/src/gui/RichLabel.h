@@ -30,6 +30,8 @@ public:
 
 	void setPosition(double x, double y);
 
+	Colibri::Window * getWindow() { return _window; }
+
 protected:
 	Colibri::ColibriManager * _manager;
 	Colibri::Window * _window;

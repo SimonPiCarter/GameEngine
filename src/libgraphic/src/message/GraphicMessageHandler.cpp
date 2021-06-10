@@ -179,6 +179,11 @@ void GraphicMessageHandler::visitCustomGui(CustomGuiMessage const &msg_p)
 	msg_p.getFunc()(msg_p.getToolkit(), _engine);
 }
 
+void GraphicMessageHandler::visitDestroyWindow(DestroyWindowMessage const &msg_p)
+{
+	_engine->getColibriManager()->destroyWindow(msg_p.getWindow());
+}
+
 void GraphicMessageHandler::visitNewCentralMenu(NewCentralMenuMessage const &msg_p)
 {
 	msg_p.getMenu().menu = new central_menu::Menu(msg_p.getTitle(), msg_p.getData(), *_engine);

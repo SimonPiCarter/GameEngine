@@ -62,6 +62,7 @@ public:
 
 	// Gui
 	void visitCustomGui(CustomGuiMessage const &msg_p);
+	void visitDestroyWindow(DestroyWindowMessage const &msg_p);
 	void visitNewCentralMenu(NewCentralMenuMessage const &msg_p);
 	void visitHideCentralMenu(HideCentralMenuMessage const &msg_p);
 	void visitNewRichLabel(NewRichLabelMessage const &msg_p);

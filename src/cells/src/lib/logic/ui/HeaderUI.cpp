@@ -69,6 +69,10 @@ HeaderUI::HeaderUI(LogicEngine &engine_p)
 
 HeaderUI::~HeaderUI()
 {
+	GraphicEngine & graphic_l = _engine.getCellsEngine()->getGraphic();
+	graphic_l.registerMessage(new DestroyWindowMessage(_labelLife->label->getWindow()));
+	graphic_l.registerMessage(new DestroyWindowMessage(_labelTime->label->getWindow()));
+	graphic_l.registerMessage(new DestroyWindowMessage(_labelResource->label->getWindow()));
 	delete _labelLife;
 	delete _labelTime;
 	delete _labelResource;

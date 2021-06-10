@@ -2,6 +2,7 @@
 
 #include "message/GraphicMessage.h"
 
+#include "ColibriGui/ColibriWindow.h"
 #include <functional>
 
 class GraphicEngine;
@@ -28,4 +29,17 @@ public:
 protected:
 	std::function<void(CustomGuiToolkit*, GraphicEngine *)> _func;
 	CustomGuiToolkit * const _toolkit;
+};
+
+class DestroyWindowMessage : public GraphicMessage
+{
+public:
+	DestroyWindowMessage(Colibri::Window * window_p);
+
+	virtual void visit(GraphicMessageHandler &handler_p);
+
+	Colibri::Window * getWindow() const { return _window; }
+
+protected:
+	Colibri::Window * const _window;
 };

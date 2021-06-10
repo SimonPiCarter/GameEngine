@@ -5,6 +5,7 @@
 #include "message/entity/MoveGraphicEntityMessage.h"
 #include "message/entity/AnimateGraphicEntityMessage.h"
 #include "message/entity/RotateGraphicEntityMessage.h"
+#include "message/gui/CustomGuiMessage.h"
 #include "message/light/NewLightMessage.h"
 #include "message/scene/DestroySceneMessage.h"
 #include "message/scene/MoveSceneMessage.h"
@@ -165,6 +166,12 @@ public:
 			timeSinceLast = std::min( 1.0, timeSinceLast/1000. ); //Prevent from going haywire.
 			start_l = end_l;
 		}
+
+		_graphic.registerMessage(new DestroyWindowMessage(label_l->getWindow()));
+		_graphic.registerMessage(new DestroyWindowMessage(label2_l->getWindow()));
+		_graphic.registerMessage(new DestroyWindowMessage(label3_l->getWindow()));
+		_graphic.registerMessage(new DestroyWindowMessage(_menu->getWindow()));
+
 		delete label_l;
 		delete label2_l;
 		delete label3_l;

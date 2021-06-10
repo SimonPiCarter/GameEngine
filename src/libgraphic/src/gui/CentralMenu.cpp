@@ -81,7 +81,6 @@ Menu::~Menu()
 	{
 		delete listener_l;
 	}
-	_manager->destroyWindow(_window);
 }
 
 void Menu::setHidden(bool hidden_p)
