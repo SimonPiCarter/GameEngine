@@ -153,6 +153,7 @@ void GraphicMessageHandler::visitNewGraphicEntity(NewGraphicEntityMessage const 
 	sceneNode->attachObject(item_l);
 	sceneNode->scale(res_l._scale, res_l._scale, res_l._scale);
 
+	item_l->getUserObjectBindings() = msg_p.getEntity()->getData();
 	msg_p.getEntity()->setItem(item_l);
 }
 
@@ -172,6 +173,11 @@ void GraphicMessageHandler::visitRotateGraphicEntity(RotateGraphicEntityMessage 
 //           Gui                //
 //                              //
 //////////////////////////////////
+
+void GraphicMessageHandler::visitCustomGui(CustomGuiMessage const &msg_p)
+{
+	msg_p.getFunc()(msg_p.getToolkit(), _engine);
+}
 
 void GraphicMessageHandler::visitNewCentralMenu(NewCentralMenuMessage const &msg_p)
 {

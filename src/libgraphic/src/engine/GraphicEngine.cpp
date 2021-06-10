@@ -544,6 +544,8 @@ void GraphicEngine::run(double elapsedTime_p)
 		}
 	}
 
+	_colibriManager->update(elapsedTime_p);
+
 	SDL_Event evt;
 	while( SDL_PollEvent( &evt ) )
 	{
@@ -570,7 +572,6 @@ void GraphicEngine::run(double elapsedTime_p)
 		tried = true;
 	}
 
-	_colibriManager->update(elapsedTime_p);
 
 	const bool isTextInputActive_l = SDL_IsTextInputActive();
 

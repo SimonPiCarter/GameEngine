@@ -7,6 +7,7 @@
 
 struct RichLabelVessel
 {
+	~RichLabelVessel() { delete label; }
 	RichLabel * label = nullptr;
 };
 

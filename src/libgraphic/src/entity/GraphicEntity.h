@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Animation/OgreSkeletonAnimation.h"
+#include "OgreUserObjectBindings.h"
 
 namespace Ogre
 {
@@ -25,8 +26,13 @@ public:
 
 	Ogre::SkeletonAnimation *getAnimationState(std::string const &animState_p);
 
+	Ogre::UserObjectBindings const & getData() const;
+	Ogre::UserObjectBindings & getData();
+
 protected:
 	Ogre::Item * _item;
 	Ogre::Light * _light;
 	Ogre::ParticleSystem * _particle;
+	/// @brief custom data
+	Ogre::UserObjectBindings _data;
 };

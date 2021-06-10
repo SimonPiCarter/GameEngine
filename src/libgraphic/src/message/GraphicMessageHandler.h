@@ -16,6 +16,7 @@
 #include "entity/RotateGraphicEntityMessage.h"
 // gui
 #include "gui/CentralMenuMessage.h"
+#include "gui/CustomGuiMessage.h"
 #include "gui/RichLabelMessage.h"
 // light
 #include "light/DestroyLightMessage.h"
@@ -60,6 +61,7 @@ public:
 	void visitRotateGraphicEntity(RotateGraphicEntityMessage const &msg_p);
 
 	// Gui
+	void visitCustomGui(CustomGuiMessage const &msg_p);
 	void visitNewCentralMenu(NewCentralMenuMessage const &msg_p);
 	void visitHideCentralMenu(HideCentralMenuMessage const &msg_p);
 	void visitNewRichLabel(NewRichLabelMessage const &msg_p);

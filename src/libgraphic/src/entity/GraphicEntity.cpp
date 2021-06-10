@@ -45,3 +45,12 @@ Ogre::SkeletonAnimation *GraphicEntity::getAnimationState(std::string const &ani
 	assert(skeletonInstance_l);
 	return skeletonInstance_l->getAnimation(animState_p);;
 }
+
+Ogre::UserObjectBindings const & GraphicEntity::getData() const
+{
+	return _data;
+}
+Ogre::UserObjectBindings & GraphicEntity::getData()
+{
+	return _data;
+}
