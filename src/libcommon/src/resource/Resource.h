@@ -27,11 +27,16 @@ public:
 	void addUISkin(std::string const &path_p);
 	std::list<std::string> const &getListUISkins() const;
 
+	void addResourcePath(std::string const &path_p);
+	std::list<std::string> const &getResourcePaths() const;
+
+
 	std::string const &getRootPath() const { return _rootPath; }
 
 protected:
 	std::unordered_map<std::string, Resource> _mapResources;
 	std::list<std::string> _listUISkins;
+	std::list<std::string> _listResourcePaths;
 
 	std::string const _rootPath;
 };

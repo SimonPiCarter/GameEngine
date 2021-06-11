@@ -24,3 +24,13 @@ std::list<std::string> const &ResourceHandler::getListUISkins() const
 {
 	return _listUISkins;
 }
+
+void ResourceHandler::addResourcePath(std::string const &path_p)
+{
+	_listResourcePaths.push_back(path_p);
+}
+
+std::list<std::string> const &ResourceHandler::getResourcePaths() const
+{
+	return _listResourcePaths;
+}

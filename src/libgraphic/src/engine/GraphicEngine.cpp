@@ -338,7 +338,10 @@ void GraphicEngine::setupResources()
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Materials/Common/GLSL", "FileSystem", "Popular");
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Materials/ColibriGui/Skins/Custom", "FileSystem", "Popular");
 	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Materials/ColibriGui/Skins/DarkGloss", "FileSystem", "Popular");
-	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/Materials/ColibriGui/Skins/Debug", "FileSystem", "Popular");
+	for(std::string path_l : _resourceHandler->getResourcePaths())
+	{
+		Ogre::ResourceGroupManager::getSingleton().addResourceLocation(_resourcePath+"/"+path_l, "FileSystem", "Popular");
+	}
 }
 
 //-----------------------------------------------------------------------------------
