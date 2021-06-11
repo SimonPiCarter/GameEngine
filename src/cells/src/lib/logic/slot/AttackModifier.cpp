@@ -39,11 +39,11 @@ std::vector<InfoLabel> AttackModifier::getDesc() const
 			break;
 		case AttackType::Splash:
 			content_l.push_back({typeStr_l + "\n", 150, 20, 20});
-			content_l.push_back({translate("Deals damage an area.") + "\n", 255, 255, 255});
+			content_l.push_back({translate("Deals damage in an area.") + "\n", 255, 255, 255});
 			break;
 		case AttackType::Line:
 			content_l.push_back({typeStr_l + "\n", 100, 255, 100});
-			content_l.push_back({translate("Deals damage enemies in a line.") + "\n", 255, 255, 255});
+			content_l.push_back({translate("Deals damage to enemies in a line.") + "\n", 255, 255, 255});
 			break;
 	};
 
