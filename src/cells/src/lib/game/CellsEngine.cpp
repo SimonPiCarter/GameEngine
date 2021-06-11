@@ -82,21 +82,25 @@ void CellsEngine::runLogic()
 	Tower * tower_l = new Tower({1.5, 5.5}, {1., 1.});
 	tower_l->setAttackModifier(AttackModifier(1.,1.,2.,3.,AttackType::Arc, DamageType::Standard));
 	tower_l->setResource("CubeGreen");
+	tower_l->setMaxSlots(3);
 	_logic->spawnTower(tower_l);
 
 	tower_l = new Tower({1.5, 1.5}, {1., 1.});
 	tower_l->setAttackModifier(AttackModifier(0.5,2.,1.,3.,AttackType::Direct, DamageType::Standard));
 	tower_l->setResource("CubeGreen");
+	tower_l->setMaxSlots(5);
 	_logic->spawnTower(tower_l);
 
 	tower_l = new Tower({5.5, 1.5}, {1., 1.});
 	tower_l->setAttackModifier(AttackModifier(1.5,2.,1.,3.,AttackType::Splash, DamageType::Standard));
 	tower_l->setResource("CubeGreen");
+	tower_l->setMaxSlots(7);
 	_logic->spawnTower(tower_l);
 
 	tower_l = new Tower({5.5, 5.5}, {1., 1.});
 	tower_l->setAttackModifier(AttackModifier(3.5,2.,1.,3.,AttackType::Line, DamageType::Standard));
 	tower_l->setResource("CubeGreen");
+	tower_l->setMaxSlots(12);
 	_logic->spawnTower(tower_l);
 
 	while( !_graphic.getQuit() )
