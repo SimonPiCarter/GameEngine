@@ -23,7 +23,7 @@ private:
 class TooltipListener : public Colibri::WidgetActionListener
 {
 public:
-	TooltipListener(Colibri::ColibriManager * manager_p, Colibri::Button *button_p, RichLabel * label_p);
+	TooltipListener(Colibri::ColibriManager * manager_p, Colibri::Button *button_p, RichLabel * label_p, bool setPosition_p=true);
 
 	virtual ~TooltipListener();
 	virtual void notifyWidgetAction( Colibri::Widget *widget, Colibri::Action::Action action );
@@ -32,6 +32,7 @@ private:
 	Colibri::ColibriManager * const _manager;
 	Colibri::Button * const _button;
 	RichLabel * const _label;
+	bool _setPosition;
 };
 
 /// @brief simple definition of a central_menu button

@@ -15,6 +15,11 @@ RichLabel::RichLabel(std::vector<InfoLabel> const &content_p, double x, double y
 	_window = _manager->createWindow(nullptr);
 	_window->setZOrder(1);
 
+	_adjustHeight = height < 1e-5;
+	_width = width;
+	_anchored = false;
+	_bottom = 0.;
+
 	// Adjust window to the full
 	_window->setTransform(Ogre::Vector2(x, y), Ogre::Vector2(width, height));
 	_window->m_breadthFirst = true;
@@ -22,27 +27,37 @@ RichLabel::RichLabel(std::vector<InfoLabel> const &content_p, double x, double y
 	float borders_l[4] = {0, 0, 0, 0};
 	_window->setBorderSize(borders_l);
 
-	Colibri::LayoutLine *layout_l = new Colibri::LayoutLine(_manager);
-	layout_l->setCellOffset(Ogre::Vector2(0,0));
-
-	std::stringstream ss_l;
-	for(InfoLabel const &info_l : content_p)
+	// if fixed height
+	if(!_adjustHeight)
 	{
-		ss_l<<info_l.text;
+		Colibri::LayoutLine *layout_l = new Colibri::LayoutLine(_manager);
+		layout_l->setCellOffset(Ogre::Vector2(0,0));
+
+		_label = _manager->createWidget<Colibri::Label>(_window);
+		_label->m_minSize = Ogre::Vector2( width, 0 );
+		_label->sizeToFit(width);
+		_label->setDefaultFontSize(size_p);
+		layout_l->addCell(_label);
+
+		updateText(content_p);
+
+
+		layout_l->setAdjustableWindow(_window);
+		layout_l->m_hardMaxSize = Ogre::Vector2(width, height+(40*size_p/10));
+		layout_l->layout();
 	}
+	else
+	{
+		_label = _manager->createWidget<Colibri::Label>(_window);
 
-	_label = _manager->createWidget<Colibri::Label>(_window);
-	_label->m_minSize = Ogre::Vector2( width, 0 );
-	_label->sizeToFit(width);
-	_label->setDefaultFontSize(size_p);
-	layout_l->addCell(_label);
+		_label->m_minSize = Ogre::Vector2( width, 0 );
+		_label->setDefaultFontSize(size_p);
 
-	updateText(content_p);
+		updateText(content_p);
 
-
-	layout_l->setAdjustableWindow(_window);
-	layout_l->m_hardMaxSize = Ogre::Vector2(width, height+(40*size_p/10));
-	layout_l->layout();
+		_label->sizeToFit(width);
+		_window->setTransform(Ogre::Vector2(x, y), Ogre::Vector2(width, _label->getSize().y));
+	}
 
 	// no scroll here!
 	_window->setMaxScroll(Ogre::Vector2(0,0));
@@ -93,10 +108,32 @@ void RichLabel::updateText(std::vector<InfoLabel> const &content_p)
 		_label->setTextColour(Ogre::ColourValue(info_l.r/255.f, info_l.g/255.f, info_l.b/255.f), idx_l);
 		++idx_l;
 	}
+
+	// adjust height if necessary
+	if(_adjustHeight)
+	{
+		_label->sizeToFit(_width);
+		if(_anchored)
+		{
+			_window->setTransform({_window->getLocalTopLeft().x, _bottom - _label->getSize().y}, Ogre::Vector2(_width, _label->getSize().y));
+		}
+		else
+		{
+			_window->setTransform(_window->getLocalTopLeft(), Ogre::Vector2(_width, _label->getSize().y));
+		}
+	}
 }
 
 void RichLabel::setPosition(double x, double y)
 {
 	_window->setTopLeft(Ogre::Vector2(x, y));
 	_label->updateDerivedTransformFromParent(true);
+}
+
+void RichLabel::setBottomAnchor(double anchor_p)
+{
+	_anchored = true;
+	_bottom = anchor_p;
+	// adjust height if necessary
+	_window->setTransform({_window->getLocalTopLeft().x, _bottom - _label->getSize().y}, Ogre::Vector2(_width, _label->getSize().y));
 }
