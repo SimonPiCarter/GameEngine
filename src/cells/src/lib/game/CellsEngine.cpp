@@ -3,6 +3,7 @@
 #include "OgreCamera.h"
 #include "OgreWindow.h"
 #include "OgreSceneManager.h"
+#include "OgreSceneQuery.h"
 #include <thread>
 
 #include "logic/LogicEngine.h"
@@ -21,7 +22,8 @@ void CellsEngine::init()
 	_resourceHandler.addResource({"CubeGreen", "new_cube.mesh", false, "Green", 0.5});
 	_resourceHandler.addResource({"CubeYellow", "new_cube.mesh", false, "Yellow", 0.5});
 	_resourceHandler.addResource({"CubeRed", "new_cube.mesh", false, "Red", 0.5});
-
+	_resourceHandler.addUISkin("cells/Skins.colibri.json");
+	_resourceHandler.addResourcePath("cells/");
 	_graphic.initWindow("cells");
 }
 
@@ -82,6 +84,21 @@ void CellsEngine::runLogic()
 	tower_l->setResource("CubeGreen");
 	_logic->spawnTower(tower_l);
 
+	tower_l = new Tower({1.5, 1.5}, {1., 1.});
+	tower_l->setAttackModifier(AttackModifier(0.5,2.,1.,3.,AttackType::Direct, DamageType::Standard));
+	tower_l->setResource("CubeGreen");
+	_logic->spawnTower(tower_l);
+
+	tower_l = new Tower({5.5, 1.5}, {1., 1.});
+	tower_l->setAttackModifier(AttackModifier(1.5,2.,1.,3.,AttackType::Splash, DamageType::Standard));
+	tower_l->setResource("CubeGreen");
+	_logic->spawnTower(tower_l);
+
+	tower_l = new Tower({5.5, 5.5}, {1., 1.});
+	tower_l->setAttackModifier(AttackModifier(3.5,2.,1.,3.,AttackType::Line, DamageType::Standard));
+	tower_l->setResource("CubeGreen");
+	_logic->spawnTower(tower_l);
+
 	while( !_graphic.getQuit() )
 	{
 		// handle game message
@@ -121,17 +138,40 @@ void CellsEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 		{
 			double x = double(evt.button.x) / double(_graphic.getRenderWindow()->getWidth());
 			double y = double(evt.button.y) / double(_graphic.getRenderWindow()->getHeight());
-			// clic
-			Ogre::Ray ray_l = _graphic.getCamera()->getCameraToViewportRay(x, y);
-			std::array<double, 3> pos_l = {ray_l.getOrigin().x, ray_l.getOrigin().y, ray_l.getOrigin().z};
-			std::array<double, 3> dir_l = {ray_l.getDirection().x, ray_l.getDirection().y, ray_l.getDirection().z};
-			_logic->setMobSelection(_logic->getMobSelection(pos_l, dir_l));
+
+			Ogre::RaySceneQuery* rayQuery = _graphic.getSceneManager()->createRayQuery(
+			_graphic.getCamera()->getCameraToViewportRay(x, y));
+			rayQuery->setSortByDistance(true, 1);
+
+			Ogre::RaySceneQueryResult& result = rayQuery->execute();
+			Ogre::RaySceneQueryResult::iterator it = result.begin();
+			MobEntity * mobSelection_l;
+			for ( ; it != result.end(); it++)
+			{
+				Ogre::Any mobData_l = it->movable->getUserObjectBindings().getUserAny("mob");
+				Ogre::Any towerData_l = it->movable->getUserObjectBindings().getUserAny("tower");
+				if(mobData_l.has_value())
+				{
+					_logic->setMobSelection(*Ogre::any_cast<MobEntity *>(&mobData_l));
+					_logic->setTowerSelection(nullptr);
+				}
+				else if (towerData_l.has_value())
+				{
+					_logic->setTowerSelection(*Ogre::any_cast<Tower *>(&towerData_l));
+					_logic->setMobSelection(nullptr);
+				}
+			}
 		}
 		break;
 	case SDL_KEYDOWN:
 		break;
 	case SDL_KEYUP:
 		if(evt.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+		{
+			_logic->setTowerSelection(nullptr);
+			_logic->setMobSelection(nullptr);
+		}
+		if(evt.key.keysym.scancode == SDL_SCANCODE_Q)
 		{
 			_graphic.setQuit();
 		}

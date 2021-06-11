@@ -12,7 +12,7 @@
 
 WaveEngine::WaveEngine(LogicEngine &logic_p)
 	: _logic(logic_p)
-	, _tree({{0.,0.}, {double(_logic._currentMap->getSize()[0]), double(_logic._currentMap->getSize()[1])}}, 20, 0.)
+	, _tree({{0.,0.}, {double(_logic._currentMap->getSize()[0]), double(_logic._currentMap->getSize()[1])}}, _logic._currentMap->getSize()[0], 0.)
 	, _timestamp(0.)
 	, _spawner(nullptr)
 	, _mover(nullptr)

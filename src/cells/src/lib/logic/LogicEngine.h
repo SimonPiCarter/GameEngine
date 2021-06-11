@@ -1,12 +1,14 @@
 #pragma once
 
 #include "layout/MapLayout.h"
+#include "wave/PositionalTreeDefs.h"
 
 class CellsEngine;
 class GraphicEntity;
 class HeaderUI;
 class MobEntity;
 class MobSelectionUI;
+class TowerSelectionUI;
 class Tower;
 class WaveEngine;
 
@@ -41,15 +43,23 @@ public:
 	void spawnTower(Tower * tower_p);
 
 	MobEntity * getMobSelection(std::array<double, 3> pos_p, std::array<double, 3> dir_p);
+	Tower * getTowerSelection(std::array<double, 3> pos_p, std::array<double, 3> dir_p);
 
 	void setMobSelection(MobEntity *ent_p) { _mobSelection = ent_p; }
 	MobEntity * getMobSelection() { return _mobSelection; }
+
+	void setTowerSelection(Tower *ent_p) { _towerSelection = ent_p; }
+	Tower * getTowerSelection() { return _towerSelection; }
 
 protected:
 	CellsEngine * const _cellsEngine;
 
 	HeaderUI * _header;
 	MobSelectionUI * _mobSelectionUI;
+	TowerSelectionUI * _towerSelectionUI;
+
+	/// @brief handle towers
+	PositionalTree<Tower> _tree;
 
 	bool _quit;
 
@@ -59,6 +69,8 @@ protected:
 
 	/// @brief currently selected mob
 	MobEntity * _mobSelection;
+	/// @brief currently selected tower
+	Tower * _towerSelection;
 
 	/// @brief map
 	MapLayout const * const _currentMap;

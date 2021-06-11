@@ -3,6 +3,10 @@
 #include "logic/types/AttackType.h"
 #include "logic/types/DamageType.h"
 
+#include "gui/InfoLabel.h"
+
+#include <vector>
+
 class AttackModifier
 {
 public:
@@ -25,6 +29,12 @@ public:
 	double getParam() const { return _param; }
 	AttackType getAttackType() const { return _attackType; }
 	DamageType getDamageType() const { return _damageType; }
+
+	/// @brief return the skin associated with the modifier
+	std::string getSkin() const;
+
+	/// @brief return a text description for the modifier
+	std::vector<InfoLabel> getDesc() const;
 
 protected:
 	double _speed;
