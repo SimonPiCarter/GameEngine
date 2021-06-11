@@ -1,20 +1,14 @@
 #pragma once
 
-#include <string>
 #include <vector>
 
 #include "ColibriGui/ColibriManager.h"
 #include "ColibriGui/ColibriWindow.h"
 
+#include "gui/InfoLabel.h"
+
 class GraphicEngine;
 
-struct InfoLabel
-{
-	std::string text;
-	int r;
-	int g;
-	int b;
-};
 
 /// @brief This class allow for rich Label handling
 /// with coloring inside it
