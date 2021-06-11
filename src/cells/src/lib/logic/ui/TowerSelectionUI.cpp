@@ -10,7 +10,6 @@
 #include "engine/GraphicEngine.h"
 #include "gui/ButtonData.h"
 
-#include "ColibriGui/Layouts/ColibriLayoutLine.h"
 
 TowerSelectionUI::TowerSelectionUI(LogicEngine &engine_p)
 	: _engine(engine_p)
@@ -19,7 +18,7 @@ TowerSelectionUI::TowerSelectionUI(LogicEngine &engine_p)
 	GraphicEngine & graphic_l = _engine.getCellsEngine()->getGraphic();
 	_pos = {
 		graphic_l.getColibriManager()->getCanvasSize().x-500,
-		graphic_l.getColibriManager()->getCanvasSize().y-287
+		graphic_l.getColibriManager()->getCanvasSize().y-282
 	};
 
 	graphic_l.registerMessage(new CustomGuiMessage(init, this));
@@ -112,35 +111,13 @@ void TowerSelectionUI::setUpSlots()
 	float borders_l[4] = {0, 0, 0, 0};
 	_slots->setBorderSize(borders_l);
 
-	Colibri::LayoutLine *layout_l = new Colibri::LayoutLine(_manager);
+	_layout = new Colibri::LayoutLine(_manager);
 
-	size_t slots_number_l = 10;
-	for(size_t i = 0 ; i < slots_number_l ; ++ i)
-	{
-		Colibri::Button *button_l = _manager->createWidget<Colibri::Button>(_slots);
-		button_l->m_minSize = Ogre::Vector2( 150, 64 );
-		button_l->getLabel()->setText("s"+std::to_string(i));
-		button_l->sizeToFit();
-		layout_l->addCell(button_l);
-	}
+	_layout->setAdjustableWindow(_slots);
+	_layout->m_hardMaxSize = 3*69 + 45;
+	_layout->layout();
 
-	// Do some spacing (cf demo...)
-	{
-		const Colibri::LayoutCellVec &cells_l = layout_l->getCells();
-		Colibri::LayoutCellVec::const_iterator end  = cells_l.end();
-
-		for( Colibri::LayoutCellVec::const_iterator itor = cells_l.begin();itor != end ; ++itor)
-		{
-			(*itor)->m_margin = 5.0f;
-			(*itor)->m_expand[0] = true;
-		}
-	}
-
-	layout_l->setAdjustableWindow(_slots);
-	layout_l->m_hardMaxSize = 3*69 + 45;
-	layout_l->layout();
-
-	_slots->setMaxScroll(Ogre::Vector2(0,(slots_number_l-2)*69 + 20));
+	_slots->setMaxScroll(Ogre::Vector2(0,0));
 	_slots->updateDerivedTransformFromParent(true);
 }
 
@@ -182,6 +159,12 @@ void show(CustomGuiToolkit * toolkit_p, GraphicEngine *)
 	ui_l->_windowModifier->setClickable(true);
 	ui_l->_slots->setHidden(false);
 	ui_l->_slots->setClickable(true);
+}
+
+void slot(CustomGuiToolkit * toolkit_p, GraphicEngine *)
+{
+	TowerSelectionUI * ui_l = static_cast<TowerSelectionUI *>(toolkit_p);
+	ui_l->updateSlots();
 }
 
 void TowerSelectionUI::update()
@@ -230,7 +213,37 @@ void TowerSelectionUI::updateSelection(Tower * tower_p)
 
 	graphic_l.registerMessage(new UpdateTextRichLabelMessage(_stats, content_l));
 
-	// update attack modifier
-	_modifier->setSkin(tower_p->getAttackModifier().getSkin());
+	// update attack modifier tooltip and icon
+	_modifier->setSkin(tower_p->getAttackModifier().getSkin()+"Modifier");
 	graphic_l.registerMessage(new UpdateTextRichLabelMessage(*_tooltipsLabel[0], tower_p->getAttackModifier().getDesc()));
+
+	graphic_l.registerMessage(new CustomGuiMessage(&slot, this));
+}
+
+void TowerSelectionUI::updateSlots()
+{
+	size_t slots_number_l = _currentSelection->getMaxSlots();
+	// create new buttons if necessary
+	for(size_t i = _buttons.size() ; i < slots_number_l ; ++ i)
+	{
+		_buttons.push_back(_manager->createWidget<Colibri::Button>(_slots));
+		_buttons.back()->m_minSize = Ogre::Vector2( 150, 64 );
+		_buttons.back()->getLabel()->setText("s"+std::to_string(i));
+		_buttons.back()->sizeToFit();
+		_layout->addCell(_buttons.back());
+	}
+	for(size_t i = 0 ; i < _buttons.size() ; ++ i)
+	{
+		_buttons[i]->setHidden(i>=slots_number_l);
+	}
+
+	_layout->layout();
+
+	double size_l = 0.;
+	if(!_buttons.empty())
+	{
+		size_l = _buttons.back()->getSize().y;
+	}
+
+	_slots->setMaxScroll(Ogre::Vector2(0,std::max(0.,(slots_number_l-3)*size_l)));
 }
