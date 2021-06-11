@@ -46,8 +46,7 @@ void TooltipListener::notifyWidgetAction( Colibri::Widget *widget, Colibri::Acti
 		}
 		_label->setHidden(false);
 	}
-	if(action == Colibri::Action::Action::Cancel
-	|| action == Colibri::Action::Action::PrimaryActionPerform)
+	if(action == Colibri::Action::Action::Cancel)
 	{
 		_label->setHidden(true);
 	}
