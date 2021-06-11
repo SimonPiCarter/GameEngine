@@ -1,0 +1,57 @@
+{
+    "skins" :
+    {
+        "DirectModifier" :
+        {
+            "material" : "DirectModifier",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+		},
+        "ArcModifier" :
+        {
+            "material" : "ArcModifier",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+		},
+        "SplashModifier" :
+        {
+            "material" : "SplashModifier",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+		},
+        "LineModifier" :
+        {
+            "material" : "LineModifier",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+		}
+	}
+}

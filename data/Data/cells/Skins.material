@@ -1,0 +1,16 @@
+hlms ArcModifier unlit
+{
+	diffuse_map arc.png
+}
+hlms DirectModifier unlit
+{
+	diffuse_map direct.png
+}
+hlms LineModifier unlit
+{
+	diffuse_map line.png
+}
+hlms SplashModifier unlit
+{
+	diffuse_map splash.png
+}
