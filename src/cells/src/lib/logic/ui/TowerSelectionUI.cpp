@@ -8,6 +8,7 @@
 #include "logic/entity/Tower.h"
 
 #include "engine/GraphicEngine.h"
+#include "gui/ButtonData.h"
 
 #include "ColibriGui/Layouts/ColibriLayoutLine.h"
 
@@ -32,6 +33,11 @@ TowerSelectionUI::~TowerSelectionUI()
 	graphic_l.registerMessage(new DestroyWindowMessage(_stats.label->getWindow()));
 	graphic_l.registerMessage(new DestroyWindowMessage(_slots));
 	graphic_l.registerMessage(new DestroyWindowMessage(_windowModifier));
+	for(RichLabelVessel * label_l : _tooltipsLabel)
+	{
+		graphic_l.registerMessage(new DestroyWindowMessage(label_l->label->getWindow()));
+		delete label_l;
+	}
 }
 
 void TowerSelectionUI::setUpTitle()
@@ -84,6 +90,14 @@ void TowerSelectionUI::setUpStats()
 
 	_modifier = _manager->createWidget<Colibri::Button>(_windowModifier);
 	_modifier->setTransform( Ogre::Vector2(350/2-sizeModifier_l/2, 0), Ogre::Vector2(sizeModifier_l, sizeModifier_l) );
+
+	long tooltipHeight_l = 220;
+	_tooltipsLabel.push_back(new RichLabelVessel());
+	_tooltipsLabel.back()->label = new RichLabel(content_l, _pos[0] + 5, _pos[1] - tooltipHeight_l, 490, 0., 10, true, graphic_l);
+	_tooltipsLabel.back()->label->setBottomAnchor(_pos[1] - 5.);
+	_tooltipsLabel.back()->label->setHidden(true);
+	_listeners.push_back(new TooltipListener(graphic_l.getColibriManager(), _modifier, _tooltipsLabel.back()->label, false));
+	_modifier->addActionListener(_listeners.back());
 
 	// no scroll here!
 	_windowModifier->setMaxScroll(Ogre::Vector2(0,0));
@@ -217,5 +231,6 @@ void TowerSelectionUI::updateSelection(Tower * tower_p)
 	graphic_l.registerMessage(new UpdateTextRichLabelMessage(_stats, content_l));
 
 	// update attack modifier
-	 _modifier->setSkin(tower_p->getAttackModifier().getSkin());
+	_modifier->setSkin(tower_p->getAttackModifier().getSkin());
+	graphic_l.registerMessage(new UpdateTextRichLabelMessage(*_tooltipsLabel[0], tower_p->getAttackModifier().getDesc()));
 }
