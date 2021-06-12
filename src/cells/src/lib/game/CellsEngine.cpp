@@ -9,6 +9,7 @@
 #include "logic/LogicEngine.h"
 #include "logic/layout/MapLayout.h"
 #include "logic/entity/Tower.h"
+#include "logic/slot/effect_maker/SlowSlot.h"
 
 CellsEngine::CellsEngine(std::string const &path_p)
 	: GameEngine(path_p)
@@ -79,16 +80,18 @@ void CellsEngine::runLogic()
 	_logic = new LogicEngine(&layout_l, this);
 	_logic->init();
 
-	Tower * tower_l = new Tower({1.5, 5.5}, {1., 1.});
+	Tower * tower_l = nullptr;
+	tower_l = new Tower({1.5, 5.5}, {1., 1.});
 	tower_l->setAttackModifier(AttackModifier(1.,1.,2.,3.,AttackType::Arc, DamageType::Standard));
 	tower_l->setResource("CubeGreen");
 	tower_l->setMaxSlots(3);
 	_logic->spawnTower(tower_l);
 
 	tower_l = new Tower({1.5, 1.5}, {1., 1.});
-	tower_l->setAttackModifier(AttackModifier(0.5,2.,1.,3.,AttackType::Direct, DamageType::Standard));
+	tower_l->setAttackModifier(AttackModifier(0.5,0.1,2.,3.,AttackType::Direct, DamageType::Standard));
 	tower_l->setResource("CubeGreen");
 	tower_l->setMaxSlots(5);
+	tower_l->getSlots()[0] = new SlowSlot("SlowTest", 0.2, 15., 4);
 	_logic->spawnTower(tower_l);
 
 	tower_l = new Tower({5.5, 1.5}, {1., 1.});

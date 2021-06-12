@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <vector>
 
 #include "LogicEntityDefs.h"
 
@@ -15,6 +15,7 @@ class Tower : public LogicEntity<Tower>
 {
 public:
 	Tower(std::array<double, 2> const &position_p, std::array<double, 2> const &size_p);
+	~Tower();
 
 	double getMultAttackSpeed() const { return _multAttackSpeed; }
 	void setMultAttackSpeed(double multAttackSpeed_p) { _multAttackSpeed = multAttackSpeed_p; }
@@ -29,13 +30,13 @@ public:
 	void setDamageEffect(DamageStyle damageEffect_p) { _damageEffect = damageEffect_p; }
 
 	unsigned long getMaxSlots() const { return _maxSlots; }
-	void setMaxSlots(unsigned long maxSlots_p) { _maxSlots = maxSlots_p; }
+	void setMaxSlots(unsigned long maxSlots_p);
 
 	AttackModifier const & getAttackModifier() const { return _attackModifier; }
 	void setAttackModifier(AttackModifier const & modifier_p) { _attackModifier = modifier_p; }
 
-	std::list<Slot *> const & getSlots() const { return _slots; }
-	std::list<Slot *> & getSlots() { return _slots; }
+	std::vector<Slot *> const & getSlots() const { return _slots; }
+	std::vector<Slot *> & getSlots() { return _slots; }
 
 	/// @brief get full attack speed (taking multiplier into account)
 	double getAttackSpeed() const;
@@ -55,7 +56,7 @@ protected:
 	unsigned long _maxSlots;
 	AttackModifier _attackModifier;
 
-	std::list<Slot *> _slots;
+	std::vector<Slot *> _slots;
 
 	/// @brief graphic resource
 	std::string _resource;

@@ -15,6 +15,8 @@ target_sources(libcells
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/game/CellsEngine.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/display/MapDisplay.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/effect/Effect.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/effect/Buff.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/effect/buff/Slow.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/entity/MobEntity.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/entity/Tower.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/layout/MapLayout.cpp
@@ -25,6 +27,7 @@ target_sources(libcells
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/utils/Hitbox.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/slot/AttackModifier.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/slot/Slot.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/slot/effect_maker/SlowSlot.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/wave/AttackBuilder.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/wave/BoundingBox.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/wave/MobMover.cpp
