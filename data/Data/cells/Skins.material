@@ -14,3 +14,13 @@ hlms SplashModifier unlit
 {
 	diffuse_map splash.png
 }
+
+
+hlms EmptySlot unlit
+{
+	diffuse_map empty_slot.png
+}
+hlms SlowSlot unlit
+{
+	diffuse_map slow_slot.png
+}

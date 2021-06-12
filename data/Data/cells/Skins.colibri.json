@@ -52,6 +52,32 @@
             {
                 "all" : [4, 4]
             }
+		},
+        "EmptySlot" :
+        {
+            "material" : "EmptySlot",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+		},
+        "SlowSlot" :
+        {
+            "material" : "SlowSlot",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
 		}
 	}
 }

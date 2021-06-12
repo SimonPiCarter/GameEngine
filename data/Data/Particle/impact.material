@@ -4,7 +4,7 @@ hlms Particle/impact unlit
      lighting off
      scene_blend add
      depth_write off
-     diffuse_map splash.png
+     diffuse_map splash_particle.png
 }
 
 hlms Particle/impact_point unlit
