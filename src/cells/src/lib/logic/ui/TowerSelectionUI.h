@@ -51,7 +51,7 @@ protected:
 	std::array<double, 2> _pos;
 
 	/// @brief list of listeners to delete them
-	std::list<Colibri::WidgetActionListener*> _listeners;
+	std::vector<Colibri::WidgetActionListener*> _listeners;
 	/// @brief list of tooltips label to clear them
 	/// tooltip[0] is attack modifier
 	/// tooltip[i] is the i-1 th slot tooltip

@@ -6,6 +6,7 @@
 #include "logic/utils/Translator.h"
 #include "logic/LogicEngine.h"
 #include "logic/entity/Tower.h"
+#include "logic/slot/Slot.h"
 
 #include "engine/GraphicEngine.h"
 #include "gui/ButtonData.h"
@@ -90,9 +91,8 @@ void TowerSelectionUI::setUpStats()
 	_modifier = _manager->createWidget<Colibri::Button>(_windowModifier);
 	_modifier->setTransform( Ogre::Vector2(350/2-sizeModifier_l/2, 0), Ogre::Vector2(sizeModifier_l, sizeModifier_l) );
 
-	long tooltipHeight_l = 220;
 	_tooltipsLabel.push_back(new RichLabelVessel());
-	_tooltipsLabel.back()->label = new RichLabel(content_l, _pos[0] + 5, _pos[1] - tooltipHeight_l, 490, 0., 10, true, graphic_l);
+	_tooltipsLabel.back()->label = new RichLabel(content_l, _pos[0] + 5, _pos[1], 490, 0., 10, true, graphic_l);
 	_tooltipsLabel.back()->label->setBottomAnchor(_pos[1] - 5.);
 	_tooltipsLabel.back()->label->setHidden(true);
 	_listeners.push_back(new TooltipListener(graphic_l.getColibriManager(), _modifier, _tooltipsLabel.back()->label, false));
@@ -147,6 +147,10 @@ void hide(CustomGuiToolkit * toolkit_p, GraphicEngine *)
 	ui_l->_windowModifier->setClickable(false);
 	ui_l->_slots->setHidden(true);
 	ui_l->_slots->setClickable(false);
+	for(RichLabelVessel * tooltips_l : ui_l->_tooltipsLabel)
+	{
+		tooltips_l->label->setHidden(true);
+	}
 }
 
 void show(CustomGuiToolkit * toolkit_p, GraphicEngine *)
@@ -222,19 +226,47 @@ void TowerSelectionUI::updateSelection(Tower * tower_p)
 
 void TowerSelectionUI::updateSlots()
 {
+	GraphicEngine & graphic_l = _engine.getCellsEngine()->getGraphic();
 	size_t slots_number_l = _currentSelection->getMaxSlots();
 	// create new buttons if necessary
 	for(size_t i = _buttons.size() ; i < slots_number_l ; ++ i)
 	{
+		// create button
 		_buttons.push_back(_manager->createWidget<Colibri::Button>(_slots));
-		_buttons.back()->m_minSize = Ogre::Vector2( 150, 64 );
-		_buttons.back()->getLabel()->setText("s"+std::to_string(i));
-		_buttons.back()->sizeToFit();
+		size_t buttonSize_l = 75;
+		_buttons.back()->m_minSize = Ogre::Vector2( buttonSize_l, buttonSize_l );
 		_layout->addCell(_buttons.back());
+
+		std::vector<InfoLabel> content_l;
+		content_l.push_back({"empty.", 255, 255, 255});
+
+		// create tooltip
+		_tooltipsLabel.push_back(new RichLabelVessel());
+		_tooltipsLabel.back()->label = new RichLabel(content_l, _pos[0] + 5, _pos[1], 490, 0., 10, true, graphic_l);
+		_tooltipsLabel.back()->label->setBottomAnchor(_pos[1] - 5.);
+		_tooltipsLabel.back()->label->setHidden(true);
+		_listeners.push_back(new TooltipListener(graphic_l.getColibriManager(), _buttons.back(), _tooltipsLabel.back()->label, false));
+		_buttons.back()->addActionListener(_listeners.back());
+		_buttons.back()->updateDerivedTransformFromParent(true);
+		_tooltipsLabel.back()->label->getWindow()->updateDerivedTransformFromParent(true);
 	}
+
+	// Show only necesssary slots buttons
 	for(size_t i = 0 ; i < _buttons.size() ; ++ i)
 	{
-		_buttons[i]->setHidden(i>=slots_number_l);
+		// update image from slot
+		if(i < slots_number_l)
+		{
+			_buttons[i]->setHidden(false);
+			_buttons[i]->setSkin(getSkin(_currentSelection->getSlots()[i]));
+			// update tooltip
+			// index is shifted by 1 because first tooltip is attack modifier
+			graphic_l.registerMessage(new UpdateTextRichLabelMessage(*_tooltipsLabel[i+1], getDesc(_currentSelection->getSlots()[i])));
+		}
+		else
+		{
+			_buttons[i]->setHidden(true);
+		}
 	}
 
 	_layout->layout();
