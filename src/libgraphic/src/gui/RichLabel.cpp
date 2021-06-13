@@ -61,7 +61,7 @@ RichLabel::RichLabel(std::vector<InfoLabel> const &content_p, double x, double y
 
 	// no scroll here!
 	_window->setMaxScroll(Ogre::Vector2(0,0));
-
+	_label->setShadowOutline(true);
 	_window->setClickable(false);
 	_label->setClickable(false);
 	_label->updateDerivedTransformFromParent(true);
