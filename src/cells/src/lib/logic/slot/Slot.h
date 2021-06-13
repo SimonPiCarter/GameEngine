@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <vector>
 #include "gui/InfoLabel.h"
 
@@ -11,13 +12,16 @@ class Tower;
 class Slot
 {
 public:
-	Slot(std::string const &id_p);
+	Slot(std::string const &id_p, unsigned long lvl_p);
 	virtual ~Slot();
 
 	/// @brief return true iif Slot is of type EffectMaker
 	virtual bool isEffectMaker() const = 0;
 	/// @brief return true iif Slot is of type Buff
 	virtual bool isBuffMaker() const = 0;
+
+	/// @brief get lvl
+	unsigned long getLvl() const { return _lvl; }
 
 	/// @brief return the skin associated with the modifier
 	virtual std::string getSkin() const = 0;
@@ -27,12 +31,14 @@ public:
 protected:
 	/// @brief unique id of the slot
 	std::string const _id;
+	/// @brief lvl of the slot
+	unsigned long const _lvl;
 };
 
 class EffectMaker : public Slot
 {
 public:
-	EffectMaker(std::string const &id_p);
+	EffectMaker(std::string const &id_p, unsigned long lvl_p);
 	~EffectMaker();
 
 	/// @brief return true iif Slot is of type EffectMaker
@@ -47,3 +53,5 @@ public:
 std::string getSkin(Slot * slot_p);
 /// @brief content getter for a slot that handles empty slot
 std::vector<InfoLabel> getDesc(Slot * slot_p);
+std::string getLvl(Slot * slot_p);
+std::array<double, 3> getLvlColour(Slot * slot_p);

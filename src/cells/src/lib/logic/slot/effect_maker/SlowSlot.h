@@ -5,7 +5,7 @@
 class SlowSlot : public EffectMaker
 {
 public:
-	SlowSlot(std::string const & id_p, double slow_p, double duration_p, unsigned long maxStack_p);
+	SlowSlot(std::string const & id_p, unsigned long lvl_p, double slow_p, double duration_p, unsigned long maxStack_p);
 	~SlowSlot();
 
 	virtual Effect * newEffect(MobEntity * target_p, Tower const & tower_p, WaveEngine &waveEngine_p, double timestamp_p) const;

@@ -5,8 +5,8 @@
 #include "logic/utils/Translator.h"
 #include "logic/effect/buff/Slow.h"
 
-SlowSlot::SlowSlot(std::string const & id_p, double slow_p, double duration_p, unsigned long maxStack_p)
-	: EffectMaker(id_p), _slow(slow_p), _duration(duration_p), _maxStack(maxStack_p)
+SlowSlot::SlowSlot(std::string const & id_p, unsigned long lvl_p, double slow_p, double duration_p, unsigned long maxStack_p)
+	: EffectMaker(id_p, lvl_p), _slow(slow_p), _duration(duration_p), _maxStack(maxStack_p)
 {}
 SlowSlot::~SlowSlot()
 {}
