@@ -231,10 +231,12 @@ void TowerSelectionUI::updateSlots()
 	// create new buttons if necessary
 	for(size_t i = _buttons.size() ; i < slots_number_l ; ++ i)
 	{
+		size_t buttonSize_l = 75;
 		// create button
 		_buttons.push_back(_manager->createWidget<Colibri::Button>(_slots));
-		size_t buttonSize_l = 75;
-		_buttons.back()->m_minSize = Ogre::Vector2( buttonSize_l, buttonSize_l );
+		_buttons.back()->setTransform( Ogre::Vector2(_slots->getSize().x/2. - buttonSize_l/2., 0.), Ogre::Vector2( buttonSize_l, buttonSize_l ) );
+		_buttons.back()->getLabel()->setShadowOutline(true);
+		_buttons.back()->getLabel()->setDefaultFontSize(6.f);
 		_layout->addCell(_buttons.back());
 
 		std::vector<InfoLabel> content_l;
@@ -259,6 +261,10 @@ void TowerSelectionUI::updateSlots()
 		{
 			_buttons[i]->setHidden(false);
 			_buttons[i]->setSkin(getSkin(_currentSelection->getSlots()[i]));
+			_buttons[i]->getLabel()->setText(getLvl(_currentSelection->getSlots()[i]));
+			std::array<double, 3> col_l = getLvlColour(_currentSelection->getSlots()[i]);
+			_buttons[i]->getLabel()->setTextColour(Ogre::ColourValue(col_l[0], col_l[1], col_l[2], 1.));
+
 			// update tooltip
 			// index is shifted by 1 because first tooltip is attack modifier
 			graphic_l.registerMessage(new UpdateTextRichLabelMessage(*_tooltipsLabel[i+1], getDesc(_currentSelection->getSlots()[i])));
