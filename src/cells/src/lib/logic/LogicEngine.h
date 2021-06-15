@@ -3,14 +3,18 @@
 #include "layout/MapLayout.h"
 #include "wave/PositionalTreeDefs.h"
 
+#include <set>
+
 class CellsEngine;
 class GraphicEntity;
 class HeaderUI;
 class MobEntity;
 class MobSelectionUI;
+class InventoryUI;
 class TowerSelectionUI;
 class Tower;
 class WaveEngine;
+class Slot;
 
 class LogicEngine
 {
@@ -51,12 +55,23 @@ public:
 	void setTowerSelection(Tower *ent_p) { _towerSelection = ent_p; }
 	Tower * getTowerSelection() { return _towerSelection; }
 
+	std::vector<Slot *> & getInventorySlots() { return _inventorySlots; }
+	std::vector<Slot *> const & getInventorySlots() const { return _inventorySlots; }
+
+	void setInventoryHidden(bool hidden_p);
+	bool isInventoryHidden();
+
+	void updateInventory(std::set<Slot *> const &consumedSlots_p);
+	void deleteSlots(std::set<Slot *> const &toBeRemovedSlots_p);
+
 protected:
 	CellsEngine * const _cellsEngine;
 
 	HeaderUI * _header;
 	MobSelectionUI * _mobSelectionUI;
 	TowerSelectionUI * _towerSelectionUI;
+	InventoryUI * _inventoryUI;
+	bool _inventoyHidden;
 
 	/// @brief handle towers
 	PositionalTree<Tower> _tree;
@@ -71,6 +86,9 @@ protected:
 	MobEntity * _mobSelection;
 	/// @brief currently selected tower
 	Tower * _towerSelection;
+
+	/// @brief slot inventory
+	std::vector<Slot *> _inventorySlots;
 
 	/// @brief map
 	MapLayout const * const _currentMap;

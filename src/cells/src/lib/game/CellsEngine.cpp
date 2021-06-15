@@ -106,6 +106,10 @@ void CellsEngine::runLogic()
 	tower_l->setMaxSlots(12);
 	_logic->spawnTower(tower_l);
 
+	_logic->getInventorySlots().push_back(new SlowSlot("SlowTest", 120, 0.2, 15., 4));
+	_logic->getInventorySlots().push_back(new SlowSlot("SlowTest", 15, 0.1, 15., 1));
+	_logic->getInventorySlots().push_back(new SlowSlot("SlowTest", 35, 0.2, 15., 2));
+
 	while( !_graphic.getQuit() )
 	{
 		// handle game message
@@ -181,6 +185,10 @@ void CellsEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 		if(evt.key.keysym.scancode == SDL_SCANCODE_Q)
 		{
 			_graphic.setQuit();
+		}
+		if(evt.key.keysym.scancode == SDL_SCANCODE_I)
+		{
+			_logic->setInventoryHidden(!_logic->isInventoryHidden());
 		}
 		break;
 	case SDL_QUIT:

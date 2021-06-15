@@ -22,6 +22,8 @@ target_sources(libcells
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/layout/MapLayout.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/ui/HeaderUI.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/ui/MobSelectionUI.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/ui/InventoryUI.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/ui/SlotUI.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/ui/TowerSelectionUI.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/utils/ArrayUtils.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/utils/Hitbox.cpp

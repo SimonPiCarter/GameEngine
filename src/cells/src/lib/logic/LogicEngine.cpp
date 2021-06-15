@@ -4,8 +4,10 @@
 #include "logic/WaveEngine.h"
 #include "logic/display/MapDisplay.h"
 #include "logic/entity/Tower.h"
+#include "logic/slot/Slot.h"
 #include "logic/ui/HeaderUI.h"
 #include "logic/ui/MobSelectionUI.h"
+#include "logic/ui/InventoryUI.h"
 #include "logic/ui/TowerSelectionUI.h"
 
 LogicEngine::LogicEngine(MapLayout const * map_p, CellsEngine * cellsEngine_p)
@@ -13,6 +15,8 @@ LogicEngine::LogicEngine(MapLayout const * map_p, CellsEngine * cellsEngine_p)
 	, _header(nullptr)
 	, _mobSelectionUI(nullptr)
 	, _towerSelectionUI(nullptr)
+	, _inventoryUI(nullptr)
+	, _inventoyHidden(true)
 	, _tree({{0.,0.}, {double(map_p->getSize()[0]), double(map_p->getSize()[1])}}, map_p->getSize()[0], 0.)
 	, _quit(false)
 	, _life(100.)
@@ -42,6 +46,7 @@ LogicEngine::~LogicEngine()
 	delete _header;
 	delete _mobSelectionUI;
 	delete _towerSelectionUI;
+	delete _inventoryUI;
 }
 
 
@@ -67,6 +72,7 @@ void LogicEngine::init()
 		_header = new HeaderUI(*this);
 		_mobSelectionUI = new MobSelectionUI(*this);
 		_towerSelectionUI = new TowerSelectionUI(*this);
+		_inventoryUI = new InventoryUI(*this);
 	}
 }
 
@@ -120,6 +126,10 @@ void LogicEngine::run(double elapsedTime_p)
 	if(_towerSelectionUI)
 	{
 		_towerSelectionUI->update();
+	}
+	if(_inventoryUI)
+	{
+		_inventoryUI->update();
 	}
 }
 
@@ -218,3 +228,47 @@ Tower * LogicEngine::getTowerSelection(std::array<double, 3> pos_p, std::array<d
 {
 	return _tree.getIntersectionToRay(pos_p, dir_p);
 }
+
+void LogicEngine::setInventoryHidden(bool hidden_p)
+{
+	if(_inventoryUI)
+	{
+		if(hidden_p)
+		{
+			_cellsEngine->getGraphic().registerMessage(new CustomGuiMessage(hide_inventory, _inventoryUI));
+		}
+		else
+		{
+			_cellsEngine->getGraphic().registerMessage(new CustomGuiMessage(show_inventory, _inventoryUI));
+		}
+	}
+	_inventoyHidden = hidden_p;
+}
+
+bool LogicEngine::isInventoryHidden()
+{
+	return _inventoyHidden;
+}
+
+void LogicEngine::updateInventory(std::set<Slot *> const &consumedSlots_p)
+{
+	std::vector<Slot *> newInventory_l;
+	for(Slot * slot_l : _inventorySlots)
+	{
+		if(consumedSlots_p.find(slot_l) == consumedSlots_p.end())
+		{
+			newInventory_l.push_back(slot_l);
+		}
+	}
+	std::swap(newInventory_l, _inventorySlots);
+}
+
+void LogicEngine::deleteSlots(std::set<Slot *> const &toBeRemovedSlots_p)
+{
+	for(Slot * slot_l : toBeRemovedSlots_p)
+	{
+		_scrap += slot_l->getLvl();
+		delete slot_l;
+	}
+}
+

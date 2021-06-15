@@ -54,4 +54,4 @@ std::string getSkin(Slot * slot_p);
 /// @brief content getter for a slot that handles empty slot
 std::vector<InfoLabel> getDesc(Slot * slot_p);
 std::string getLvl(Slot * slot_p);
-std::array<double, 3> getLvlColour(Slot * slot_p);
+std::array<double, 3> getLvlColour(Slot * slot_p, bool zeroToOneFormat_p=false);

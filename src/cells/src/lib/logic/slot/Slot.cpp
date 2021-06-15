@@ -31,7 +31,7 @@ std::vector<InfoLabel> getDesc(Slot * slot_p)
 		std::vector<InfoLabel> desc_l = slot_p->getDesc();
 		desc_l.push_back({translate("\nlevel : "), 255, 255, 255});
 		std::array<double, 3> col_l = getLvlColour(slot_p);
-		desc_l.push_back({getLvl(slot_p), col_l[0], col_l[1], col_l[2]});
+		desc_l.push_back({getLvl(slot_p), int(col_l[0]), int(col_l[1]), int(col_l[2])});
 		return desc_l;
 	}
 	std::vector<InfoLabel> content_l;
@@ -50,35 +50,49 @@ std::string getLvl(Slot * slot_p)
 	return "";
 }
 
-std::array<double, 3> getLvlColour(Slot * slot_p)
+std::array<double, 3> getLvlColour(Slot * slot_p, bool zeroToOneFormat_p)
 {
+	std::array<double, 3> col_l;
 	if(slot_p)
 	{
 		if(slot_p->getLvl() < 25)
 		{
-			return {255.,255.,255.};
+			col_l = {255.,255.,255.};
 		}
-		if(slot_p->getLvl() < 50)
+		else if(slot_p->getLvl() < 50)
 		{
-			return {0.,255.,0.};
+			col_l = {0.,255.,0.};
 		}
-		if(slot_p->getLvl() < 75)
+		else if(slot_p->getLvl() < 75)
 		{
-			return {0.,0.,255.};
+			col_l = {0.,0.,255.};
 		}
-		if(slot_p->getLvl() < 100)
+		else if(slot_p->getLvl() < 100)
 		{
-			return {155.,0.,0.};
+			col_l = {155.,0.,0.};
 		}
-		if(slot_p->getLvl() < 150)
+		else if(slot_p->getLvl() < 150)
 		{
-			return {75.,0.,75.};
+			col_l = {75.,0.,75.};
 		}
-		if(slot_p->getLvl() < 200)
+		else if(slot_p->getLvl() < 200)
 		{
-			return {75.,75.,0.};
+			col_l = {75.,75.,0.};
 		}
-		return {0.,75.,75.};
+		else
+		{
+			col_l = {0.,75.,75.};
+		}
 	}
-	return {0.,0.,0.};
+	else
+	{
+		col_l = {0.,0.,0.};
+	}
+	if(zeroToOneFormat_p)
+	{
+		col_l[0] /= 255.;
+		col_l[1] /= 255.;
+		col_l[2] /= 255.;
+	}
+	return col_l;
 }

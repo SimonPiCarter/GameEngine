@@ -38,6 +38,10 @@ TowerSelectionUI::~TowerSelectionUI()
 		graphic_l.registerMessage(new DestroyWindowMessage(label_l->label->getWindow()));
 		delete label_l;
 	}
+	for(Colibri::WidgetActionListener* listener_l: _listeners)
+	{
+		delete listener_l;
+	}
 }
 
 void TowerSelectionUI::setUpTitle()
