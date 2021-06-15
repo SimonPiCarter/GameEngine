@@ -24,3 +24,17 @@ hlms SlowSlot unlit
 {
 	diffuse_map slow_slot.png
 }
+hlms Select unlit
+{
+	lighting off
+	scene_blend add
+	depth_write off
+	diffuse_map select.png
+}
+hlms Disabled unlit
+{
+	lighting off
+	scene_blend add
+	depth_write off
+	diffuse_map disabled.png
+}

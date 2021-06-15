@@ -78,6 +78,32 @@
             {
                 "all" : [4, 4]
             }
+		},
+        "Select" :
+        {
+            "material" : "Select",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+		},
+        "Disabled" :
+        {
+            "material" : "Disabled",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
 		}
 	}
 }
