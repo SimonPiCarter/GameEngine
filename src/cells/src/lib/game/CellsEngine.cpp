@@ -109,6 +109,7 @@ void CellsEngine::runLogic()
 	_logic->getInventorySlots().push_back(new SlowSlot("SlowTest", 120, 0.2, 15., 4));
 	_logic->getInventorySlots().push_back(new SlowSlot("SlowTest", 15, 0.1, 15., 1));
 	_logic->getInventorySlots().push_back(new SlowSlot("SlowTest", 35, 0.2, 15., 2));
+	_logic->getInventorySlots().resize(36,nullptr);
 
 	while( !_graphic.getQuit() )
 	{

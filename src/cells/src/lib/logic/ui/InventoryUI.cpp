@@ -230,10 +230,6 @@ void InventoryUI::updateInventory()
 
 	size_t buttonSize_l = _size[0] / _lines;
 
-	// todo to remove
-	size_t size_l = 36;
-
-	_engine.getInventorySlots().resize(size_l,nullptr);
 	size_t slots_number_l = _engine.getInventorySlots().size();
 
 	for(size_t i = _slots.size() ; i < slots_number_l || i%_layout->m_numLines != 0 ; ++ i)

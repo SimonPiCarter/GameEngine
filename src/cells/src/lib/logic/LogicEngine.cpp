@@ -261,6 +261,7 @@ void LogicEngine::updateInventory(std::set<Slot *> const &consumedSlots_p)
 		}
 	}
 	std::swap(newInventory_l, _inventorySlots);
+	_inventorySlots.resize(36,nullptr);
 }
 
 void LogicEngine::deleteSlots(std::set<Slot *> const &toBeRemovedSlots_p)
