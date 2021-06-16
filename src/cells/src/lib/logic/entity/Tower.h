@@ -33,6 +33,7 @@ public:
 	void setMaxSlots(unsigned long maxSlots_p);
 
 	AttackModifier const & getAttackModifier() const { return _attackModifier; }
+	AttackModifier & getAttackModifier() { return _attackModifier; }
 	void setAttackModifier(AttackModifier const & modifier_p) { _attackModifier = modifier_p; }
 
 	std::vector<Slot *> const & getSlots() const { return _slots; }

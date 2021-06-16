@@ -95,13 +95,13 @@ void CellsEngine::runLogic()
 	_logic->spawnTower(tower_l);
 
 	tower_l = new Tower({5.5, 1.5}, {1., 1.});
-	tower_l->setAttackModifier(AttackModifier("special", 1, 1.5,2.,1.,3.,AttackType::Splash, DamageType::Standard));
+	tower_l->setAttackModifier(AttackModifier("special", 1, 1.5,2.,2.,3.,AttackType::Splash, DamageType::Standard));
 	tower_l->setResource("CubeGreen");
 	tower_l->setMaxSlots(7);
 	_logic->spawnTower(tower_l);
 
 	tower_l = new Tower({5.5, 5.5}, {1., 1.});
-	tower_l->setAttackModifier(AttackModifier("special", 1, 3.5,2.,1.,3.,AttackType::Line, DamageType::Standard));
+	tower_l->setAttackModifier(AttackModifier("special", 1, 3.5,2.,2.,3.,AttackType::Line, DamageType::Standard));
 	tower_l->setResource("CubeGreen");
 	tower_l->setMaxSlots(12);
 	_logic->spawnTower(tower_l);
@@ -109,6 +109,8 @@ void CellsEngine::runLogic()
 	_logic->getInventorySlots().push_back(new SlowSlot("SlowTest", 120, 0.2, 15., 4));
 	_logic->getInventorySlots().push_back(new SlowSlot("SlowTest", 15, 0.1, 15., 1));
 	_logic->getInventorySlots().push_back(new SlowSlot("SlowTest", 35, 0.2, 15., 2));
+	_logic->getInventorySlots().push_back(new AttackModifier("special", 30, 70 , 2., 2., 3., AttackType::Line, DamageType::Standard));
+	_logic->getInventorySlots().push_back(new AttackModifier("special", 27, 70 , 2., 2., 3., AttackType::Splash, DamageType::Standard));
 	_logic->getInventorySlots().resize(36,nullptr);
 
 	while( !_graphic.getQuit() )

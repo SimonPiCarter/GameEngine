@@ -64,6 +64,8 @@ public:
 	void updateInventory(std::set<Slot *> const &consumedSlots_p);
 	void deleteSlots(std::set<Slot *> const &toBeRemovedSlots_p);
 
+	void updateTowerSelection();
+
 protected:
 	CellsEngine * const _cellsEngine;
 

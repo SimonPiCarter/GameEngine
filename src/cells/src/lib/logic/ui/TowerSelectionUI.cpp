@@ -175,13 +175,13 @@ void slot(CustomGuiToolkit * toolkit_p, GraphicEngine *)
 	ui_l->updateSlots();
 }
 
-void TowerSelectionUI::update()
+void TowerSelectionUI::update(bool force_p)
 {
 	GraphicEngine & graphic_l = _engine.getCellsEngine()->getGraphic();
 
 	if(_engine.getTowerSelection())
 	{
-		if(_currentSelection != _engine.getTowerSelection())
+		if(_currentSelection != _engine.getTowerSelection() || force_p)
 		{
 			// update UI from selection
 			_currentSelection = _engine.getTowerSelection();
@@ -222,7 +222,7 @@ void TowerSelectionUI::updateSelection(Tower * tower_p)
 	graphic_l.registerMessage(new UpdateTextRichLabelMessage(_stats, content_l));
 
 	// update attack modifier tooltip and icon
-	_modifier->setSkin(tower_p->getAttackModifier().getSkin()+"Modifier");
+	_modifier->setSkin(tower_p->getAttackModifier().getSkin());
 	graphic_l.registerMessage(new UpdateTextRichLabelMessage(*_tooltipsLabel[0], tower_p->getAttackModifier().getDesc()));
 
 	graphic_l.registerMessage(new CustomGuiMessage(&slot, this));

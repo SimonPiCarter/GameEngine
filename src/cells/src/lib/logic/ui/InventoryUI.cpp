@@ -14,6 +14,8 @@
 
 InventoryUI::InventoryUI(LogicEngine &engine_p)
 	: _engine(engine_p)
+	, _towerModifierSlot(nullptr)
+	, _currentSelectedSlot(nullptr)
 	, _pos({300 , 300})
 	, _size({720 , 720})
 	, _posTower({1025, 660})
@@ -21,6 +23,7 @@ InventoryUI::InventoryUI(LogicEngine &engine_p)
 	, _posButton({300, 1025})
 	, _sizeButton({720, 100})
 	, _lines(6)
+	, _slotSize(120)
 	, _cancel(false)
 	, _reset(false)
 	, _save(false)
@@ -33,6 +36,9 @@ InventoryUI::~InventoryUI()
 {
 	GraphicEngine & graphic_l = _engine.getCellsEngine()->getGraphic();
 	graphic_l.registerMessage(new DestroyWindowMessage(_main));
+	graphic_l.registerMessage(new DestroyWindowMessage(_towerWindow));
+	graphic_l.registerMessage(new DestroyWindowMessage(_towerModifierWindow));
+	graphic_l.registerMessage(new DestroyWindowMessage(_buttonWindow));
 	for(RichLabelVessel * label_l : _tooltipsLabel)
 	{
 		graphic_l.registerMessage(new DestroyWindowMessage(label_l->label->getWindow()));
@@ -53,6 +59,8 @@ InventoryUI::~InventoryUI()
 	delete _layout;
 	delete _towerLayout;
 	delete _buttonLayout;
+
+	delete _towerModifierSlot;
 }
 
 
@@ -84,6 +92,9 @@ void hide_inventory(CustomGuiToolkit * toolkit_p, GraphicEngine *)
 	ui_l->_towerWindow->setHidden(true);
 	ui_l->_towerWindow->setClickable(false);
 
+	ui_l->_towerModifierWindow->setHidden(true);
+	ui_l->_towerModifierWindow->setClickable(false);
+
 	ui_l->_buttonWindow->setHidden(true);
 	ui_l->_buttonWindow->setClickable(false);
 
@@ -101,6 +112,9 @@ void show_inventory(CustomGuiToolkit * toolkit_p, GraphicEngine *)
 
 	ui_l->_towerWindow->setHidden(false);
 	ui_l->_towerWindow->setClickable(true);
+
+	ui_l->_towerModifierWindow->setHidden(false);
+	ui_l->_towerModifierWindow->setClickable(true);
 
 	ui_l->_buttonWindow->setHidden(false);
 	ui_l->_buttonWindow->setClickable(true);
@@ -135,6 +149,48 @@ void InventoryUI::update()
 		saveConf();
 	}
 }
+
+void InventoryUI::setCurrentSlotSelection(SlotUI * selection_p)
+{
+	if(_currentSelectedSlot)
+	{
+		_currentSelectedSlot->_select->setHidden(true);
+		// update higlighted
+		if(_currentSelectedSlot->_slot->isAttackModifier())
+		{
+			// de-highlight attack modifier
+			_towerModifierSlot->_highlighted->setHidden(true);
+		}
+		else
+		{
+			// de-highlight slots tower
+			for(SlotUI * slot_l : _towerSlots)
+			{
+				slot_l->_highlighted->setHidden(true);
+			}
+		}
+	}
+	_currentSelectedSlot = selection_p;
+	if(_currentSelectedSlot)
+	{
+		_currentSelectedSlot->_select->setHidden(false);
+		// update higlighted
+		if(_currentSelectedSlot->_slot->isAttackModifier())
+		{
+			// highlight attack modifier
+			_towerModifierSlot->_highlighted->setHidden(_towerModifierSlot->_button->isHidden());
+		}
+		else
+		{
+			// highlight slots tower
+			for(SlotUI * slot_l : _towerSlots)
+			{
+				slot_l->_highlighted->setHidden(slot_l->_button->isHidden());
+			}
+		}
+	}
+}
+
 
 namespace
 {
@@ -172,6 +228,29 @@ void InventoryUI::setUpTower()
 	_towerWindow->m_breadthFirst = true;
 	float borders_l[4] = {0, 0, 0, 0};
 	_towerWindow->setBorderSize(borders_l);
+
+	_towerModifierWindow = _manager->createWindow(nullptr);;
+	_towerModifierWindow->setTransform( Ogre::Vector2(_posTower[0], _posTower[1]- _slotSize - 5), Ogre::Vector2( _sizeTower[0], _slotSize +5 ) );
+	_towerModifierWindow->m_breadthFirst = true;
+	_towerModifierWindow->setBorderSize(borders_l);
+
+	_towerModifierSlot = createSlotUI(_manager, _towerModifierWindow, {0, 0}, _slotSize);
+	updateSlotUI(*_towerModifierSlot, nullptr);
+
+	// create tooltip
+	std::vector<InfoLabel> content_l;
+	content_l.push_back({"empty.", 255, 255, 255});
+
+	_tooltipsLabelTower.push_back(new RichLabelVessel());
+	_tooltipsLabelTower.back()->label = new RichLabel(content_l, _posTower[0] + _sizeTower[0] + 5, _pos[1] + _size[1]/2. + 10., 490, 0., 10, true, graphic_l);
+	_tooltipsLabelTower.back()->label->setHidden(true);
+	_towerModifierSlot->_tooltip = _tooltipsLabelTower.back();
+
+	_listeners.push_back(new TooltipListener(graphic_l.getColibriManager(), _towerModifierSlot->_button, _tooltipsLabelTower.back()->label, false));
+	_towerModifierSlot->_button->addActionListener(_listeners.back());
+
+	_listeners.push_back(new SelectionTowerUIListener(*_towerModifierSlot, *this, _engine));
+	_towerModifierSlot->_button->addActionListener(_listeners.back());
 
 	_towerLayout = new Colibri::LayoutLine(_manager);
 	_towerLayout->m_vertical = true;
@@ -284,7 +363,7 @@ void InventoryUI::updateTower()
 {
 	GraphicEngine & graphic_l = _engine.getCellsEngine()->getGraphic();
 
-	size_t buttonSize_l = _sizeTower[0];
+	size_t buttonSize_l = _slotSize;
 
 	Tower * towerSelection_l = _engine.getTowerSelection();
 
@@ -336,10 +415,10 @@ void InventoryUI::updateTower()
 		{
 			updateSlotUI(*_towerSlots[i], towerSelection_l->getSlots().at(i));
 			_towerSlots[i]->_button->setHidden(false);
-			_towerSlots[i]->_tooltip = _tooltipsLabelTower[i];
+			_towerSlots[i]->_tooltip = _tooltipsLabelTower[i+1];
 
 			// update tooltip
-			graphic_l.registerMessage(new UpdateTextRichLabelMessage(*_tooltipsLabelTower[i], getDesc(towerSelection_l->getSlots().at(i))));
+			graphic_l.registerMessage(new UpdateTextRichLabelMessage(*_tooltipsLabelTower[i+1], getDesc(towerSelection_l->getSlots().at(i))));
 
 		}
 		else
@@ -347,6 +426,12 @@ void InventoryUI::updateTower()
 			_towerSlots[i]->_button->setHidden(true);
 		}
 	}
+	if(towerSelection_l)
+	{
+		updateSlotUI(*_towerModifierSlot, &towerSelection_l->getAttackModifier());
+		graphic_l.registerMessage(new UpdateTextRichLabelMessage(*_tooltipsLabelTower[0], getDesc(&towerSelection_l->getAttackModifier())));
+	}
+
 	_towerLayout->layout();
 }
 
@@ -377,6 +462,14 @@ void InventoryUI::saveConf()
 			tower_l->getSlots()[i] = getTowerSlots()[i]->_slot;
 		}
 
+		if(dynamic_cast<AttackModifier *>(_towerModifierSlot->_slot))
+		{
+			AttackModifier * toDelete_l = new AttackModifier(tower_l->getAttackModifier());
+			consumedSlots_l.insert(_towerModifierSlot->_slot);
+			tower_l->setAttackModifier(*dynamic_cast<AttackModifier *>(_towerModifierSlot->_slot));
+			toBeRemovedSlots_l.insert(toDelete_l);
+		}
+
 		//// logic update
 		// update inventory
 		_engine.updateInventory(consumedSlots_l);
@@ -385,6 +478,8 @@ void InventoryUI::saveConf()
 
 		// close inventory
 		_engine.setInventoryHidden(true);
+
+		_engine.updateTowerSelection();
 	}
 	_save = false;
 }
@@ -402,14 +497,8 @@ void SelectionInventoryUIListener::notifyWidgetAction( Colibri::Widget *widget, 
 	}
 	if(action == Colibri::Action::Action::PrimaryActionPerform)
 	{
-		// Unselect last selection
-		if(_ui.getCurrentSlotSelection())
-		{
-			_ui.getCurrentSlotSelection()->_select->setHidden(true);
-		}
 		// update selection
 		_ui.setCurrentSlotSelection(&_slot);
-		_slot._select->setHidden(false);
 	}
 }
 
@@ -426,8 +515,9 @@ void SelectionTowerUIListener::notifyWidgetAction( Colibri::Widget *widget, Coli
 	}
 	if(action == Colibri::Action::Action::PrimaryActionPerform)
 	{
-		// if current selection
-		if(_ui.getCurrentSlotSelection())
+		// if current selection and slot is highlighted for modification
+		if(_ui.getCurrentSlotSelection()
+		&& !_slot._highlighted->isHidden())
 		{
 			// replace slot in tower
 			updateSlotUI(_slot, _ui.getCurrentSlotSelection()->_slot);
@@ -443,10 +533,8 @@ void SelectionTowerUIListener::notifyWidgetAction( Colibri::Widget *widget, Coli
 			// set origin slot from inventory
 			_originSlot = _ui.getCurrentSlotSelection();
 			// remove select marker
-			_ui.getCurrentSlotSelection()->_select->setHidden(true);
 			_ui.getCurrentSlotSelection()->_disabled->setHidden(false);
 			_ui.setCurrentSlotSelection(nullptr);
-
 		}
 	}
 }

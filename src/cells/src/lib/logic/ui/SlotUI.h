@@ -13,6 +13,7 @@ struct SlotUI
 	Colibri::Renderable * _image = nullptr;
 	Colibri::Renderable * _select = nullptr;
 	Colibri::Renderable * _disabled = nullptr;
+	Colibri::Renderable * _highlighted = nullptr;
 	Colibri::Label * _label = nullptr;
 	Slot * _slot = nullptr;
 	RichLabelVessel * _tooltip = nullptr;

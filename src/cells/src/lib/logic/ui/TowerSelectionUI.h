@@ -26,7 +26,7 @@ public:
 	~TowerSelectionUI();
 
 	/// @brief update render
-	void update();
+	void update(bool force_p=false);
 
 protected:
 	LogicEngine &_engine;

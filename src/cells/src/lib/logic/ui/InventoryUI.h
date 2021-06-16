@@ -31,7 +31,7 @@ public:
 	/// @brief update render
 	void update();
 
-	void setCurrentSlotSelection(SlotUI * selection_p) { _currentSelectedSlot = selection_p; }
+	void setCurrentSlotSelection(SlotUI * selection_p);
 	SlotUI * getCurrentSlotSelection() { return _currentSelectedSlot; }
 	SlotUI const * getCurrentSlotSelection() const { return _currentSelectedSlot; }
 
@@ -50,10 +50,14 @@ protected:
 	Colibri::LayoutMultiline * _layout;
 	std::vector<SlotUI *> _slots;
 
-	// window to show the tower configuration
+	// window to show the tower configuration (slots)
 	Colibri::Window * _towerWindow;
 	Colibri::LayoutLine * _towerLayout;
 	std::vector<SlotUI *> _towerSlots;
+
+	// window to show the tower configuration (atk modifier)
+	Colibri::Window * _towerModifierWindow;
+	SlotUI * _towerModifierSlot;
 
 	// window for buttons (cancel, save, reset)
 	Colibri::Window * _buttonWindow;
@@ -69,7 +73,8 @@ protected:
 	std::array<double, 2> const _sizeTower;
 	std::array<double, 2> const _posButton;
 	std::array<double, 2> const _sizeButton;
-	unsigned long const  _lines;
+	unsigned long const _lines;
+	unsigned long const _slotSize;
 
 	/// @brief list of listeners to delete them
 	std::vector<Colibri::WidgetActionListener*> _listeners;

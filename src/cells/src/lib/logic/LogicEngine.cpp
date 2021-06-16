@@ -273,3 +273,7 @@ void LogicEngine::deleteSlots(std::set<Slot *> const &toBeRemovedSlots_p)
 	}
 }
 
+void LogicEngine::updateTowerSelection()
+{
+	_towerSelectionUI->update(true);
+}

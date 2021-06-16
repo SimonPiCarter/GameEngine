@@ -10,7 +10,7 @@ SlotUI * createSlotUI(Colibri::ColibriManager *manager_p, Colibri::Window *windo
 {
 	SlotUI * newSlot_l = new SlotUI();
 	newSlot_l->_button = manager_p->createWidget<Colibri::Button>(window_p);
-	newSlot_l->_button->setTransform( Ogre::Vector2(pos_p[0]-100, pos_p[1]-100), Ogre::Vector2( size_p, size_p ) );
+	newSlot_l->_button->setTransform( Ogre::Vector2(pos_p[0], pos_p[1]), Ogre::Vector2( size_p, size_p ) );
 	float borders_l[4] = {0, 0, 0, 0};
 	newSlot_l->_button->setBorderSize(borders_l);
 	newSlot_l->_button->setVisualsEnabled(false);
@@ -32,6 +32,13 @@ SlotUI * createSlotUI(Colibri::ColibriManager *manager_p, Colibri::Window *windo
 	newSlot_l->_disabled->setSkin("Disabled");
 	newSlot_l->_disabled->setHidden(true);
 	newSlot_l->_disabled->setZOrder(5);
+
+	newSlot_l->_highlighted = manager_p->createWidget<Colibri::Renderable>(newSlot_l->_button);
+	newSlot_l->_highlighted->setTransform(Ogre::Vector2(0, 0), Ogre::Vector2(size_p, size_p));
+	newSlot_l->_highlighted->setSkin("Highlighted");
+	newSlot_l->_highlighted->setHidden(true);
+	newSlot_l->_highlighted->setZOrder(5);
+
 	return newSlot_l;
 }
 
