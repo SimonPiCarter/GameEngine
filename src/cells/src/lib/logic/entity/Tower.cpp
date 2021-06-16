@@ -9,7 +9,7 @@ Tower::Tower(std::array<double, 2> const &position_p, std::array<double, 2> cons
 	, _bonusRange(0.)
 	, _damageEffect(DamageStyle::Standard)
 	, _maxSlots(1)
-	, _attackModifier(1., 1., 1., 1., AttackType::Direct, DamageType::Standard)
+	, _attackModifier("BasicModifier", 1, 1., 1., 1., 1., AttackType::Direct, DamageType::Standard)
 	, _resource("")
 {}
 Tower::~Tower()

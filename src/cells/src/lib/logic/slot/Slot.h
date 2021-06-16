@@ -19,6 +19,8 @@ public:
 	virtual bool isEffectMaker() const = 0;
 	/// @brief return true iif Slot is of type Buff
 	virtual bool isBuffMaker() const = 0;
+	/// @brief return true iif Slot is of type AttackModifier
+	virtual bool isAttackModifier() const = 0;
 
 	/// @brief get lvl
 	unsigned long getLvl() const { return _lvl; }
@@ -30,9 +32,9 @@ public:
 	virtual std::vector<InfoLabel> getDesc() const = 0;
 protected:
 	/// @brief unique id of the slot
-	std::string const _id;
+	std::string _id;
 	/// @brief lvl of the slot
-	unsigned long const _lvl;
+	unsigned long _lvl;
 };
 
 class EffectMaker : public Slot
@@ -45,6 +47,8 @@ public:
 	virtual bool isEffectMaker() const final;
 	/// @brief return true iif Slot is of type Buff
 	virtual bool isBuffMaker() const final;
+	/// @brief return true iif Slot is of type AttackModifier
+	virtual bool isAttackModifier() const final;
 
 	virtual Effect * newEffect(MobEntity * target_p, Tower const & tower_p, WaveEngine &waveEngine_p, double timestamp_p) const = 0;
 };

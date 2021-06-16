@@ -12,6 +12,8 @@ EffectMaker::~EffectMaker() {}
 bool EffectMaker::isEffectMaker() const { return true; }
 /// @brief return true iif Slot is of type Buff
 bool EffectMaker::isBuffMaker() const { return false; }
+/// @brief return true iif Slot is of type Buff
+bool EffectMaker::isAttackModifier() const { return false; }
 
 /// @brief skin getter for a slot that handles empty slot
 std::string getSkin(Slot * slot_p)

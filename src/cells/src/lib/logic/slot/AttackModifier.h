@@ -4,24 +4,35 @@
 #include "logic/types/DamageType.h"
 
 #include "gui/InfoLabel.h"
+#include "Slot.h"
 
 #include <vector>
 
-class AttackModifier
+class AttackModifier : public Slot
 {
 public:
-	AttackModifier(double speed_p
+	AttackModifier(std::string const & id_p
+			, unsigned long lvl_p
+			, double speed_p
 			, double damage_p
 			, double range_p
 			, double param_p
 			, AttackType attackType_p
 			, DamageType damageType_p)
-	:_speed(speed_p)
+	: Slot(id_p, lvl_p)
+	, _speed(speed_p)
 	, _damage(damage_p)
 	, _range(range_p)
 	, _param(param_p)
 	, _attackType(attackType_p)
 	, _damageType(damageType_p) {}
+
+	/// @brief return true iif Slot is of type EffectMaker
+	virtual bool isEffectMaker() const final { return false; }
+	/// @brief return true iif Slot is of type Buff
+	virtual bool isBuffMaker() const final { return false; }
+	/// @brief return true iif Slot is of type AttackModifier
+	virtual bool isAttackModifier() const final { return true; }
 
 	double getSpeed() const { return _speed; }
 	double getDamage() const { return _damage; }
