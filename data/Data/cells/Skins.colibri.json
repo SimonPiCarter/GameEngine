@@ -1,9 +1,9 @@
 {
     "skins" :
     {
-        "DirectModifier" :
+        "Direct" :
         {
-            "material" : "DirectModifier",
+            "material" : "Direct",
             "tex_resolution" : [512, 512],
             "grid_uv" :
             {
@@ -13,10 +13,10 @@
             {
                 "all" : [4, 4]
             }
-		},
-        "ArcModifier" :
+        },
+        "Arc" :
         {
-            "material" : "ArcModifier",
+            "material" : "Arc",
             "tex_resolution" : [512, 512],
             "grid_uv" :
             {
@@ -26,10 +26,10 @@
             {
                 "all" : [4, 4]
             }
-		},
-        "SplashModifier" :
+        },
+        "Splash" :
         {
-            "material" : "SplashModifier",
+            "material" : "Splash",
             "tex_resolution" : [512, 512],
             "grid_uv" :
             {
@@ -39,10 +39,10 @@
             {
                 "all" : [4, 4]
             }
-		},
-        "LineModifier" :
+        },
+        "Line" :
         {
-            "material" : "LineModifier",
+            "material" : "Line",
             "tex_resolution" : [512, 512],
             "grid_uv" :
             {
@@ -52,7 +52,7 @@
             {
                 "all" : [4, 4]
             }
-		},
+        },
         "EmptySlot" :
         {
             "material" : "EmptySlot",
@@ -65,7 +65,7 @@
             {
                 "all" : [4, 4]
             }
-		},
+        },
         "SlowSlot" :
         {
             "material" : "SlowSlot",
@@ -78,7 +78,7 @@
             {
                 "all" : [4, 4]
             }
-		},
+        },
         "Select" :
         {
             "material" : "Select",
@@ -91,7 +91,7 @@
             {
                 "all" : [4, 4]
             }
-		},
+        },
         "Disabled" :
         {
             "material" : "Disabled",
@@ -104,6 +104,19 @@
             {
                 "all" : [4, 4]
             }
-		}
-	}
+        },
+        "Highlighted" :
+        {
+            "material" : "Highlighted",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+        }
+    }
 }
