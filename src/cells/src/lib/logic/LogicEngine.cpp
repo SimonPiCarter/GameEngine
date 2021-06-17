@@ -17,13 +17,14 @@ LogicEngine::LogicEngine(MapLayout const * map_p, CellsEngine * cellsEngine_p)
 	, _tree({{0.,0.}, {double(map_p->getSize()[0]), double(map_p->getSize()[1])}}, map_p->getSize()[0], 0.)
 	, _quit(false)
 	, _life(100.)
-	, _scrap(20.)
+	, _scrap(100.)
 	, _time(0.)
 	, _mobSelection(nullptr)
 	, _towerSelection(nullptr)
 	, _currentMap(map_p)
 	, _waveEngine(nullptr)
 	, _isWaveRunning(false)
+	, _placingTower(false)
 {}
 
 LogicEngine::~LogicEngine()
@@ -63,10 +64,7 @@ void LogicEngine::init()
 
 		_cellsEngine->getGraphic().registerMessage(new NewSceneMessage("game", "root", {0.,0.,0.}));
 
-		_ui._header = new HeaderUI(*this);
-		_ui._mobSelectionUI = new MobSelectionUI(*this);
-		_ui._towerSelectionUI = new TowerSelectionUI(*this);
-		_ui._inventoryUI = new InventoryUI(*this);
+		_ui.init(*this);
 	}
 }
 
@@ -179,20 +177,27 @@ void LogicEngine::spawnDamageParticle(std::array<double,2> pos_p, double lifetim
 	}
 }
 
-void LogicEngine::spawnTower(Tower * tower_p)
+bool LogicEngine::spawnTower(Tower * tower_p)
 {
-	_towers.push_back(tower_p);
-	_towers.back()->setMainHitbox({{0.,0., 0.}, {tower_p->getSize()[0], tower_p->getSize()[1], 1.}});
-	_tree.addContent(tower_p);
-
-	if(_cellsEngine && !tower_p->getResource().empty())
+	if(_scrap >= 35)
 	{
-		GraphicEntity * entity_l = new GraphicEntity();
-		entity_l->getData().setUserAny("tower", Ogre::Any(tower_p));
-		_cellsEngine->getGraphic().registerMessage(new NewGraphicEntityMessage(entity_l, tower_p->getResource(),
-			{tower_p->getPosition()[0]-tower_p->getSize()[0]/2., tower_p->getPosition()[1]-tower_p->getSize()[1]/2., 0.}, "game"));
-		tower_p->setGraphic(entity_l);
+		_towers.push_back(tower_p);
+		_towers.back()->setMainHitbox({{0.,0., 0.}, {tower_p->getSize()[0], tower_p->getSize()[1], 1.}});
+		_tree.addContent(tower_p);
+
+		if(_cellsEngine && !tower_p->getResource().empty())
+		{
+			GraphicEntity * entity_l = new GraphicEntity();
+			entity_l->getData().setUserAny("tower", Ogre::Any(tower_p));
+			_cellsEngine->getGraphic().registerMessage(new NewGraphicEntityMessage(entity_l, tower_p->getResource(),
+				{tower_p->getPosition()[0]-tower_p->getSize()[0]/2., tower_p->getPosition()[1]-tower_p->getSize()[1]/2., 0.}, "game"));
+			tower_p->setGraphic(entity_l);
+		}
+		_scrap -= 35;
+		return true;
 	}
+	delete tower_p;
+	return false;
 }
 
 MobEntity * LogicEngine::getMobSelection(std::array<double, 3> pos_p, std::array<double, 3> dir_p)

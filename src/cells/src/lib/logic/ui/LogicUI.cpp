@@ -5,18 +5,104 @@
 #include "TowerSelectionUI.h"
 #include "InventoryUI.h"
 
+#include "logic/LogicEngine.h"
+#include "engine/GraphicEngine.h"
+#include "game/CellsEngine.h"
+#include "gui/ButtonData.h"
+
+void init_buildTower(CustomGuiToolkit * toolkit_p, GraphicEngine * graphic_p)
+{
+	LogicUI * ui_l = static_cast<LogicUI *>(toolkit_p);
+
+	Colibri::ColibriManager * manager_l = graphic_p->getColibriManager();
+	ui_l->_buildTower = manager_l->createWindow(nullptr);
+	ui_l->_buildTower->setTransform( Ogre::Vector2(0., manager_l->getCanvasSize().y-80), Ogre::Vector2( 200, 80 ) );
+	ui_l->_buildTower->m_breadthFirst = true;
+	float borders_l[4] = {0, 0, 0, 0};
+	ui_l->_buildTower->setBorderSize(borders_l);
+
+	Colibri::Button * button_l = manager_l->createWidget<Colibri::Button>(ui_l->_buildTower);
+	button_l->m_minSize = Ogre::Vector2( 200, 80 );
+
+	std::vector<InfoLabel> content_l;
+	content_l.push_back({"build tower", 255, 255, 255});
+	ui_l->_buildTowerButton.tooltip = new RichLabel(content_l, 0, 0, 200., 0., 10.f, true, *graphic_p);
+
+	// event
+	if(ui_l->_buildTowerButton.listener)
+	{
+		ui_l->_listeners.push_back(new WidgetListener(button_l, ui_l->_buildTowerButton.listener));
+		button_l->addActionListener(ui_l->_listeners.back());
+	}
+
+	if(!ui_l->_buildTowerButton.skin.empty())
+	{
+		button_l->setSkin(ui_l->_buildTowerButton.skin);
+	}
+	if(!ui_l->_buildTowerButton.text.empty())
+	{
+		button_l->getLabel()->setText(ui_l->_buildTowerButton.text);
+		button_l->sizeToFit();
+	}
+
+	// tooltip
+	ui_l->_listeners.push_back(new TooltipListener(manager_l, button_l, ui_l->_buildTowerButton.tooltip));
+	button_l->addActionListener(ui_l->_listeners.back());
+}
+
 LogicUI::LogicUI()
 	: _header(nullptr)
 	, _mobSelectionUI(nullptr)
 	, _towerSelectionUI(nullptr)
 	, _inventoryUI(nullptr)
+	, _buildTower(nullptr)
 {}
+
 LogicUI::~LogicUI()
 {
 	delete _header;
 	delete _mobSelectionUI;
 	delete _towerSelectionUI;
 	delete _inventoryUI;
+	delete _buildTowerButton.listener;
+	delete _buildTowerButton.tooltip;
+	for(auto ptr_l : _listeners)
+	{
+		delete ptr_l;
+	}
+}
+
+namespace
+{
+	class SwitchToTowerBuild : public Listener
+	{
+	public:
+		SwitchToTowerBuild(LogicEngine &engine_p)
+			: _engine(engine_p)
+		{}
+
+		void run()
+		{
+			_engine.setPlacingTower(true);
+		}
+	protected:
+		LogicEngine &_engine;
+	};
+} // namespace
+
+
+void LogicUI::init(LogicEngine &engine_p)
+{
+	_header = new HeaderUI(engine_p);
+	_mobSelectionUI = new MobSelectionUI(engine_p);
+	_towerSelectionUI = new TowerSelectionUI(engine_p);
+	_inventoryUI = new InventoryUI(engine_p);
+
+	_buildTowerButton.text = "build tower";
+	_buildTowerButton.listener = new SwitchToTowerBuild(engine_p);
+
+	GraphicEngine & graphic_l = engine_p.getCellsEngine()->getGraphic();
+	graphic_l.registerMessage(new CustomGuiMessage(init_buildTower, this));
 }
 
 void LogicUI::update()

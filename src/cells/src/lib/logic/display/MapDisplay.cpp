@@ -17,6 +17,7 @@ MapDisplay * newMapDisplay(std::string const &scene_p, MapLayout const * layout_
 	for(Tile const &tile_l : layout_p->getTile())
 	{
 		display_l->getEntities().push_back(new GraphicEntity());
+		display_l->getEntities().back()->getData().setUserAny("tile", Ogre::Any(&tile_l));
 		graphic_p.registerMessage(new NewGraphicEntityMessage(display_l->getEntities().back(), tile_l.resource,
 			{double(tile_l.x), double(tile_l.y), -1.}, scene_p));
 	}

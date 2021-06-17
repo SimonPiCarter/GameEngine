@@ -41,8 +41,11 @@ public:
 
 	void spawnDamageParticle(std::array<double,2> pos_p, double lifetime_p);
 
-	void spawnTower(Tower * tower_p);
+	bool spawnTower(Tower * tower_p);
 
+	////////////////////////
+	// Handling selection //
+	////////////////////////
 	MobEntity * getMobSelection(std::array<double, 3> pos_p, std::array<double, 3> dir_p);
 	Tower * getTowerSelection(std::array<double, 3> pos_p, std::array<double, 3> dir_p);
 
@@ -52,6 +55,9 @@ public:
 	void setTowerSelection(Tower *ent_p) { _towerSelection = ent_p; }
 	Tower * getTowerSelection() { return _towerSelection; }
 
+	////////////////////////
+	// Handling inventory //
+	////////////////////////
 	std::vector<Slot *> & getInventorySlots() { return _inventorySlots; }
 	std::vector<Slot *> const & getInventorySlots() const { return _inventorySlots; }
 
@@ -63,9 +69,14 @@ public:
 
 	void updateTowerSelection();
 
+	////////////////////////
+	//   Handling state   //
+	////////////////////////
+	void setPlacingTower(bool placingTower_p) { _placingTower = placingTower_p; }
+
 	// Logic state
 	bool isWaveRunning() const { return _isWaveRunning; }
-	bool isPlacingTower() const { return true; }
+	bool isPlacingTower() const { return _placingTower; }
 
 protected:
 	CellsEngine * const _cellsEngine;
@@ -104,6 +115,7 @@ protected:
 
 	// Logic state
 	bool _isWaveRunning;
+	bool _placingTower;
 
 	/// @brief tandem class can access logic data
 	friend class WaveEngine;

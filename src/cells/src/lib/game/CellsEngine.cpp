@@ -80,32 +80,6 @@ void CellsEngine::runLogic()
 	_logic = new LogicEngine(&layout_l, this);
 	_logic->init();
 
-	Tower * tower_l = nullptr;
-	tower_l = new Tower({1.5, 5.5}, {1., 1.});
-	tower_l->setAttackModifier(AttackModifier("special", 1, 1.,1.,2.,3.,AttackType::Arc, DamageType::Standard));
-	tower_l->setResource("CubeGreen");
-	tower_l->setMaxSlots(3);
-	_logic->spawnTower(tower_l);
-
-	tower_l = new Tower({1.5, 1.5}, {1., 1.});
-	tower_l->setAttackModifier(AttackModifier("special", 1, 0.5,0.1,2.,3.,AttackType::Direct, DamageType::Standard));
-	tower_l->setResource("CubeGreen");
-	tower_l->setMaxSlots(5);
-	tower_l->getSlots()[0] = new SlowSlot("SlowTest", 120, 0.2, 15., 4);
-	_logic->spawnTower(tower_l);
-
-	tower_l = new Tower({5.5, 1.5}, {1., 1.});
-	tower_l->setAttackModifier(AttackModifier("special", 1, 1.5,2.,2.,3.,AttackType::Splash, DamageType::Standard));
-	tower_l->setResource("CubeGreen");
-	tower_l->setMaxSlots(7);
-	_logic->spawnTower(tower_l);
-
-	tower_l = new Tower({5.5, 5.5}, {1., 1.});
-	tower_l->setAttackModifier(AttackModifier("special", 1, 3.5,2.,2.,3.,AttackType::Line, DamageType::Standard));
-	tower_l->setResource("CubeGreen");
-	tower_l->setMaxSlots(12);
-	_logic->spawnTower(tower_l);
-
 	_logic->getInventorySlots().push_back(new SlowSlot("SlowTest", 120, 0.2, 15., 4));
 	_logic->getInventorySlots().push_back(new SlowSlot("SlowTest", 15, 0.1, 15., 1));
 	_logic->getInventorySlots().push_back(new SlowSlot("SlowTest", 35, 0.2, 15., 2));
@@ -148,8 +122,9 @@ void CellsEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 	switch( evt.type )
 	{
 	case SDL_MOUSEBUTTONDOWN:
-		if(_logic)
+		if(_logic && _logic->isInventoryHidden() && !_logic->isPlacingTower())
 		{
+			// handle selection
 			double x = double(evt.button.x) / double(_graphic.getRenderWindow()->getWidth());
 			double y = double(evt.button.y) / double(_graphic.getRenderWindow()->getHeight());
 
@@ -159,7 +134,6 @@ void CellsEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 
 			Ogre::RaySceneQueryResult& result = rayQuery->execute();
 			Ogre::RaySceneQueryResult::iterator it = result.begin();
-			MobEntity * mobSelection_l;
 			for ( ; it != result.end(); it++)
 			{
 				Ogre::Any mobData_l = it->movable->getUserObjectBindings().getUserAny("mob");
@@ -176,14 +150,49 @@ void CellsEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 				}
 			}
 		}
+		else if(_logic && _logic->isInventoryHidden() && _logic->isPlacingTower())
+		{
+			// handle tower placement
+			double x = double(evt.button.x) / double(_graphic.getRenderWindow()->getWidth());
+			double y = double(evt.button.y) / double(_graphic.getRenderWindow()->getHeight());
+
+			Ogre::RaySceneQuery* rayQuery = _graphic.getSceneManager()->createRayQuery(
+			_graphic.getCamera()->getCameraToViewportRay(x, y));
+			rayQuery->setSortByDistance(true, 1);
+
+			Ogre::RaySceneQueryResult& result = rayQuery->execute();
+			Ogre::RaySceneQueryResult::iterator it = result.begin();
+			for ( ; it != result.end(); it++)
+			{
+				Ogre::Any tileData_l = it->movable->getUserObjectBindings().getUserAny("tile");
+				if(tileData_l.has_value())
+				{
+					Tile const * tile_l = Ogre::any_cast<Tile const *>(tileData_l);
+					if(tile_l->constructible)
+					{
+						Tower * tower_l = nullptr;
+						tower_l = new Tower({tile_l->x+0.5, tile_l->y+0.5}, {1., 1.});
+						tower_l->setAttackModifier(AttackModifier("special", 1, 1.,1.,2.,3.,AttackType::Direct, DamageType::Standard));
+						tower_l->setResource("CubeGreen");
+						tower_l->setMaxSlots(3);
+						_logic->spawnTower(tower_l);
+					}
+				}
+			}
+		}
 		break;
 	case SDL_KEYDOWN:
 		break;
 	case SDL_KEYUP:
 		if(evt.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 		{
-			_logic->setTowerSelection(nullptr);
-			_logic->setMobSelection(nullptr);
+			if(_logic->isInventoryHidden())
+			{
+				_logic->setTowerSelection(nullptr);
+				_logic->setMobSelection(nullptr);
+			}
+			_logic->setPlacingTower(false);
+			_logic->setInventoryHidden(true);
 		}
 		if(evt.key.keysym.scancode == SDL_SCANCODE_Q)
 		{
