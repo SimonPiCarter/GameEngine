@@ -4,11 +4,13 @@
 #include "logic/layout/WaveLayout.h"
 
 class LogicEngine;
+class WaveGenerator;
 
 class CellsEngine : public GameEngine
 {
 public:
 	CellsEngine(std::string const &path_p);
+	~CellsEngine();
 
 	virtual void init() override;
 	virtual void run() override;
@@ -20,7 +22,9 @@ public:
 
 	virtual void visitSDLEvent(SDLEventGameMessage const &msg_p) override;
 
-	WaveLayout * getNextWave();
+	WaveGenerator * getWaveGenerator() { return _waveGenerator; }
+
 protected:
 	LogicEngine *_logic;
+	WaveGenerator * _waveGenerator;
 };

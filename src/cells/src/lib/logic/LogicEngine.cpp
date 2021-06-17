@@ -9,6 +9,7 @@
 #include "logic/ui/MobSelectionUI.h"
 #include "logic/ui/InventoryUI.h"
 #include "logic/ui/TowerSelectionUI.h"
+#include "logic/generator/wave/WaveGenerator.h"
 #include "logic/Constant.h"
 
 
@@ -77,7 +78,7 @@ void LogicEngine::run(double elapsedTime_p)
 {
 	if(!_nextWave)
 	{
-		_nextWave = _cellsEngine->getNextWave();
+		_nextWave = _cellsEngine->getWaveGenerator()->getNextWave();
 		if(_nextWave)
 		{
 			_timeToWave = _nextWave->time;
@@ -118,8 +119,10 @@ void LogicEngine::run(double elapsedTime_p)
 	{
 		_waveEngine->handleFrame(elapsedTime_p);
 		_time += elapsedTime_p;
+		// end wave
 		if(_waveEngine->isWaveOver())
 		{
+			addSlotsToInventory(_nextWave->rewards);
 			delete _waveEngine;
 			_waveEngine = nullptr;
 			_isWaveRunning = false;
@@ -299,6 +302,20 @@ bool LogicEngine::isInventoryHidden()
 	return _inventoyHidden;
 }
 
+void LogicEngine::addSlotsToInventory(std::list<Slot *> const &newSlots_p)
+{
+	auto it_l = newSlots_p.begin();
+	for(size_t i = 0 ; i < _inventorySlots.size() && it_l != newSlots_p.end() ; ++i)
+	{
+		if(_inventorySlots[i] == nullptr)
+		{
+			_inventorySlots[i] = *it_l;
+			++ it_l;
+		}
+	}
+	_inventorySlots.insert(_inventorySlots.end(), it_l, newSlots_p.end());
+}
+
 void LogicEngine::updateInventory(std::set<Slot *> const &consumedSlots_p)
 {
 	std::vector<Slot *> newInventory_l;
@@ -310,7 +327,10 @@ void LogicEngine::updateInventory(std::set<Slot *> const &consumedSlots_p)
 		}
 	}
 	std::swap(newInventory_l, _inventorySlots);
-	_inventorySlots.resize(36,nullptr);
+	if(_inventorySlots.size() < 36)
+	{
+		_inventorySlots.resize(36,nullptr);
+	}
 }
 
 void LogicEngine::deleteSlots(std::set<Slot *> const &toBeRemovedSlots_p)

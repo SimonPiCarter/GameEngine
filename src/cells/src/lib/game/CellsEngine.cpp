@@ -10,12 +10,18 @@
 #include "logic/layout/MapLayout.h"
 #include "logic/entity/Tower.h"
 #include "logic/slot/effect_maker/SlowSlot.h"
+#include "logic/generator/wave/DemoWaveGenerator.h"
 
 CellsEngine::CellsEngine(std::string const &path_p)
 	: GameEngine(path_p)
 	, _logic(nullptr)
 {}
 
+CellsEngine::~CellsEngine()
+{
+	delete _waveGenerator;
+	delete _logic;
+}
 
 void CellsEngine::init()
 {
@@ -66,6 +72,10 @@ void CellsEngine::runLogic()
 
 	double timeSinceLast_l = 1.0 / 60.0;
 
+	////
+	//// DEMO
+	////
+
 	std::list<Tile> tiles_l;
 	long size_l = 8;
 	for(long i = 0 ; i < size_l ; ++ i )
@@ -86,6 +96,22 @@ void CellsEngine::runLogic()
 	_logic->getInventorySlots().push_back(new AttackModifier("special", 30, 70 , 2., 2., 3., AttackType::Line, DamageType::Standard));
 	_logic->getInventorySlots().push_back(new AttackModifier("special", 27, 70 , 2., 2., 3., AttackType::Splash, DamageType::Standard));
 	_logic->getInventorySlots().resize(36,nullptr);
+
+	WaveLayout waveLayout_l;
+	waveLayout_l.time = 20.;
+	waveLayout_l.mobLayout.push_back(
+		{
+			{3., 1., ArmorType::Standard, "Cube", {1.,1.}, 1., 5., 2.},		// Mob model
+			10,																// number of spawn
+			1.																// interval
+		}
+	);
+
+	_waveGenerator = new DemoWaveGenerator(waveLayout_l);
+
+	////
+	//// FIN DEMO
+	////
 
 	while( !_graphic.getQuit() )
 	{
@@ -114,6 +140,8 @@ void CellsEngine::runLogic()
 
 	delete _logic;
 	_logic = nullptr;
+	delete _waveGenerator;
+	_waveGenerator = nullptr;
 }
 
 void CellsEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
@@ -213,18 +241,4 @@ void CellsEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 	default:
 		break;
 	}
-}
-
-WaveLayout* CellsEngine::getNextWave()
-{
-	static WaveLayout layout_l;
-	layout_l.time = 20.;
-	layout_l.mobLayout.push_back(
-		{
-			{3., 1., ArmorType::Standard, "Cube", {1.,1.}, 1., 5., 2.},		// Mob model
-			10,																// number of spawn
-			1.																// interval
-		}
-	);
-	return &layout_l;
 }

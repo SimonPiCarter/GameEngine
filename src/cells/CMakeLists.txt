@@ -19,6 +19,8 @@ target_sources(libcells
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/effect/Effect.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/entity/MobEntity.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/entity/Tower.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/generator/wave/DemoWaveGenerator.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/generator/wave/WaveGenerator.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/layout/MapLayout.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/LogicEngine.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/slot/AttackModifier.cpp

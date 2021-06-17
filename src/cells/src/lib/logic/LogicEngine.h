@@ -66,6 +66,7 @@ public:
 	void setInventoryHidden(bool hidden_p);
 	bool isInventoryHidden();
 
+	void addSlotsToInventory(std::list<Slot *> const &newSlots_p);
 	void updateInventory(std::set<Slot *> const &consumedSlots_p);
 	void deleteSlots(std::set<Slot *> const &toBeRemovedSlots_p);
 
