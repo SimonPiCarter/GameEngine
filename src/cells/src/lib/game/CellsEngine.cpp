@@ -201,7 +201,10 @@ void CellsEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 		}
 		if(evt.key.keysym.scancode == SDL_SCANCODE_I)
 		{
-			_logic->setInventoryHidden(!_logic->isInventoryHidden());
+			if(!_logic->isWaveRunning())
+			{
+				_logic->setInventoryHidden(!_logic->isInventoryHidden());
+			}
 		}
 		break;
 	case SDL_QUIT:

@@ -106,6 +106,10 @@ void LogicEngine::run(double elapsedTime_p)
 		_isWaveRunning = true;
 		startWave_l = false;
 		_time = 0.;
+
+		// close inventory and leave place tower mode
+		setInventoryHidden(true);
+		setPlacingTower(false);
 	}
 
 	// run wave
