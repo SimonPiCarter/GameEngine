@@ -3,6 +3,8 @@
 #include "Animation/OgreSkeletonAnimation.h"
 #include "OgreUserObjectBindings.h"
 
+#include <map>
+
 namespace Ogre
 {
 	class Item;
@@ -26,13 +28,18 @@ public:
 
 	Ogre::SkeletonAnimation *getAnimationState(std::string const &animState_p);
 
-	Ogre::UserObjectBindings const & getData() const;
-	Ogre::UserObjectBindings & getData();
+	std::map<std::string, Ogre::Any> const & getData() const;
+
+	template<typename data_t>
+	void addData(std::string const &key_p, data_t data_p)
+	{
+		_data[key_p] = Ogre::Any(data_p);
+	}
 
 protected:
 	Ogre::Item * _item;
 	Ogre::Light * _light;
 	Ogre::ParticleSystem * _particle;
 	/// @brief custom data
-	Ogre::UserObjectBindings _data;
+	std::map<std::string, Ogre::Any> _data;
 };

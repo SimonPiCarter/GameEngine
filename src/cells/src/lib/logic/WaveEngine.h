@@ -52,6 +52,9 @@ protected:
 
 	double _timestamp;
 
+	unsigned long _spawnedMob;
+	unsigned long _unspawnedMob;
+
 	MobSpawner * _spawner;
 	MobMover * _mover;
 	AttackBuilder * _attack;

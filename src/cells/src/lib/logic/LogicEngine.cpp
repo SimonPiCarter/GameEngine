@@ -9,6 +9,8 @@
 #include "logic/ui/MobSelectionUI.h"
 #include "logic/ui/InventoryUI.h"
 #include "logic/ui/TowerSelectionUI.h"
+#include "logic/Constant.h"
+
 
 LogicEngine::LogicEngine(MapLayout const * map_p, CellsEngine * cellsEngine_p)
 	: _cellsEngine(cellsEngine_p)
@@ -84,12 +86,11 @@ void LogicEngine::run(double elapsedTime_p)
 	if(!_nextWave)
 	{
 		_isOver = true;
-		return;
 	}
 	bool startWave_l = false;
 
 	// update start wave if necessary
-	if(elapsedTime_p > _timeToWave)
+	if(elapsedTime_p > _timeToWave && !_isOver)
 	{
 		startWave_l = true;
 	}
@@ -152,7 +153,7 @@ void LogicEngine::spawnMob(MobEntity * entity_p, std::array<double, 2> const & s
 		_cellsEngine->getGraphic().registerMessage(new NewGraphicEntityMessage(entity_l, entity_p->getModel()->resource,
 			{spawnPosition_p[0]-entity_p->getSize()[0]/2., spawnPosition_p[1]-entity_p->getSize()[1]/2., 0.}, "game"));
 		entity_p->setGraphic(entity_l);
-		entity_l->getData().setUserAny("mob", Ogre::Any(entity_p));
+		entity_l->addData("mob", entity_p);
 	}
 }
 
@@ -160,7 +161,7 @@ void LogicEngine::despawnMob(MobEntity * entity_p)
 {
 	if(_cellsEngine && entity_p->getGraphic())
 	{
-		_cellsEngine->getGraphic().registerMessage(new DestroyGraphicEntityMessage(entity_p->getGraphic()));
+		_cellsEngine->getGraphic().registerMessage(new DestroyGraphicEntityMessage(entity_p->getGraphic(), true));
 	}
 
 	// decrease life
@@ -177,7 +178,7 @@ void LogicEngine::killMob(MobEntity * entity_p)
 {
 	if(_cellsEngine && entity_p->getGraphic())
 	{
-		_cellsEngine->getGraphic().registerMessage(new DestroyGraphicEntityMessage(entity_p->getGraphic()));
+		_cellsEngine->getGraphic().registerMessage(new DestroyGraphicEntityMessage(entity_p->getGraphic(), true));
 	}
 
 	// increase scrap
@@ -212,7 +213,7 @@ void LogicEngine::spawnDamageParticle(std::array<double,2> pos_p, double lifetim
 
 bool LogicEngine::spawnTower(Tower * tower_p)
 {
-	if(_scrap >= 35)
+	if(_scrap >= TOWER_COST)
 	{
 		_towers.push_back(tower_p);
 		_towers.back()->setMainHitbox({{0.,0., 0.}, {tower_p->getSize()[0], tower_p->getSize()[1], 1.}});
@@ -221,16 +222,46 @@ bool LogicEngine::spawnTower(Tower * tower_p)
 		if(_cellsEngine && !tower_p->getResource().empty())
 		{
 			GraphicEntity * entity_l = new GraphicEntity();
-			entity_l->getData().setUserAny("tower", Ogre::Any(tower_p));
+			entity_l->addData("tower", tower_p);
 			_cellsEngine->getGraphic().registerMessage(new NewGraphicEntityMessage(entity_l, tower_p->getResource(),
 				{tower_p->getPosition()[0]-tower_p->getSize()[0]/2., tower_p->getPosition()[1]-tower_p->getSize()[1]/2., 0.}, "game"));
 			tower_p->setGraphic(entity_l);
 		}
-		_scrap -= 35;
+		_scrap -= TOWER_COST;
 		return true;
 	}
 	delete tower_p;
 	return false;
+}
+
+void LogicEngine::deleteSelectedTower()
+{
+	if(!_towerSelection || _isWaveRunning)
+	{
+		return;
+	}
+	if(_cellsEngine && _towerSelection->getGraphic())
+	{
+		_cellsEngine->getGraphic().registerMessage(new DestroyGraphicEntityMessage(_towerSelection->getGraphic(), true));
+	}
+
+	// increase scrap
+	_scrap += TOWER_COST/2.;
+
+	// delete all slots of the tower
+	std::set<Slot *> slots_l;
+	slots_l.insert(new AttackModifier(_towerSelection->getAttackModifier()));
+	for(Slot * slot_l : _towerSelection->getSlots())
+	{
+		if(slot_l)
+		{
+			slots_l.insert(slot_l);
+		}
+	}
+	deleteSlots(slots_l);
+
+	// reset selection
+	setTowerSelection(nullptr);
 }
 
 MobEntity * LogicEngine::getMobSelection(std::array<double, 3> pos_p, std::array<double, 3> dir_p)

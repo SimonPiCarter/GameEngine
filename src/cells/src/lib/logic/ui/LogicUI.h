@@ -29,6 +29,7 @@ public:
 
 	Colibri::Window *_buildTower;
 	ButtonData _buildTowerButton;
+	ButtonData _removeTowerButton;
 
 	friend void init_buildTower(CustomGuiToolkit * toolkit_p, GraphicEngine * graphic_p);
 

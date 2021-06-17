@@ -103,6 +103,10 @@ void GraphicMessageHandler::visitDestroyGraphicEntity(DestroyGraphicEntityMessag
 	assert(parentNode_l);
 	// Destroy scene and all children
 	parentNode_l->removeAndDestroyChild(node_l);
+	if(msg_p.isDelete())
+	{
+		delete msg_p.getEntity();
+	}
 }
 
 void GraphicMessageHandler::visitLinkGraphicEntity(LinkGraphicEntityMessage const &msg_p)
@@ -153,7 +157,10 @@ void GraphicMessageHandler::visitNewGraphicEntity(NewGraphicEntityMessage const 
 	sceneNode->attachObject(item_l);
 	sceneNode->scale(res_l._scale, res_l._scale, res_l._scale);
 
-	item_l->getUserObjectBindings() = msg_p.getEntity()->getData();
+	for(auto pair_l : msg_p.getEntity()->getData())
+	{
+		item_l->getUserObjectBindings().setUserAny(pair_l.first, pair_l.second);
+	}
 	msg_p.getEntity()->setItem(item_l);
 }
 

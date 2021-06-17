@@ -43,6 +43,7 @@ public:
 	void spawnDamageParticle(std::array<double,2> pos_p, double lifetime_p);
 
 	bool spawnTower(Tower * tower_p);
+	void deleteSelectedTower();
 
 	////////////////////////
 	// Handling selection //
