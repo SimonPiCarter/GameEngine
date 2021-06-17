@@ -22,9 +22,12 @@ LogicEngine::LogicEngine(MapLayout const * map_p, CellsEngine * cellsEngine_p)
 	, _mobSelection(nullptr)
 	, _towerSelection(nullptr)
 	, _currentMap(map_p)
+	, _nextWave(nullptr)
 	, _waveEngine(nullptr)
 	, _isWaveRunning(false)
 	, _placingTower(false)
+	, _isOver(false)
+	, _timeToWave(0.)
 {}
 
 LogicEngine::~LogicEngine()
@@ -70,17 +73,42 @@ void LogicEngine::init()
 
 void LogicEngine::run(double elapsedTime_p)
 {
-	bool startWave_l = true;
-	WaveLayout wave_l = _cellsEngine->getNextWave();
+	if(!_nextWave)
+	{
+		_nextWave = _cellsEngine->getNextWave();
+		if(_nextWave)
+		{
+			_timeToWave = _nextWave->time;
+		}
+	}
+	if(!_nextWave)
+	{
+		_isOver = true;
+		return;
+	}
+	bool startWave_l = false;
 
+	// update start wave if necessary
+	if(elapsedTime_p > _timeToWave)
+	{
+		startWave_l = true;
+	}
+	else
+	{
+		_timeToWave -= elapsedTime_p;
+	}
+
+	// start wave
 	if(!_waveEngine && startWave_l)
 	{
 		_waveEngine = new WaveEngine(*this);
-		_waveEngine->init(wave_l);
+		_waveEngine->init(*_nextWave);
 		_isWaveRunning = true;
 		startWave_l = false;
 		_time = 0.;
 	}
+
+	// run wave
 	if(_waveEngine)
 	{
 		_waveEngine->handleFrame(elapsedTime_p);
@@ -90,6 +118,7 @@ void LogicEngine::run(double elapsedTime_p)
 			delete _waveEngine;
 			_waveEngine = nullptr;
 			_isWaveRunning = false;
+			_nextWave = nullptr;
 		}
 	}
 

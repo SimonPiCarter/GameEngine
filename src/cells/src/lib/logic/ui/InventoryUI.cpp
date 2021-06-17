@@ -251,6 +251,7 @@ void InventoryUI::setUpTower()
 
 	_listeners.push_back(new SelectionTowerUIListener(*_towerModifierSlot, *this, _engine));
 	_towerModifierSlot->_button->addActionListener(_listeners.back());
+	_allButtons.push_back(_towerModifierSlot->_button);
 
 	_towerLayout = new Colibri::LayoutLine(_manager);
 	_towerLayout->m_vertical = true;

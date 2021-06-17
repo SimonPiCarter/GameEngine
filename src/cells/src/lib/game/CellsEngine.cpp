@@ -176,6 +176,7 @@ void CellsEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 						tower_l->setResource("CubeGreen");
 						tower_l->setMaxSlots(3);
 						_logic->spawnTower(tower_l);
+						_logic->setPlacingTower(false);
 					}
 				}
 			}
@@ -211,9 +212,10 @@ void CellsEngine::visitSDLEvent(SDLEventGameMessage const &msg_p)
 	}
 }
 
-WaveLayout CellsEngine::getNextWave()
+WaveLayout* CellsEngine::getNextWave()
 {
-	WaveLayout layout_l;
+	static WaveLayout layout_l;
+	layout_l.time = 20.;
 	layout_l.mobLayout.push_back(
 		{
 			{3., 1., ArmorType::Standard, "Cube", {1.,1.}, 1., 5., 2.},		// Mob model
@@ -221,5 +223,5 @@ WaveLayout CellsEngine::getNextWave()
 			1.																// interval
 		}
 	);
-	return layout_l;
+	return &layout_l;
 }

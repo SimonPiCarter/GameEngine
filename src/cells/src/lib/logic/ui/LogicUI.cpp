@@ -83,7 +83,10 @@ namespace
 
 		void run()
 		{
-			_engine.setPlacingTower(true);
+			if(!_engine.isWaveRunning())
+			{
+				_engine.setPlacingTower(true);
+			}
 		}
 	protected:
 		LogicEngine &_engine;

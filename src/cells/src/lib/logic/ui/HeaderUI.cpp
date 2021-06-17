@@ -23,6 +23,10 @@ std::vector<InfoLabel> getLifeContent(LogicEngine &engine_p)
 std::vector<InfoLabel> getTimeContent(LogicEngine &engine_p)
 {
 	size_t roundedSecond_l = size_t(engine_p.getTime());
+	if(!engine_p.isWaveRunning())
+	{
+		roundedSecond_l = size_t(engine_p.getTimeToWave());
+	}
 	size_t secondWithoutMinutes_l = roundedSecond_l%60;
 	size_t minutes_l = (roundedSecond_l - secondWithoutMinutes_l) / 60;
 	std::stringstream ss_l;

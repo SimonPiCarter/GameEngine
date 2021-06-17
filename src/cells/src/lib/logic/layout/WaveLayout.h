@@ -6,5 +6,6 @@
 
 struct WaveLayout
 {
+	double time;
 	std::list<MobModelLayout> mobLayout;
 };

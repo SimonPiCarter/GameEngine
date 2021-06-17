@@ -20,7 +20,7 @@ public:
 
 	virtual void visitSDLEvent(SDLEventGameMessage const &msg_p) override;
 
-	WaveLayout getNextWave();
+	WaveLayout * getNextWave();
 protected:
 	LogicEngine *_logic;
 };

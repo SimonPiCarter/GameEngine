@@ -12,6 +12,7 @@ class MobEntity;
 class Tower;
 class WaveEngine;
 class Slot;
+class WaveLayout;
 
 class LogicEngine
 {
@@ -77,6 +78,8 @@ public:
 	// Logic state
 	bool isWaveRunning() const { return _isWaveRunning; }
 	bool isPlacingTower() const { return _placingTower; }
+	bool isOver() const { return _isOver; }
+	double getTimeToWave() const { return _timeToWave; }
 
 protected:
 	CellsEngine * const _cellsEngine;
@@ -111,11 +114,14 @@ protected:
 
 	std::list<GraphicEntity *> _lights;
 
+	WaveLayout * _nextWave;
 	WaveEngine * _waveEngine;
 
 	// Logic state
 	bool _isWaveRunning;
 	bool _placingTower;
+	bool _isOver;
+	double _timeToWave;
 
 	/// @brief tandem class can access logic data
 	friend class WaveEngine;
