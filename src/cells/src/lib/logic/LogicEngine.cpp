@@ -12,10 +12,7 @@
 
 LogicEngine::LogicEngine(MapLayout const * map_p, CellsEngine * cellsEngine_p)
 	: _cellsEngine(cellsEngine_p)
-	, _header(nullptr)
-	, _mobSelectionUI(nullptr)
-	, _towerSelectionUI(nullptr)
-	, _inventoryUI(nullptr)
+	, _ui()
 	, _inventoyHidden(true)
 	, _tree({{0.,0.}, {double(map_p->getSize()[0]), double(map_p->getSize()[1])}}, map_p->getSize()[0], 0.)
 	, _quit(false)
@@ -26,6 +23,7 @@ LogicEngine::LogicEngine(MapLayout const * map_p, CellsEngine * cellsEngine_p)
 	, _towerSelection(nullptr)
 	, _currentMap(map_p)
 	, _waveEngine(nullptr)
+	, _isWaveRunning(false)
 {}
 
 LogicEngine::~LogicEngine()
@@ -43,10 +41,6 @@ LogicEngine::~LogicEngine()
 	{
 		delete pair_l.first;
 	}
-	delete _header;
-	delete _mobSelectionUI;
-	delete _towerSelectionUI;
-	delete _inventoryUI;
 }
 
 
@@ -69,10 +63,10 @@ void LogicEngine::init()
 
 		_cellsEngine->getGraphic().registerMessage(new NewSceneMessage("game", "root", {0.,0.,0.}));
 
-		_header = new HeaderUI(*this);
-		_mobSelectionUI = new MobSelectionUI(*this);
-		_towerSelectionUI = new TowerSelectionUI(*this);
-		_inventoryUI = new InventoryUI(*this);
+		_ui._header = new HeaderUI(*this);
+		_ui._mobSelectionUI = new MobSelectionUI(*this);
+		_ui._towerSelectionUI = new TowerSelectionUI(*this);
+		_ui._inventoryUI = new InventoryUI(*this);
 	}
 }
 
@@ -85,6 +79,7 @@ void LogicEngine::run(double elapsedTime_p)
 	{
 		_waveEngine = new WaveEngine(*this);
 		_waveEngine->init(wave_l);
+		_isWaveRunning = true;
 		startWave_l = false;
 		_time = 0.;
 	}
@@ -96,6 +91,7 @@ void LogicEngine::run(double elapsedTime_p)
 		{
 			delete _waveEngine;
 			_waveEngine = nullptr;
+			_isWaveRunning = false;
 		}
 	}
 
@@ -114,23 +110,7 @@ void LogicEngine::run(double elapsedTime_p)
 			++ it_l;
 		}
 	}
-
-	if(_header)
-	{
-		_header->update();
-	}
-	if(_mobSelectionUI)
-	{
-		_mobSelectionUI->update();
-	}
-	if(_towerSelectionUI)
-	{
-		_towerSelectionUI->update();
-	}
-	if(_inventoryUI)
-	{
-		_inventoryUI->update();
-	}
+	_ui.update();
 }
 
 void LogicEngine::spawnMob(MobEntity * entity_p, std::array<double, 2> const & spawnPosition_p)
@@ -231,15 +211,15 @@ Tower * LogicEngine::getTowerSelection(std::array<double, 3> pos_p, std::array<d
 
 void LogicEngine::setInventoryHidden(bool hidden_p)
 {
-	if(_inventoryUI)
+	if(_ui._inventoryUI)
 	{
 		if(hidden_p)
 		{
-			_cellsEngine->getGraphic().registerMessage(new CustomGuiMessage(hide_inventory, _inventoryUI));
+			_cellsEngine->getGraphic().registerMessage(new CustomGuiMessage(hide_inventory, _ui._inventoryUI));
 		}
 		else
 		{
-			_cellsEngine->getGraphic().registerMessage(new CustomGuiMessage(show_inventory, _inventoryUI));
+			_cellsEngine->getGraphic().registerMessage(new CustomGuiMessage(show_inventory, _ui._inventoryUI));
 		}
 	}
 	_inventoyHidden = hidden_p;
@@ -275,5 +255,5 @@ void LogicEngine::deleteSlots(std::set<Slot *> const &toBeRemovedSlots_p)
 
 void LogicEngine::updateTowerSelection()
 {
-	_towerSelectionUI->update(true);
+	_ui._towerSelectionUI->update(true);
 }

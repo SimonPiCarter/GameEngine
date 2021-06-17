@@ -2,16 +2,13 @@
 
 #include "layout/MapLayout.h"
 #include "wave/PositionalTreeDefs.h"
+#include "ui/LogicUI.h"
 
 #include <set>
 
 class CellsEngine;
 class GraphicEntity;
-class HeaderUI;
 class MobEntity;
-class MobSelectionUI;
-class InventoryUI;
-class TowerSelectionUI;
 class Tower;
 class WaveEngine;
 class Slot;
@@ -66,13 +63,14 @@ public:
 
 	void updateTowerSelection();
 
+	// Logic state
+	bool isWaveRunning() const { return _isWaveRunning; }
+	bool isPlacingTower() const { return true; }
+
 protected:
 	CellsEngine * const _cellsEngine;
 
-	HeaderUI * _header;
-	MobSelectionUI * _mobSelectionUI;
-	TowerSelectionUI * _towerSelectionUI;
-	InventoryUI * _inventoryUI;
+	LogicUI _ui;
 	bool _inventoyHidden;
 
 	/// @brief handle towers
@@ -103,6 +101,9 @@ protected:
 	std::list<GraphicEntity *> _lights;
 
 	WaveEngine * _waveEngine;
+
+	// Logic state
+	bool _isWaveRunning;
 
 	/// @brief tandem class can access logic data
 	friend class WaveEngine;
