@@ -213,7 +213,7 @@ void InventoryUI::setUpMain()
 
 	_layout = new Colibri::LayoutMultiline(_manager);
 	_layout->m_numLines = _lines;
-	_layout->m_vertical = false;
+	_layout->m_vertical = true;
 
 	_layout->setAdjustableWindow(_main);
 	_layout->m_hardMaxSize = _size[0];
@@ -336,7 +336,6 @@ void InventoryUI::updateInventory()
 		_slots.push_back(newSlot_l);
 		_allButtons.push_back(newSlot_l->_button);
 	}
-
 	// Show only necesssary slots buttons
 	for(size_t i = 0 ; i < _slots.size() ; ++ i)
 	{
@@ -352,7 +351,9 @@ void InventoryUI::updateInventory()
 		}
 		else
 		{
-			_slots[i]->_button->setHidden(true);
+			updateSlotUI(*_slots[i], nullptr);
+			_slots[i]->_button->setHidden(false);
+			_slots[i]->_tooltip = _tooltipsLabel[i];
 		}
 		// re enable every slot
 		_slots[i]->_disabled->setHidden(true);
@@ -431,7 +432,15 @@ void InventoryUI::updateTower()
 	{
 		updateSlotUI(*_towerModifierSlot, &towerSelection_l->getAttackModifier());
 		graphic_l.registerMessage(new UpdateTextRichLabelMessage(*_tooltipsLabelTower[0], getDesc(&towerSelection_l->getAttackModifier())));
+		_towerModifierSlot->_button->setHidden(false);
+		_towerModifierSlot->_button->setClickable(true);
 	}
+	else
+	{
+		_towerModifierSlot->_button->setHidden(true);
+		_towerModifierSlot->_button->setClickable(false);
+	}
+
 
 	_towerLayout->layout();
 }

@@ -327,9 +327,9 @@ void LogicEngine::updateInventory(std::set<Slot *> const &consumedSlots_p)
 		}
 	}
 	std::swap(newInventory_l, _inventorySlots);
-	if(_inventorySlots.size() < 36)
+	if(_inventorySlots.size() < MIN_INVENTORY_SIZE)
 	{
-		_inventorySlots.resize(36,nullptr);
+		_inventorySlots.resize(MIN_INVENTORY_SIZE,nullptr);
 	}
 }
 

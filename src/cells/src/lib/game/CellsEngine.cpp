@@ -11,6 +11,7 @@
 #include "logic/entity/Tower.h"
 #include "logic/slot/effect_maker/SlowSlot.h"
 #include "logic/generator/wave/DemoWaveGenerator.h"
+#include "logic/Constant.h"
 
 CellsEngine::CellsEngine(std::string const &path_p)
 	: GameEngine(path_p)
@@ -95,7 +96,7 @@ void CellsEngine::runLogic()
 	_logic->getInventorySlots().push_back(new SlowSlot("SlowTest", 35, 0.2, 15., 2));
 	_logic->getInventorySlots().push_back(new AttackModifier("special", 30, 70 , 2., 2., 3., AttackType::Line, DamageType::Standard));
 	_logic->getInventorySlots().push_back(new AttackModifier("special", 27, 70 , 2., 2., 3., AttackType::Splash, DamageType::Standard));
-	_logic->getInventorySlots().resize(36,nullptr);
+	_logic->getInventorySlots().resize(MIN_INVENTORY_SIZE,nullptr);
 
 	WaveLayout waveLayout_l;
 	waveLayout_l.time = 20.;
