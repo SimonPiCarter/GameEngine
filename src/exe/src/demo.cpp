@@ -20,7 +20,16 @@
 
 #include "engine/GameEngine.h"
 #include "gui/CentralMenu.h"
+#include "gui/PopUpScreen.h"
 #include "gui/RichLabel.h"
+
+#include "ColibriGui/Layouts/ColibriLayoutLine.h"
+
+//////////////////////////////////
+//////////////////////////////////
+// CENTRAL MENU START
+//////////////////////////////////
+//////////////////////////////////
 
 class QuitListener : public Listener
 {
@@ -67,6 +76,107 @@ private:
 	central_menu::Menu *& _menu;
 };
 
+//////////////////////////////////
+//////////////////////////////////
+// CENTRAL MENU END
+//////////////////////////////////
+//////////////////////////////////
+
+//////////////////////////////////
+//////////////////////////////////
+// POPUP SCREEN START
+//////////////////////////////////
+//////////////////////////////////
+
+class DemoPopUp : public PopUpScreen
+{
+public:
+	DemoPopUp() : PopUpScreen() {}
+
+	virtual void setContent()
+	{
+		Colibri::LayoutLine *layoutV = new Colibri::LayoutLine( _manager );
+		layoutV->m_vertical = true;
+
+		Colibri::Button *button1_l = _manager->createWidget<Colibri::Button>( _window );
+		button1_l->m_minSize = Ogre::Vector2( 350, 64 );
+		button1_l->getLabel()->setText( "button1" );
+		button1_l->sizeToFit();
+		Colibri::Button *button2_l = _manager->createWidget<Colibri::Button>( _window );
+		button2_l->m_minSize = Ogre::Vector2( 350, 64 );
+		button2_l->getLabel()->setText( "button2" );
+		button2_l->sizeToFit();
+
+		layoutV->addCell(button1_l);
+		layoutV->addCell(button2_l);
+		button1_l->m_expand[0] = true;
+		button2_l->m_expand[0] = true;
+
+		Colibri::LayoutLine *layoutH = new Colibri::LayoutLine( _manager );
+		layoutH->m_vertical = false;
+
+		Colibri::Button *button3_l = _manager->createWidget<Colibri::Button>( _window );
+		button3_l->m_minSize = Ogre::Vector2( 350, 64 );
+		button3_l->getLabel()->setText( "button3" );
+		button3_l->sizeToFit();
+		Colibri::Button *button4_l = _manager->createWidget<Colibri::Button>( _window );
+		button4_l->m_minSize = Ogre::Vector2( 350, 64 );
+		button4_l->getLabel()->setText( "button4" );
+		button4_l->sizeToFit();
+		Colibri::Button *button5_l = _manager->createWidget<Colibri::Button>( _window );
+		button5_l->m_minSize = Ogre::Vector2( 350, 64 );
+		button5_l->getLabel()->setText( "button5" );
+		button5_l->sizeToFit();
+
+		layoutH->addCell(button3_l);
+		layoutH->addCell(button4_l);
+		layoutH->addCell(button5_l);
+
+		Colibri::LayoutLine *layoutH2 = new Colibri::LayoutLine( _manager );
+		layoutH2->m_vertical = false;
+
+		Colibri::Button *button7_l = _manager->createWidget<Colibri::Button>( _window );
+		button7_l->m_minSize = Ogre::Vector2( 100, 64 );
+		button7_l->getLabel()->setText( "button7" );
+		button7_l->sizeToFit();
+		Colibri::Button *button6_l = _manager->createWidget<Colibri::Button>( _window );
+		button6_l->m_minSize = Ogre::Vector2( 100, 64 );
+		button6_l->getLabel()->setText( "button6" );
+		button6_l->sizeToFit();
+		Colibri::Button *button8_l = _manager->createWidget<Colibri::Button>( _window );
+		button8_l->m_minSize = Ogre::Vector2( 100, 64 );
+		button8_l->getLabel()->setText( "button8" );
+		button8_l->sizeToFit();
+
+		layoutH2->addCell(button6_l);
+		layoutH2->addCell(button7_l);
+		layoutH2->addCell(button8_l);
+		layoutH2->m_gridLocation = Colibri::GridLocations::Center;
+		Colibri::LayoutBase::setMarginToAllCells(layoutH2->getCells(), Ogre::Vector2(20,0));
+
+		layoutH2->m_hardMaxSize = _manager->getCanvasSize();
+		layoutH2->layout();
+
+		layoutH->m_hardMaxSize = _manager->getCanvasSize();
+		layoutH->layout();
+
+		layoutV->addCell(layoutH);
+		layoutV->addCell(layoutH2);
+
+		layoutV->setAdjustableWindow(_window);
+		layoutV->m_hardMaxSize = _manager->getCanvasSize();
+		layoutV->layout();
+	}
+
+private:
+};
+
+//////////////////////////////////
+//////////////////////////////////
+// POPUP SCREEN END
+//////////////////////////////////
+//////////////////////////////////
+
 class DemoEngine : public GameEngine
 {
 public:
@@ -105,6 +215,9 @@ public:
 		data_l.push_back({"quit", &_quit, nullptr, ""});
 		data_l.push_back({"return", &_return, label3_l, "Custom_Button"});
 		_menu = new central_menu::Menu("Main", data_l, _graphic);
+
+		_popup = new DemoPopUp();
+		_popup->init(data_l, _graphic);
 
 		std::vector<InfoLabel> content_l;
 		content_l.push_back({"F5", 255, 255, 0});
@@ -176,6 +289,7 @@ public:
 		delete label2_l;
 		delete label3_l;
 		delete _menu;
+		delete _popup;
 
 		_graphic.tearDown();
 	}
@@ -224,6 +338,7 @@ private:
 	bool _visible = true;
 
 	central_menu::Menu * _menu;
+	PopUpScreen * _popup;
 
 	QuitListener _quit;
 	DestroyListener _destroy;

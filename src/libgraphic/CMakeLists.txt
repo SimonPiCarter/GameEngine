@@ -14,6 +14,7 @@ target_sources(graphic
 	src/entity/GraphicEntity.cpp
 	src/gui/ButtonData.cpp
 	src/gui/CentralMenu.cpp
+	src/gui/PopUpScreen.cpp
 	src/gui/RichLabel.cpp
 	src/message/GraphicMessage.cpp
 	src/message/GraphicMessageHandler.cpp
