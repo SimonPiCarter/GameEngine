@@ -1,5 +1,7 @@
 #include "Tower.h"
 
+#include "logic/slot/Slot.h"
+
 Tower::Tower(std::array<double, 2> const &position_p, std::array<double, 2> const &size_p)
 	: LogicEntity<Tower>(position_p, size_p)
 	, _multAttackSpeed(1.)
@@ -7,9 +9,23 @@ Tower::Tower(std::array<double, 2> const &position_p, std::array<double, 2> cons
 	, _bonusRange(0.)
 	, _damageEffect(DamageStyle::Standard)
 	, _maxSlots(1)
-	, _attackModifier(1., 1., 1., 1., AttackType::Direct, DamageType::Standard)
+	, _attackModifier("BasicModifier", 1, 1., 1., 1., 1., AttackType::Direct, DamageType::Standard)
 	, _resource("")
 {}
+Tower::~Tower()
+{
+	for(Slot *slot_l : _slots)
+	{
+		delete slot_l;
+	}
+}
+
+void Tower::setMaxSlots(unsigned long maxSlots_p)
+{
+	_maxSlots = maxSlots_p;
+	// resize slot vector
+	_slots.resize(_maxSlots, nullptr);
+}
 
 /// @brief get full attack speed (taking multiplier into account)
 double Tower::getAttackSpeed() const

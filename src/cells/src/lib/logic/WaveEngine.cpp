@@ -12,8 +12,10 @@
 
 WaveEngine::WaveEngine(LogicEngine &logic_p)
 	: _logic(logic_p)
-	, _tree({{0.,0.}, {double(_logic._currentMap->getSize()[0]), double(_logic._currentMap->getSize()[1])}}, 20)
+	, _tree({{0.,0.}, {double(_logic._currentMap->getSize()[0]), double(_logic._currentMap->getSize()[1])}}, _logic._currentMap->getSize()[0], 0.)
 	, _timestamp(0.)
+	, _spawnedMob(0)
+	, _unspawnedMob(0)
 	, _spawner(nullptr)
 	, _mover(nullptr)
 	, _attack(nullptr)
@@ -121,9 +123,11 @@ void WaveEngine::spawnMob(MobModel const &model_p, std::array<double, 2> const &
 {
 	assert(_logic._currentMap);
 	_mobs.push_back(new MobEntity(spawnPosition_p, &model_p, *_logic._currentMap, spawntime_p));
+	_mobs.back()->setMainHitbox({{-model_p.size[0]/2.,-model_p.size[0]/2., 0.}, {model_p.size[0], model_p.size[1], model_p.height}});
 	_tree.addContent(_mobs.back());
 
 	_logic.spawnMob(_mobs.back(), spawnPosition_p);
+	++_spawnedMob;
 }
 
 void WaveEngine::despawnMob(MobEntity * entity_p)
@@ -131,6 +135,7 @@ void WaveEngine::despawnMob(MobEntity * entity_p)
 	_tree.removeContent(entity_p);
 	_logic.despawnMob(entity_p);
 	entity_p->setDisabled(true);
+	++_unspawnedMob;
 }
 
 void WaveEngine::killMob(MobEntity * entity_p)
@@ -138,6 +143,7 @@ void WaveEngine::killMob(MobEntity * entity_p)
 	_tree.removeContent(entity_p);
 	_logic.killMob(entity_p);
 	entity_p->setDisabled(true);
+	++_unspawnedMob;
 }
 
 void WaveEngine::moveMob(MobEntity * entity_p, std::array<double,2> pos_p, std::array<double,2>)
@@ -153,5 +159,5 @@ void WaveEngine::moveMob(MobEntity * entity_p, std::array<double,2> pos_p, std::
 
 bool WaveEngine::isWaveOver()
 {
-	return _spawnOver && _mobs.empty();
+	return _spawnOver && _unspawnedMob == _spawnedMob;
 }

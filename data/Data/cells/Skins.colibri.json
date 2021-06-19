@@ -1,0 +1,122 @@
+{
+    "skins" :
+    {
+        "Direct" :
+        {
+            "material" : "Direct",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+        },
+        "Arc" :
+        {
+            "material" : "Arc",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+        },
+        "Splash" :
+        {
+            "material" : "Splash",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+        },
+        "Line" :
+        {
+            "material" : "Line",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+        },
+        "EmptySlot" :
+        {
+            "material" : "EmptySlot",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+        },
+        "SlowSlot" :
+        {
+            "material" : "SlowSlot",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+        },
+        "Select" :
+        {
+            "material" : "Select",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+        },
+        "Disabled" :
+        {
+            "material" : "Disabled",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+        },
+        "Highlighted" :
+        {
+            "material" : "Highlighted",
+            "tex_resolution" : [512, 512],
+            "grid_uv" :
+            {
+                "enclosing" : [[0, 0, 512, 512], [4, 4]]
+            },
+            "borders" :
+            {
+                "all" : [4, 4]
+            }
+        }
+    }
+}

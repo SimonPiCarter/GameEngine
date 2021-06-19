@@ -2,6 +2,7 @@
 
 #include "PositionalTree.h"
 #include "logic/utils/ArrayUtils.h"
+#include "logic/utils/Hitbox.h"
 
 #include <cassert>
 
@@ -20,10 +21,11 @@ BoundingBox getBoundingBox(T const &content_p, std::array<double, 2> const &pos_
 }
 
 template<typename T>
-PositionalTree<T>::PositionalTree(BoundingBox const &box_p, unsigned long size_p)
+PositionalTree<T>::PositionalTree(BoundingBox const &box_p, unsigned long size_p, double z_p)
 	: _box(box_p)
 	, _size(size_p)
 	, _map(size_p, std::vector<PositionalNode<T>* >(size_p, nullptr))
+	, _z(z_p)
 {
 	// compute size of one node
 	std::array<double, 2> subSize_l = { box_p.size[0] / size_p , box_p.size[1] / size_p };
@@ -258,46 +260,13 @@ std::unordered_set<T*> PositionalTree<T>::getAllWithinLine(std::array<double, 2>
 				// can have null elt
 				if(!content_l) { continue; }
 				BoundingBox box_l = getBoundingBox(*content_l);
-				// upper and lower bounds for x and y (swaped if direction < 0 (lower = closest))
-				double lx = box_l.position[0];
-				double ux = box_l.size[0] + box_l.position[0];
-				if(direction_l[0] < 0.) { std::swap(lx, ux); }
-				double ly = box_l.position[1];
-				double uy = box_l.size[1] + box_l.position[1];
-				if(direction_l[1] < 0.) { std::swap(ly, uy); }
 
-
-				// boolean to check nul direction coordinate
-				std::array<bool, 2> nul;
-				bool skip_l = false;
-				for(size_t i = 0 ; i < 2 ; ++ i )
-				{
-					nul[i] = direction_l[i] < 1e-5 && direction_l[i] > -1e-5;
-					// if not direction toward x/y
-					if(nul[i])
-					{
-						// skip if not in the correct range for x/y
-						if(box_l.position[i] > position_p[i]
-						|| box_l.position[i] + box_l.position[i] < position_p[i])
-						{
-							skip_l = true;
-							break;
-						}
-					}
-				}
-				// skip
-				if(skip_l) { continue; }
-
-				// compute range for intersection
-				double lowerx_l = nul[0] ? std::numeric_limits<double>::min() : (lx-position_p[0])/direction_l[0];
-				double upperx_l = nul[0] ? std::numeric_limits<double>::max() : (ux-position_p[0])/direction_l[0];
-				double lowery_l = nul[1] ? std::numeric_limits<double>::min() : (ly-position_p[1])/direction_l[1];
-				double uppery_l = nul[1] ? std::numeric_limits<double>::max() : (uy-position_p[1])/direction_l[1];
-				double lower_l = std::max(lowerx_l, lowery_l);
-				double upper_l = std::min(upperx_l, uppery_l);
-
+				PositionalHitbox hitbox_l;
+				hitbox_l.pos = {box_l.position[0], box_l.position[1], 0.};
+				hitbox_l.hitbox.size = {box_l.size[0], box_l.size[1], 0.};
+				double contact_l = collide({position_p[0], position_p[1], 0.}, {direction_l[0], direction_l[1], 0.}, hitbox_l);
 				// if range is within given range limit
-				if(upper_l >= lower_l && upper_l >= 0. && range_p >= lower_l)
+				if(contact_l >= 0. && range_p >= contact_l)
 				{
 					all_l.insert(content_l);
 				}
@@ -372,6 +341,56 @@ std::unordered_set<T*> PositionalTree<T>::getAllWithinRadiusDecoy(std::array<dou
 		}
 	}
 	return list_l;
+}
+
+template<typename T>
+PositionalHitbox posHitbox(T const * content_p, double z_p, bool main_p)
+{
+	return PositionalHitbox({
+		(main_p? content_p->getMainHitbox() : content_p->getSecondaryHitbox()),
+		{content_p->getPosition()[0], content_p->getPosition()[1], z_p}
+	});
+}
+
+template<typename T>
+T * PositionalTree<T>::getIntersectionToRay(std::array<double, 3> const &pos_p, std::array<double, 3> const & dir_p)
+{
+	double dist_l = std::numeric_limits<double>::max();
+	T * closest_l = nullptr;
+	bool main_l = false;
+	// check intersection to every node
+	for(PositionalNode<T> & node_l : _nodes)
+	{
+		// if we collide with the node check its content
+		if(collide(pos_p, dir_p, node_l.getHitbox()) >= 0.)
+		{
+			T * nodeClosest_l = nullptr;
+			for(T * content_l : node_l.getContent())
+			{
+				// skip if nullptr (can happen)
+				if(!content_l) { continue; }
+				// check collision with main hitbox
+				double curDist_l = collide(pos_p, dir_p, posHitbox(content_l, getZ(), true));
+				if(curDist_l >= 0. && curDist_l < dist_l)
+				{
+					dist_l = curDist_l;
+					closest_l = content_l;
+					main_l = true;
+				}
+				// check collision with secondary
+				if(!main_l)
+				{
+					double curDist_l = collide(pos_p, dir_p, posHitbox(content_l, getZ(), false));
+					if(curDist_l >= 0. && curDist_l < dist_l)
+					{
+						dist_l = curDist_l;
+						closest_l = content_l;
+					}
+				}
+			}
+		}
+	}
+	return closest_l;
 }
 
 template<typename T>

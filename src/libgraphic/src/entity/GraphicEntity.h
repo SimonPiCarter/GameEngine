@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Animation/OgreSkeletonAnimation.h"
+#include "OgreUserObjectBindings.h"
+
+#include <map>
 
 namespace Ogre
 {
@@ -25,8 +28,18 @@ public:
 
 	Ogre::SkeletonAnimation *getAnimationState(std::string const &animState_p);
 
+	std::map<std::string, Ogre::Any> const & getData() const;
+
+	template<typename data_t>
+	void addData(std::string const &key_p, data_t data_p)
+	{
+		_data[key_p] = Ogre::Any(data_p);
+	}
+
 protected:
 	Ogre::Item * _item;
 	Ogre::Light * _light;
 	Ogre::ParticleSystem * _particle;
+	/// @brief custom data
+	std::map<std::string, Ogre::Any> _data;
 };

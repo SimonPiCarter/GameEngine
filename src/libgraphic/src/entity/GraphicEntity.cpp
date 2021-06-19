@@ -45,3 +45,8 @@ Ogre::SkeletonAnimation *GraphicEntity::getAnimationState(std::string const &ani
 	assert(skeletonInstance_l);
 	return skeletonInstance_l->getAnimation(animState_p);;
 }
+
+std::map<std::string, Ogre::Any> const & GraphicEntity::getData() const
+{
+	return _data;
+}

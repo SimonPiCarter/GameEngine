@@ -8,13 +8,13 @@ LogicEntity<T>::LogicEntity(std::array<double, 2> const &position_p, std::array<
 	: _position(position_p)
 	, _size(size_p)
 	, _graphic(nullptr)
+	, _mainHitbox({0.,0.,0.}, {0.,0.,0.})
+	, _secondaryHitbox({0.,0.,0.}, {0.,0.,0.})
 {}
 
 template<typename T>
 LogicEntity<T>::~LogicEntity()
-{
-	delete _graphic;
-}
+{}
 
 template<typename T>
 std::array<double, 2> const &LogicEntity<T>::getPosition() const

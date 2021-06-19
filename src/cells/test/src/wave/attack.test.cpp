@@ -98,7 +98,7 @@ TEST(attack, simple_one_reload)
 
 	// add tower
 	logic_l.getTowers().push_back(new Tower({6.5,6.5}, {1., 1.}));
-	logic_l.getTowers().back()->setAttackModifier(AttackModifier(1., 1., 10., 0., AttackType::Direct, DamageType::Standard));
+	logic_l.getTowers().back()->setAttackModifier(AttackModifier("", 1, 1., 1., 10., 0., AttackType::Direct, DamageType::Standard));
 
 	// prevent wave  engine from looping automatically
 	logic_l.quit();
@@ -150,7 +150,7 @@ TEST(attack, simple_arc)
 
 	// add tower
 	logic_l.getTowers().push_back(new Tower({6.5,6.5}, {1., 1.}));
-	logic_l.getTowers().back()->setAttackModifier(AttackModifier(1., 1., 1., 2., AttackType::Arc, DamageType::Standard));
+	logic_l.getTowers().back()->setAttackModifier(AttackModifier("", 1, 1., 1., 1., 2., AttackType::Arc, DamageType::Standard));
 
 	// prevent wave  engine from looping automatically
 	logic_l.quit();
@@ -209,7 +209,7 @@ TEST(attack, simple_splash)
 
 	// add tower
 	logic_l.getTowers().push_back(new Tower({6.5,6.5}, {1., 1.}));
-	logic_l.getTowers().back()->setAttackModifier(AttackModifier(1., 1., 1., 1., AttackType::Splash, DamageType::Standard));
+	logic_l.getTowers().back()->setAttackModifier(AttackModifier("", 1, 1., 1., 1., 1., AttackType::Splash, DamageType::Standard));
 
 	// prevent wave  engine from looping automatically
 	logic_l.quit();
@@ -273,7 +273,7 @@ TEST(attack, simple_line)
 
 	// add tower
 	logic_l.getTowers().push_back(new Tower({8.5,5.5}, {1., 1.}));
-	logic_l.getTowers().back()->setAttackModifier(AttackModifier(1., 1., 2., 1., AttackType::Line, DamageType::Standard));
+	logic_l.getTowers().back()->setAttackModifier(AttackModifier("", 1, 1., 1., 2., 1., AttackType::Line, DamageType::Standard));
 
 	// prevent wave  engine from looping automatically
 	logic_l.quit();

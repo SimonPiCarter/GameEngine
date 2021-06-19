@@ -1,0 +1,47 @@
+hlms Arc unlit
+{
+	diffuse_map arc.png
+}
+hlms Direct unlit
+{
+	diffuse_map direct.png
+}
+hlms Line unlit
+{
+	diffuse_map line.png
+}
+hlms Splash unlit
+{
+	diffuse_map splash.png
+}
+
+
+hlms EmptySlot unlit
+{
+	diffuse_map empty_slot.png
+}
+hlms SlowSlot unlit
+{
+	diffuse_map slow_slot.png
+}
+hlms Select unlit
+{
+	lighting off
+	scene_blend add
+	depth_write off
+	diffuse_map select.png
+}
+hlms Disabled unlit
+{
+	lighting off
+	scene_blend add
+	depth_write off
+	diffuse_map disabled.png
+}
+hlms Highlighted unlit
+{
+	lighting off
+	scene_blend add
+	depth_write off
+	diffuse_map highlighted.png
+}

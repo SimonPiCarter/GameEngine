@@ -20,6 +20,8 @@ public:
 
 	void setHidden(bool hidden_p);
 
+	Colibri::Window * getWindow() { return _window; }
+
 protected:
 	Colibri::ColibriManager * _manager;
 	Colibri::Window * _window;

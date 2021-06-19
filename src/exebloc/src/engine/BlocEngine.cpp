@@ -29,10 +29,10 @@ BlocEngine::BlocEngine(std::string const &path_p)
 
 void BlocEngine::init()
 {
-	_resourceHandler.addResource({"Cube", "Cube.mesh", false, ""});
-	_resourceHandler.addResource({"CubeGreen", "Cube.mesh", false, "Green"});
-	_resourceHandler.addResource({"CubeYellow", "Cube.mesh", false, "Yellow"});
-	_resourceHandler.addResource({"CubeRed", "Cube.mesh", false, "Red"});
+	_resourceHandler.addResource({"Cube", "Cube.mesh", false, "", 0.5});
+	_resourceHandler.addResource({"CubeGreen", "Cube.mesh", false, "Green", 0.5});
+	_resourceHandler.addResource({"CubeYellow", "Cube.mesh", false, "Yellow", 0.5});
+	_resourceHandler.addResource({"CubeRed", "Cube.mesh", false, "Red", 0.5});
 	_graphic.initWindow("demo");
 }
 
@@ -82,14 +82,14 @@ void BlocEngine::run()
 	for(long i = -1 ; i <= 9 ; ++i)
 	{
 		borders_l.push_back(new GraphicEntity());
-		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {double(i), 5, 19}, {0.5,0.5,0.5}, "main"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {double(i), 5, 19}, "main"));
 	}
 	for(size_t i = 0 ; i < 19 ; ++i)
 	{
 		borders_l.push_back(new GraphicEntity());
-		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {-1, 5, double(i)}, {0.5,0.5,0.5}, "main"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {-1, 5, double(i)}, "main"));
 		borders_l.push_back(new GraphicEntity());
-		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {9, 5, double(i)}, {0.5,0.5,0.5}, "main"));
+		_graphic.registerMessage(new NewGraphicEntityMessage(borders_l.back(), "Cube", {9, 5, double(i)}, "main"));
 	}
 
 	// NEXT BLOC
@@ -112,6 +112,8 @@ void BlocEngine::run()
 	{
 		delete model_l;
 	}
+	_graphic.registerMessage(new DestroyWindowMessage(label_l->getWindow()));
+	_graphic.registerMessage(new DestroyWindowMessage(_labelScore->getWindow()));
 	delete label_l;
 	delete _labelScore;
 	_labelScore = nullptr;

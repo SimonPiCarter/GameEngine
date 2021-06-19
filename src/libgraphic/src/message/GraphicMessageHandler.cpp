@@ -103,6 +103,10 @@ void GraphicMessageHandler::visitDestroyGraphicEntity(DestroyGraphicEntityMessag
 	assert(parentNode_l);
 	// Destroy scene and all children
 	parentNode_l->removeAndDestroyChild(node_l);
+	if(msg_p.isDelete())
+	{
+		delete msg_p.getEntity();
+	}
 }
 
 void GraphicMessageHandler::visitLinkGraphicEntity(LinkGraphicEntityMessage const &msg_p)
@@ -151,8 +155,12 @@ void GraphicMessageHandler::visitNewGraphicEntity(NewGraphicEntityMessage const 
 	Ogre::SceneNode *sceneNode = rootNode_l->
 		createChildSceneNode( Ogre::SCENE_DYNAMIC, Ogre::Vector3(msg_p.getPosition()[0], msg_p.getPosition()[1], msg_p.getPosition()[2]) );
 	sceneNode->attachObject(item_l);
-	sceneNode->scale(msg_p.getScale()[0], msg_p.getScale()[1], msg_p.getScale()[2]);
+	sceneNode->scale(res_l._scale, res_l._scale, res_l._scale);
 
+	for(auto pair_l : msg_p.getEntity()->getData())
+	{
+		item_l->getUserObjectBindings().setUserAny(pair_l.first, pair_l.second);
+	}
 	msg_p.getEntity()->setItem(item_l);
 }
 
@@ -165,6 +173,54 @@ void GraphicMessageHandler::visitRotateGraphicEntity(RotateGraphicEntityMessage 
 	msg_p.getEntity()->getItem()->getParentNode()->roll(Ogre::Degree(msg_p.getVector()[2]));
 	msg_p.getEntity()->getItem()->getParentNode()->pitch(Ogre::Degree(msg_p.getVector()[0]));
 	msg_p.getEntity()->getItem()->getParentNode()->yaw(Ogre::Degree(msg_p.getVector()[1]));
+}
+
+//////////////////////////////////
+//                              //
+//           Gui                //
+//                              //
+//////////////////////////////////
+
+void GraphicMessageHandler::visitCustomGui(CustomGuiMessage const &msg_p)
+{
+	msg_p.getFunc()(msg_p.getToolkit(), _engine);
+}
+
+void GraphicMessageHandler::visitDestroyWindow(DestroyWindowMessage const &msg_p)
+{
+	_engine->getColibriManager()->destroyWindow(msg_p.getWindow());
+}
+
+void GraphicMessageHandler::visitNewCentralMenu(NewCentralMenuMessage const &msg_p)
+{
+	msg_p.getMenu().menu = new central_menu::Menu(msg_p.getTitle(), msg_p.getData(), *_engine);
+}
+
+void GraphicMessageHandler::visitHideCentralMenu(HideCentralMenuMessage const &msg_p)
+{
+	msg_p.getMenu().menu->setHidden(msg_p.isHidden());
+}
+
+void GraphicMessageHandler::visitNewRichLabel(NewRichLabelMessage const &msg_p)
+{
+	// set pointer
+	msg_p.getLabel().label = new RichLabel(msg_p.getContent(), msg_p.getX(), msg_p.getY(), msg_p.getWidth(), msg_p.getHeight()
+		, msg_p.getSize(), msg_p.getBack(), *_engine);
+}
+
+void GraphicMessageHandler::visitHideRichLabel(HideRichLabelMessage const &msg_p)
+{
+	msg_p.getLabel().label->setHidden(msg_p.isHidden());
+}
+
+void GraphicMessageHandler::visitUpdateTextRichLabel(UpdateTextRichLabelMessage const &msg_p)
+{
+	msg_p.getLabel().label->updateText(msg_p.getContent());
+}
+
+void GraphicMessageHandler::visitSetPositionRichLabel(SetPositionRichLabelMessage const &msg_p)
+{
+	msg_p.getLabel().label->setPosition(msg_p.getX(), msg_p.getY());
 }
 
 //////////////////////////////////

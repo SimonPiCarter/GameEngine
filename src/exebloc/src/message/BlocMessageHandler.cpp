@@ -51,7 +51,7 @@ void BlocMessageHandler::visitSpawnBloc(SpawnBlocMessage const &msg_p)
 				}
 				GraphicEntity * entity_l = new GraphicEntity();
 				graphic_l.registerMessage(new NewGraphicEntityMessage(entity_l, bloc_l->getModel().getMaterial()
-					, {double(i),double(j),double(k)}, {0.5,0.5,0.5}, getScene(msg_p.getType())));
+					, {double(i),double(j),double(k)}, getScene(msg_p.getType())));
 				bloc_l->getEntities()[i][j][k] = entity_l;
 			}
 		}

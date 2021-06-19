@@ -166,11 +166,10 @@ Effect * AttackBuilder::buildAttackEffect(MobEntity * target_p, Tower &tower_p, 
 
 		for(Slot * slot_l : tower_p.getSlots())
 		{
-			if(slot_l->isEffectMaker())
+			if(slot_l && slot_l->isEffectMaker())
 			{
 				EffectMaker const * maker_l = static_cast<EffectMaker const *>(slot_l);
 				effects_l.push_back(maker_l->newEffect(target_p, tower_p, _waveEngine, timestamp_p));
-
 			}
 		}
 	}
