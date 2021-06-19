@@ -107,6 +107,7 @@ void CellsEngine::runLogic()
 			1.																// interval
 		}
 	);
+	waveLayout_l.rewardText = "Wandering around hot metal scraps you find valuable materials";
 
 	_waveGenerator = new DemoWaveGenerator(waveLayout_l);
 

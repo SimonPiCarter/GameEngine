@@ -128,7 +128,7 @@ void LogicEngine::run(double elapsedTime_p)
 		{
 			LootLayout layout_l;
 			layout_l.title = "Loot";
-			layout_l.text = "En parcourant les cendres des robots désarticulés vous trouvez de précieuses ressources";
+			layout_l.text = _nextWave->rewardText;
 			layout_l.loots = _nextWave->rewards;
 			openPopup(new LootPopup(layout_l, *this, nullptr));
 			addSlotsToInventory(_nextWave->rewards);
