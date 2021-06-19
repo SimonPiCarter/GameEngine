@@ -92,8 +92,23 @@ void PopUpScreen::init(std::vector<ButtonData> const &data_p, GraphicEngine & en
 	_buttonWindow->update(0.f);
 }
 
+void PopUpScreen::clean()
+{
+	if(_window)
+	{
+		_manager->destroyWindow(_window);
+	}
+	_window = nullptr;
+	if(_buttonWindow)
+	{
+		_manager->destroyWindow(_buttonWindow);
+	}
+	_buttonWindow = nullptr;
+}
+
 PopUpScreen::~PopUpScreen()
 {
+	clean();
 	// delete all listeners
 	for(Colibri::WidgetActionListener* listener_l : _listeners)
 	{

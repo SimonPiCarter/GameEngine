@@ -18,6 +18,8 @@ public:
 
 	void init(std::vector<ButtonData> const &data_p, GraphicEngine & engine_p);
 
+	void clean();
+
 	void setHidden(bool hidden_p);
 
 	Colibri::Window * getWindow() { return _window; }
