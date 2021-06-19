@@ -13,6 +13,7 @@ class Tower;
 class WaveEngine;
 class Slot;
 struct WaveLayout;
+class EndWavePopup;
 
 class LogicEngine
 {
@@ -73,6 +74,13 @@ public:
 	void updateTowerSelection();
 
 	////////////////////////
+	//   Handling popup   //
+	////////////////////////
+
+	void openPopup(EndWavePopup *popup_p);
+	void closePopup();
+
+	////////////////////////
 	//   Handling state   //
 	////////////////////////
 	void setPlacingTower(bool placingTower_p) { _placingTower = placingTower_p; }
@@ -116,6 +124,10 @@ protected:
 
 	std::list<GraphicEntity *> _lights;
 
+	/// @brief added pointer to current popup
+	EndWavePopup *_currentPopup;
+
+	// wave pointers
 	WaveLayout * _nextWave;
 	WaveEngine * _waveEngine;
 
@@ -124,6 +136,7 @@ protected:
 	bool _placingTower;
 	bool _isOver;
 	double _timeToWave;
+	bool _isPopUpOpen;
 
 	/// @brief tandem class can access logic data
 	friend class WaveEngine;

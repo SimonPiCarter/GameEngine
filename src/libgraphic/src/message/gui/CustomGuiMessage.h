@@ -19,16 +19,18 @@ public:
 class CustomGuiMessage : public GraphicMessage
 {
 public:
-	CustomGuiMessage(std::function<void(CustomGuiToolkit*, GraphicEngine *)> const &func_p, CustomGuiToolkit * toolkit_p);
+	CustomGuiMessage(std::function<void(CustomGuiToolkit*, GraphicEngine *)> const &func_p, CustomGuiToolkit * toolkit_p, bool deleteToolkit_p=false);
 
 	virtual void visit(GraphicMessageHandler &handler_p);
 
 	std::function<void(CustomGuiToolkit*, GraphicEngine *)> const &getFunc() const { return _func; }
 	CustomGuiToolkit * getToolkit() const { return _toolkit; }
+	bool isDeleteToolkit() const { return _deleteToolkit; }
 
 protected:
 	std::function<void(CustomGuiToolkit*, GraphicEngine *)> _func;
 	CustomGuiToolkit * const _toolkit;
+	bool const _deleteToolkit;
 };
 
 class DestroyWindowMessage : public GraphicMessage

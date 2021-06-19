@@ -219,7 +219,7 @@ unset( OGRE_BUILD_SETTINGS_STR )
 
 if( NOT APPLE )
   # Create debug libraries with _d suffix
-  #set( OGRE_DEBUG_SUFFIX "_d" )
+  set( OGRE_DEBUG_SUFFIX "_d" )
 endif()
 
 if( NOT IOS )

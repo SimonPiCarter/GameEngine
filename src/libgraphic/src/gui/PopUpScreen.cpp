@@ -44,6 +44,7 @@ void PopUpScreen::init(std::vector<ButtonData> const &data_p, GraphicEngine & en
 		{
 			_listeners.push_back(new ::WidgetListener(button_l, buttonData_l.listener));
 			button_l->addActionListener(_listeners.back());
+			_listenersFunctor.push_back(buttonData_l.listener);
 		}
 		if(!buttonData_l.skin.empty())
 		{
@@ -111,6 +112,11 @@ PopUpScreen::~PopUpScreen()
 	clean();
 	// delete all listeners
 	for(Colibri::WidgetActionListener* listener_l : _listeners)
+	{
+		delete listener_l;
+	}
+	// delete all listeners
+	for(Listener * listener_l : _listenersFunctor)
 	{
 		delete listener_l;
 	}

@@ -9,6 +9,8 @@
 #include "logic/ui/MobSelectionUI.h"
 #include "logic/ui/InventoryUI.h"
 #include "logic/ui/TowerSelectionUI.h"
+#include "logic/ui/popup/EndWavePopup.h"
+#include "logic/ui/popup/LootPopup.h"
 #include "logic/generator/wave/WaveGenerator.h"
 #include "logic/Constant.h"
 
@@ -25,12 +27,14 @@ LogicEngine::LogicEngine(MapLayout const * map_p, CellsEngine * cellsEngine_p)
 	, _mobSelection(nullptr)
 	, _towerSelection(nullptr)
 	, _currentMap(map_p)
+	, _currentPopup(nullptr)
 	, _nextWave(nullptr)
 	, _waveEngine(nullptr)
 	, _isWaveRunning(false)
 	, _placingTower(false)
 	, _isOver(false)
 	, _timeToWave(0.)
+	, _isPopUpOpen(false)
 {}
 
 LogicEngine::~LogicEngine()
@@ -91,11 +95,11 @@ void LogicEngine::run(double elapsedTime_p)
 	bool startWave_l = false;
 
 	// update start wave if necessary
-	if(elapsedTime_p > _timeToWave && !_isOver)
+	if(elapsedTime_p > _timeToWave && !_isOver && !_isPopUpOpen)
 	{
 		startWave_l = true;
 	}
-	else
+	else if(!_isPopUpOpen)
 	{
 		_timeToWave -= elapsedTime_p;
 	}
@@ -122,6 +126,11 @@ void LogicEngine::run(double elapsedTime_p)
 		// end wave
 		if(_waveEngine->isWaveOver())
 		{
+			LootLayout layout_l;
+			layout_l.title = "Loot";
+			layout_l.text = "En parcourant les cendres des robots désarticulés vous trouvez de précieuses ressources";
+			layout_l.loots = _nextWave->rewards;
+			openPopup(new LootPopup(layout_l, *this, nullptr));
 			addSlotsToInventory(_nextWave->rewards);
 			delete _waveEngine;
 			_waveEngine = nullptr;
@@ -345,4 +354,22 @@ void LogicEngine::deleteSlots(std::set<Slot *> const &toBeRemovedSlots_p)
 void LogicEngine::updateTowerSelection()
 {
 	_ui._towerSelectionUI->update(true);
+}
+
+void LogicEngine::openPopup(EndWavePopup *popup_p)
+{
+	_isPopUpOpen = true;
+	std::cout<<"open"<<std::endl;
+	_currentPopup = popup_p;
+	// show popup
+	_cellsEngine->getGraphic().registerMessage(new CustomGuiMessage(start_popup, _currentPopup));
+}
+
+void LogicEngine::closePopup()
+{
+	_isPopUpOpen = false;
+	std::cout<<"close"<<std::endl;
+	// remove popup (will delete popup)
+	_cellsEngine->getGraphic().registerMessage(new CustomGuiMessage(end_popup, _currentPopup));
+	_currentPopup = nullptr;
 }

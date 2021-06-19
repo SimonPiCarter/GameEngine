@@ -4,10 +4,11 @@
 
 CustomGuiToolkit::~CustomGuiToolkit() {}
 
-CustomGuiMessage::CustomGuiMessage(std::function<void(CustomGuiToolkit*, GraphicEngine *)> const &func_p, CustomGuiToolkit * toolkit_p)
+CustomGuiMessage::CustomGuiMessage(std::function<void(CustomGuiToolkit*, GraphicEngine *)> const &func_p, CustomGuiToolkit * toolkit_p, bool deleteToolkit_p)
 	: GraphicMessage("")
 	, _func(func_p)
 	, _toolkit(toolkit_p)
+	, _deleteToolkit(deleteToolkit_p)
 {}
 
 void CustomGuiMessage::visit(GraphicMessageHandler &handler_p)

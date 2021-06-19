@@ -34,4 +34,5 @@ protected:
 
 	/// @brief list of listeners to delete them
 	std::list<Colibri::WidgetActionListener*> _listeners;
+	std::list<Listener*> _listenersFunctor;
 };

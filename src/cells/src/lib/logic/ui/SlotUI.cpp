@@ -42,15 +42,28 @@ SlotUI * createSlotUI(Colibri::ColibriManager *manager_p, Colibri::Window *windo
 	return newSlot_l;
 }
 
-void updateSlotUI(SlotUI &slotUI_p, Slot * slot_p)
+UpdateSlotToolkit::UpdateSlotToolkit(SlotUI &slotUI_p, Slot * slot_p)
+	: _slotUI(slotUI_p)
+	, _newSlot(slot_p)
 {
-	slotUI_p._slot = slot_p;
-	long buttonSize_l = slotUI_p._button->getSize().x;
-	slotUI_p._image->setSkin(getSkin(slot_p));
-	slotUI_p._label->setText(getLvl(slot_p));
-	slotUI_p._label->sizeToFit();
-	std::array<double, 3> col_l = getLvlColour(slot_p, true);
-	slotUI_p._label->setTextColour(Ogre::ColourValue(col_l[0], col_l[1], col_l[2], 1.), -1, Colibri::States::NumStates);
-	slotUI_p._label->setTransform(Ogre::Vector2(buttonSize_l-slotUI_p._label->getSize().x-7, buttonSize_l-slotUI_p._label->getSize().y),
-		slotUI_p._label->getSize());
+	_slotUI._slot = slot_p;
+	_slotUI._image->setSkin(getSkin(_newSlot));
+}
+
+UpdateSlotToolkit::~UpdateSlotToolkit() {}
+
+void UpdateSlotToolkit::update()
+{
+	long buttonSize_l = _slotUI._button->getSize().x;
+	_slotUI._label->setText(getLvl(_newSlot));
+	_slotUI._label->sizeToFit();
+	std::array<double, 3> col_l = getLvlColour(_newSlot, true);
+	_slotUI._label->setTextColour(Ogre::ColourValue(col_l[0], col_l[1], col_l[2], 1.), -1, Colibri::States::NumStates);
+	_slotUI._label->setTransform(Ogre::Vector2(buttonSize_l-_slotUI._label->getSize().x-7, buttonSize_l-_slotUI._label->getSize().y),
+		_slotUI._label->getSize());
+}
+
+void updateSlotUIFromToolkit(CustomGuiToolkit* toolkit_p, GraphicEngine *)
+{
+	static_cast<UpdateSlotToolkit *>(toolkit_p)->update();
 }

@@ -235,7 +235,7 @@ void InventoryUI::setUpTower()
 	_towerModifierWindow->setBorderSize(borders_l);
 
 	_towerModifierSlot = createSlotUI(_manager, _towerModifierWindow, {0, 0}, _slotSize);
-	updateSlotUI(*_towerModifierSlot, nullptr);
+	graphic_l.registerMessage(new CustomGuiMessage(updateSlotUIFromToolkit, new UpdateSlotToolkit(*_towerModifierSlot, nullptr), true));
 
 	// create tooltip
 	std::vector<InfoLabel> content_l;
@@ -342,7 +342,7 @@ void InventoryUI::updateInventory()
 		// update image from slot
 		if(i < slots_number_l)
 		{
-			updateSlotUI(*_slots[i], _engine.getInventorySlots()[i]);
+			graphic_l.registerMessage(new CustomGuiMessage(updateSlotUIFromToolkit, new UpdateSlotToolkit(*_slots[i], _engine.getInventorySlots()[i]), true));
 			_slots[i]->_button->setHidden(false);
 			_slots[i]->_tooltip = _tooltipsLabel[i];
 
@@ -351,7 +351,7 @@ void InventoryUI::updateInventory()
 		}
 		else
 		{
-			updateSlotUI(*_slots[i], nullptr);
+			graphic_l.registerMessage(new CustomGuiMessage(updateSlotUIFromToolkit, new UpdateSlotToolkit(*_slots[i], nullptr), true));
 			_slots[i]->_button->setHidden(false);
 			_slots[i]->_tooltip = _tooltipsLabel[i];
 		}
@@ -415,7 +415,7 @@ void InventoryUI::updateTower()
 		// update image from slot
 		if(i < slots_number_l)
 		{
-			updateSlotUI(*_towerSlots[i], towerSelection_l->getSlots().at(i));
+			graphic_l.registerMessage(new CustomGuiMessage(updateSlotUIFromToolkit, new UpdateSlotToolkit(*_towerSlots[i], towerSelection_l->getSlots().at(i)), true));
 			_towerSlots[i]->_button->setHidden(false);
 			_towerSlots[i]->_tooltip = _tooltipsLabelTower[i+1];
 
@@ -430,7 +430,7 @@ void InventoryUI::updateTower()
 	}
 	if(towerSelection_l)
 	{
-		updateSlotUI(*_towerModifierSlot, &towerSelection_l->getAttackModifier());
+		graphic_l.registerMessage(new CustomGuiMessage(updateSlotUIFromToolkit, new UpdateSlotToolkit(*_towerModifierSlot, &towerSelection_l->getAttackModifier()), true));
 		graphic_l.registerMessage(new UpdateTextRichLabelMessage(*_tooltipsLabelTower[0], getDesc(&towerSelection_l->getAttackModifier())));
 		_towerModifierSlot->_button->setHidden(false);
 		_towerModifierSlot->_button->setClickable(true);
@@ -529,10 +529,10 @@ void SelectionTowerUIListener::notifyWidgetAction( Colibri::Widget *widget, Coli
 		if(_ui.getCurrentSlotSelection()
 		&& !_slot._highlighted->isHidden())
 		{
-			// replace slot in tower
-			updateSlotUI(_slot, _ui.getCurrentSlotSelection()->_slot);
-			// update tooltip
 			GraphicEngine & graphic_l = _engine.getCellsEngine()->getGraphic();
+			// replace slot in tower
+			graphic_l.registerMessage(new CustomGuiMessage(updateSlotUIFromToolkit, new UpdateSlotToolkit(_slot, _ui.getCurrentSlotSelection()->_slot), true));
+			// update tooltip
 			graphic_l.registerMessage(new UpdateTextRichLabelMessage(*_slot._tooltip, getDesc(_slot._slot)));
 
 			// if origin slot we re enable it

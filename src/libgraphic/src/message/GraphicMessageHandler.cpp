@@ -184,6 +184,10 @@ void GraphicMessageHandler::visitRotateGraphicEntity(RotateGraphicEntityMessage 
 void GraphicMessageHandler::visitCustomGui(CustomGuiMessage const &msg_p)
 {
 	msg_p.getFunc()(msg_p.getToolkit(), _engine);
+	if(msg_p.isDeleteToolkit())
+	{
+		delete msg_p.getToolkit();
+	}
 }
 
 void GraphicMessageHandler::visitDestroyWindow(DestroyWindowMessage const &msg_p)

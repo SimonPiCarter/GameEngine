@@ -32,6 +32,8 @@ target_sources(libcells
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/ui/MobSelectionUI.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/ui/SlotUI.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/ui/TowerSelectionUI.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/ui/popup/LootPopup.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/ui/popup/EndWavePopup.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/utils/ArrayUtils.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/utils/Hitbox.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/lib/logic/wave/AttackBuilder.cpp
@@ -75,4 +77,4 @@ PUBLIC
 #		TESTS			 #
 ##########################
 
-add_subdirectory(test)
+#add_subdirectory(test)
