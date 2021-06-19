@@ -33,7 +33,7 @@ TEST(mobMover, simple_every_2)
 	WaveLayout waveLayout_l;
 	waveLayout_l.mobLayout.push_back(
 		{
-			{12., 1., ArmorType::Heavy, "", {0.1,0.1}},		// Mob model
+			{12., 1., ArmorType::Heavy, "", {0.1,0.1}, 1, 1, 1.},		// Mob model
 			5,												// number of spawn
 			2.												// interval
 		}

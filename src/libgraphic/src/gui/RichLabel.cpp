@@ -115,7 +115,7 @@ void RichLabel::updateText(std::vector<InfoLabel> const &content_p)
 		_label->sizeToFit(_width);
 		if(_anchored)
 		{
-			_window->setTransform({_window->getLocalTopLeft().x, _bottom - _label->getSize().y}, Ogre::Vector2(_width, _label->getSize().y));
+			_window->setTransform({_window->getLocalTopLeft().x, Ogre::Real(_bottom - _label->getSize().y)}, Ogre::Vector2(_width, _label->getSize().y));
 		}
 		else
 		{
@@ -135,5 +135,5 @@ void RichLabel::setBottomAnchor(double anchor_p)
 	_anchored = true;
 	_bottom = anchor_p;
 	// adjust height if necessary
-	_window->setTransform({_window->getLocalTopLeft().x, _bottom - _label->getSize().y}, Ogre::Vector2(_width, _label->getSize().y));
+	_window->setTransform({_window->getLocalTopLeft().x, Ogre::Real(_bottom - _label->getSize().y)}, Ogre::Vector2(_width, _label->getSize().y));
 }

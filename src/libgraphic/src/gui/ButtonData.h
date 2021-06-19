@@ -39,7 +39,7 @@ private:
 struct ButtonData
 {
 	std::string text;
-	Listener * listener = nullptr;
-	RichLabel * tooltip = nullptr;
+	Listener * listener;
+	RichLabel * tooltip;
 	std::string skin;
 };

@@ -8,6 +8,7 @@
 #include "gui/RichLabel.h"
 #include "message/gui/RichLabelMessage.h"
 
+#include <array>
 #include <list>
 #include <vector>
 

@@ -2,7 +2,7 @@
 
 #include <random>
 
-class WaveLayout;
+struct WaveLayout;
 
 /// @brief generate waves based on a random seed
 /// abstract class to allow override in generation

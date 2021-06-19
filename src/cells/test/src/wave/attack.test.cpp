@@ -36,7 +36,7 @@ TEST(attack, simple_no_reload)
 	WaveLayout waveLayout_l;
 	waveLayout_l.mobLayout.push_back(
 		{
-			{12., 1., ArmorType::Standard, "", {0.1,0.1}},		// Mob model
+			{12., 1., ArmorType::Standard, "", {0.1,0.1}, 1, 1, 1.},		// Mob model
 			3,												// number of spawn
 			2.												// interval
 		}
@@ -87,7 +87,7 @@ TEST(attack, simple_one_reload)
 	WaveLayout waveLayout_l;
 	waveLayout_l.mobLayout.push_back(
 		{
-			{12., 1., ArmorType::Standard, "", {0.1,0.1}},		// Mob model
+			{12., 1., ArmorType::Standard, "", {0.1,0.1}, 1, 1, 1.},		// Mob model
 			3,												// number of spawn
 			2.												// interval
 		}
@@ -139,7 +139,7 @@ TEST(attack, simple_arc)
 	WaveLayout waveLayout_l;
 	waveLayout_l.mobLayout.push_back(
 		{
-			{12., 1., ArmorType::Standard, "", {0.1,0.1}},		// Mob model
+			{12., 1., ArmorType::Standard, "", {0.1,0.1}, 1, 1, 1.},		// Mob model
 			2,												// number of spawn
 			1.												// interval
 		}
@@ -198,7 +198,7 @@ TEST(attack, simple_splash)
 	WaveLayout waveLayout_l;
 	waveLayout_l.mobLayout.push_back(
 		{
-			{12., 1., ArmorType::Standard, "", {0.1,0.1}},		// Mob model
+			{12., 1., ArmorType::Standard, "", {0.1,0.1}, 1, 1, 1.},		// Mob model
 			3,												// number of spawn
 			0.1												// interval
 		}
@@ -262,7 +262,7 @@ TEST(attack, simple_line)
 	WaveLayout waveLayout_l;
 	waveLayout_l.mobLayout.push_back(
 		{
-			{12., 1., ArmorType::Standard, "", {0.1,0.1}},		// Mob model
+			{12., 1., ArmorType::Standard, "", {0.1,0.1}, 1, 1, 1.},		// Mob model
 			3,												// number of spawn
 			1.												// interval
 		}

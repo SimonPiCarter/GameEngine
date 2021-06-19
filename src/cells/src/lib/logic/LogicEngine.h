@@ -12,7 +12,7 @@ class MobEntity;
 class Tower;
 class WaveEngine;
 class Slot;
-class WaveLayout;
+struct WaveLayout;
 
 class LogicEngine
 {

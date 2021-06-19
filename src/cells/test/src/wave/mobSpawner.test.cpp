@@ -22,7 +22,7 @@ TEST(mobSpawner, simple)
 	WaveLayout waveLayout_l;
 	waveLayout_l.mobLayout.push_back(
 		{
-			{12., 0., ArmorType::Heavy, "", {0.1,0.1}},
+			{12., 0., ArmorType::Heavy, "", {0.1,0.1}, 1, 1, 1.},
 			100,
 			5.
 		}
@@ -64,7 +64,7 @@ TEST(mobSpawner, simple_chain)
 	// 1 every 2 seconds, 2 spawn
 	waveLayout_l.mobLayout.push_back(
 		{
-			{12., 0., ArmorType::Heavy, "", {0.1,0.1}},
+			{12., 0., ArmorType::Heavy, "", {0.1,0.1}, 1, 1, 1.},
 			2,
 			2.
 		}
@@ -72,7 +72,7 @@ TEST(mobSpawner, simple_chain)
 	// 1 every second, 2 spawn
 	waveLayout_l.mobLayout.push_back(
 		{
-			{12., 0., ArmorType::Heavy, "", {0.1,0.1}},
+			{12., 0., ArmorType::Heavy, "", {0.1,0.1}, 1, 1, 1.},
 			2,
 			1.
 		}
